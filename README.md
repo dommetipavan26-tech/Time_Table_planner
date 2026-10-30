@@ -98,12 +98,12 @@ Winter 2026–27 · **23 courses · 88 credits · 806 sections**
 | `CSE1021` | Foundations of Blockchain Technology | CSE | PE | 3 | Theory only |
 | `CSE2007` | Database Management Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
 | `CSE2008` | Operating Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
-| `CSE3001` | Agile Development Process | MIS | PE | 4 | Theory 3 + Project 1 |
-| `CSE3002` | Artificial Intelligence | MIS | PE | 4 | Theory 3 + Lab 1 |
+| `CSE3001` | Agile Development Process | MIS · MIC | PE | 4 | Theory 3 + Project 1 |
+| `CSE3002` | Artificial Intelligence | MIS · MIC | PE | 4 | Theory 3 + Lab 1 |
 | `SWE2004` | Software Design and Architecture | MIS | PC | 4 | Theory 3 + Project 1 |
-| `SWE3001` | Fundamentals of Computer Networks | MIS | PC | 4 | Theory 3 + Lab 1 |
-| `SWE2006` | Database Systems | MIS | PC | 4 | Theory 3 + Lab 1 |
-| `ECE2015` | Computer Architecture | ECE | PC | 4 | Theory only |
+| `SWE3001` | Fundamentals of Computer Networks | MIS · MIC | PC | 4 | Theory 3 + Lab 1 |
+| `SWE2006` | Database Systems | MIS · MIC | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2015` | Computer Architecture | ECE · MIC | PC | 4 | Theory only |
 | `ECE2016` | Engineering Electromagnetics | ECE | PC | 4 | Theory only |
 | `MAT1010` | Probability and Statistics | Common | UC | 4 | Theory 3 + Lab 1 |
 | `MGT1040` | Entrepreneurship | Common | UC | 4 | Theory 3 + Project 1 |
@@ -113,8 +113,11 @@ Winter 2026–27 · **23 courses · 88 credits · 806 sections**
 Cards are grouped by branch in the filter bar: **Common** (open to every branch) holds
 `MGT1040`, `CSE1022`, `MAT1010` and `STS2011` — these four are also pinned to the top of the **All**
 view, since they suit every branch; **MIS** holds the MIS registration list (`CSE3001`, `CSE3002`,
-`SWE2004`, `SWE3001`, `SWE2006`); **MECH**, **ECE** and **CSE** hold the rest. The branch, category and type chips combine, and every card repeats its branch as a
-badge.
+`SWE2004`, `SWE3001`, `SWE2006`) and **MIC** holds the MIC list (`SWE2006`, `SWE3001`, `ECE2015`,
+`CSE3001`, `CSE3002`); **MECH**, **ECE** and **CSE** hold the rest. The branch, category and type
+chips combine, and every card repeats its branch as a badge — a course that sits on a second list
+(a `course.also` entry) shows that group as a dashed outline badge beside the primary one, so
+`ECE2015` reads **ECE** (solid) **MIC** (outline) and still appears under both chips.
 
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
 scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
@@ -178,7 +181,7 @@ All catalogue data lives in `js/data.js` — edit it and reload, no build step:
 | --- | --- |
 | `THEORY_SLOTS` / `LAB_SLOTS` | slot code → period index for each weekday |
 | `TIMELINE` | rows of the weekly grid |
-| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `branch` (`MECH`/`ECE`/`CSE`/`MIS`/`Common`), `type`, `faculty[]`, `sections[]` |
+| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `branch` (`MECH`/`ECE`/`CSE`/`MIS`/`MIC`/`Common`), optional `also[]` for extra branch lists, `type`, `faculty[]`, `sections[]` |
 
 Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP slot notation
 (`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep

@@ -43,12 +43,10 @@ for (const theme of THEMES) {
     if (more) more.click();
     const picks = [...document.querySelectorAll('.btn-select')].slice(0, 4);
     picks.forEach((b) => b.click());
-    const tab = [...document.querySelectorAll('.nav-tab')].find((t) => t.dataset.view === 'timetable');
-    if (tab) tab.click();
   });
   await new Promise((r) => setTimeout(r, 250));
 
-  const report = await page.evaluate(() => {
+  const measure = () => page.evaluate(() => {
     const parse = (c) => {
       const m = String(c).match(/rgba?\(([^)]+)\)/);
       if (!m) return null;
@@ -130,16 +128,33 @@ for (const theme of THEMES) {
     return out;
   });
 
-  console.log(`\n=== ${theme} theme — ${report.checked} text colours checked, ${report.skipped} unmeasurable (gradient/image backdrop) ===`);
-  if (report.fails.length) {
-    const worst = report.fails.sort((a, b) => a.ratio - b.ratio).slice(0, 25);
-    for (const f of worst) {
-      console.log(`  ✗ ${f.ratio}:1 (needs ${f.need}) ${f.el} ${f.size} — "${f.text}" ${f.fg} on ${f.bg}`);
+  // Both views: the course cards (badges, section rows, credit blocks) and the
+  // timetable matrix are never on screen at the same time, so each is measured
+  // separately — a tab switch hides the other one from the walker.
+  const coursesView = await measure();
+  await page.evaluate(() => {
+    const tab = [...document.querySelectorAll('.nav-tab')].find((t) => t.dataset.view === 'timetable');
+    if (tab) tab.click();
+  });
+  await new Promise((r) => setTimeout(r, 250));
+  const timetableView = await measure();
+
+  let total = 0;
+  for (const [view, report] of [['courses', coursesView], ['timetable', timetableView]]) {
+    total += report.checked;
+    const label = `${theme} / ${view}`;
+    if (report.fails.length) {
+      console.log(`  ${label}: ${report.fails.length} below AA`);
+      for (const f of report.fails.sort((a, b) => a.ratio - b.ratio).slice(0, 20)) {
+        console.log(`    ✗ ${f.ratio}:1 (needs ${f.need}) ${f.el} ${f.size} — "${f.text}" ${f.fg} on ${f.bg}`);
+      }
+      failures.push(...report.fails.map((f) => `${label}: ${f.el} ${f.ratio}:1`));
     }
-    failures.push(...report.fails.map((f) => `${theme}: ${f.el} ${f.ratio}:1`));
-  } else {
-    console.log('  ✓ every measured pair meets WCAG AA');
   }
+  console.log(`\n=== ${theme} theme — ${total} text colours checked` +
+    ` (courses ${coursesView.checked} + timetable ${timetableView.checked}),` +
+    ` ${coursesView.skipped + timetableView.skipped} unmeasurable (gradient/image backdrop) ===`);
+  if (!coursesView.fails.length && !timetableView.fails.length) console.log('  ✓ every measured pair meets WCAG AA');
   await page.close();
 }
 

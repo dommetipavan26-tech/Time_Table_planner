@@ -338,7 +338,11 @@ h1, h2, h3, h4, .brand-name {
 .branch-ECE    { background: #ccfbf1; color: #115e59; border-color: #99f6e4; }
 .branch-CSE    { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
 .branch-MIS    { background: #ffe4e6; color: #9f1239; border-color: #fecdd3; }
+.branch-MIC    { background: #e0f2fe; color: #075985; border-color: #bae6fd; }
 .branch-Common { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
+/* a course that sits on a second branch list shows that group as an outline
+   chip, so the primary branch stays the one that colours the card */
+.branch-badge.is-alt { background: rgba(255, 255, 255, .62); border-style: dashed; }
 
 .sections { display: flex; flex-direction: column; gap: 8px; }
 .sections.expanded {
@@ -432,8 +436,10 @@ h1, h2, h3, h4, .brand-name {
 }
 .btn-select:hover { border-color: var(--primary); color: var(--primary); }
 .btn-select.on {
-  background: var(--c, var(--primary));
-  border-color: var(--c, var(--primary));
+  /* the accent palette is bright, so white label text on the raw colour lands
+     around 2–4:1; deepening the fill keeps every hue above 4.5:1 */
+  background: color-mix(in srgb, var(--c, var(--primary)) 57%, #0b1020);
+  border-color: color-mix(in srgb, var(--c, var(--primary)) 57%, #0b1020);
   color: #fff;
   box-shadow: 0 5px 12px color-mix(in srgb, var(--c, var(--primary)) 30%, transparent);
 }
@@ -1761,6 +1767,8 @@ body {
 [data-theme="dark"] .branch-ECE { background: #0e3330; color: #5eead4; border-color: #14504a; }
 [data-theme="dark"] .branch-CSE { background: #2b2150; color: #d8b4fe; border-color: #3f3270; }
 [data-theme="dark"] .branch-MIS { background: #3b1524; color: #fda4af; border-color: #571f33; }
+[data-theme="dark"] .branch-MIC { background: #0b2d40; color: #7dd3fc; border-color: #12506b; }
+[data-theme="dark"] .branch-badge.is-alt { background: rgba(255, 255, 255, .04); }
 [data-theme="dark"] .branch-Common { background: #232a3b; color: #cbd5e1; border-color: #333d55; }
 
 /* ---- timetable matrix ---- */
