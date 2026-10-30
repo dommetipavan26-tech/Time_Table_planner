@@ -3,27 +3,26 @@
 A clean course-registration & timetable planner for the Winter Semester 2026–27
 (VIT-AP, FFCS).
 
-## Registered courses (7)
+## Registered courses (6)
 
 | Code | Title | Credits | Breakdown |
 |---|---|---|---|
 | MEC3002 | Theory of Machines | 4 | Theory 3 + Lab 1 |
 | MEC2018 | Thermal Engineering Systems | 4 | Theory 3 + Lab 1 |
 | MEC2005 | Fundamentals of Manufacturing Processes | 4 | Theory 3 + Lab 1 |
-| MEC4003 | Internal Combustion Engines | 4 | Theory 3 + Lab 1 |
 | MAT1010 | Probability and Statistics | 4 | Theory 3 + Lab 1 |
 | MGT1040 | Entrepreneurship | 4 | Theory 3 + Project 1 |
 | STS2011 | Qualitative and Quantitative Skills Practice | 1 | Theory only |
 
-**Total: 25 credits** if all are registered.
+**Total: 21 credits** if all are registered.
 
-\* MEC3011 (Operations and Research) was removed from the catalogue — it is no
-longer offered in the planner. Any MEC3011 section saved in `localStorage` is
-dropped automatically on load.
+\* MEC3011 (Operations and Research) and MEC4003 (Internal Combustion Engines)
+were removed from the catalogue — they are no longer offered in the planner. Any
+saved sections for them are dropped automatically on load.
 
 Sections, faculty and venues for MAT1010 / MGT1040 / STS2011 are taken from the
-official course PDFs (OCR); MEC3002 / MEC2018 / MEC2005 / MEC4003 sections are
-from the VTOP registration screenshots. Edit `js/data.js` to adjust.
+official course PDFs (OCR); MEC3002 / MEC2018 / MEC2005 sections are from the
+VTOP registration screenshots. Edit `js/data.js` to adjust.
 
 ## Features
 

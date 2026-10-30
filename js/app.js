@@ -14,11 +14,11 @@ let filters = { q: '', cat: 'all', type: 'all' };
 const expandedCourses = new Set();
 const SECTION_PREVIEW_LIMIT = 4;
 
-// Keep short cards together and place MGT1040 / STS2011 directly after
-// MEC4003 instead of leaving large blank grid tracks.
+// Keep short cards together and place MGT1040 / STS2011 after the
+// embedded theory+lab courses instead of leaving large blank grid tracks.
 const COURSE_DISPLAY_ORDER = [
   'MEC3002', 'MEC2018', 'MEC2005', 'MAT1010',
-  'MEC4003', 'MGT1040', 'STS2011',
+  'MGT1040', 'STS2011',
 ];
 
 /* ------------------------------------------------------------------ */
