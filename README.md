@@ -122,6 +122,12 @@ chips combine, and every card repeats its branch as a badge — a course that si
 (a `course.also` entry) shows that group as a dashed outline badge beside the primary one, so
 `ECE2015` sits under **MIC** only (it is on the MIC registration list, not the ECE one).
 
+Every card lists its slots in a fixed order — **theory slots alphabetically** (`A1+TA1` → `B2+TB2` →
+`C1+TC1` → `C1+TCC1` → `F2+TFF2`) and then **lab slots by their first number**, so `L1+L2` comes
+before `L3+L4` and `L11+L12` sits after `L7+L8`. Rows that share a slot read alphabetically by
+instructor. The PDFs are transcribed in seat-availability order, so the sort lives in
+`sortSections()` in `js/app.js` and applies to every course.
+
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
 scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
 use the same collapsed list.

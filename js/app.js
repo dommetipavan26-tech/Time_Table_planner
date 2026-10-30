@@ -121,6 +121,37 @@ function normaliseSavedSelections() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Section order                                                       */
+/* ------------------------------------------------------------------ */
+// Every card lists its slots in a predictable order: theory slots
+// alphabetically (A1+TA1 → B2+TB2 → C1+TC1 → F2+TFF2) and lab slots by their
+// first number, so L1+L2 comes before L3+L4 and L11+L12 sits after L7+L8.
+// Theory rows always lead, then the labs, each group in that order.
+const LAB_START = /^L(\d+)/;
+const labNumber = (code) => {
+  const m = LAB_START.exec(code);
+  return m ? Number(m[1]) : Number.POSITIVE_INFINITY;
+};
+
+function compareSections(a, b) {
+  if (a.type !== b.type) return a.type === 'lab' ? 1 : -1;
+  if (a.type === 'lab') {
+    const byNumber = labNumber(a.code) - labNumber(b.code);
+    if (byNumber) return byNumber;
+  }
+  if (a.code !== b.code) return a.code < b.code ? -1 : 1;
+  // same slot: read the instructors alphabetically, then by room
+  if (a.faculty !== b.faculty) return a.faculty < b.faculty ? -1 : 1;
+  if (a.venue !== b.venue) return a.venue < b.venue ? -1 : 1;
+  return 0;
+}
+
+// The PDFs list slots by seat availability; the cards read better by slot.
+function sortSections() {
+  for (const course of COURSES) course.sections.sort(compareSections);
+}
+
+/* ------------------------------------------------------------------ */
 /* Scheduling                                                          */
 /* ------------------------------------------------------------------ */
 function sessionsFor(code, type) {
@@ -926,6 +957,7 @@ function initTheme() {
 /* ------------------------------------------------------------------ */
 function boot() {
   initTheme();
+  sortSections();
   bindFilters();
   normaliseSavedSelections();
   saveState();
