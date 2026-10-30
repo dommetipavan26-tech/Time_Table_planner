@@ -1,79 +1,149 @@
-# Winter 2026–27 Course Planner
+<div align="center">
+  <img src="docs/banner.svg" alt="Winter Planner — course and timetable planner for Winter 2026–27" width="100%" />
+</div>
 
-A clean course-registration & timetable planner for the Winter Semester 2026–27
-(VIT-AP, FFCS).
+<h1 align="center">Winter Planner</h1>
 
-## Registered courses (6)
+<p align="center">
+  A focused, dependency-free course &amp; timetable planner for the <strong>Winter 2026–27</strong> semester
+  (VIT-AP · FFCS). Browse the catalogue, pick one theory and one lab slot per course, and get an
+  instant, conflict-checked weekly timetable.
+</p>
 
-| Code | Title | Credits | Breakdown |
-|---|---|---|---|
-| MEC3002 | Theory of Machines | 4 | Theory 3 + Lab 1 |
-| MEC2018 | Thermal Engineering Systems | 4 | Theory 3 + Lab 1 |
-| MEC2005 | Fundamentals of Manufacturing Processes | 4 | Theory 3 + Lab 1 |
-| MAT1010 | Probability and Statistics | 4 | Theory 3 + Lab 1 |
-| MGT1040 | Entrepreneurship | 4 | Theory 3 + Project 1 |
-| STS2011 | Qualitative and Quantitative Skills Practice | 1 | Theory only |
+<p align="center">
+  <a href="https://timetableplanner.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/live-demo-4f46e5?style=flat-square" /></a>
+  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
+  <img alt="CSS3" src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
+  <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-ES2020-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
+  <img alt="No build step" src="https://img.shields.io/badge/build-none-22c55e?style=flat-square" />
+  <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-22c55e?style=flat-square" />
+  <img alt="Deployed on Vercel" src="https://img.shields.io/badge/deploy-Vercel-000000?style=flat-square&logo=vercel&logoColor=white" />
+</p>
 
-**Total: 21 credits** if all are registered.
+---
 
-\* MEC3011 (Operations and Research) and MEC4003 (Internal Combustion Engines)
-were removed from the catalogue — they are no longer offered in the planner. Any
-saved sections for them are dropped automatically on load.
+## Overview
 
-Sections, faculty and venues for MAT1010 / MGT1040 / STS2011 are taken from the
-official course PDFs (OCR); MEC3002 / MEC2018 / MEC2005 sections are from the
-VTOP registration screenshots. Edit `js/data.js` to adjust.
+Winter Planner replaces the "open twenty tabs and hope" approach to FFCS registration with a
+single page. It renders the whole course catalogue with every slot, venue and instructor, places
+your chosen sections on the official Tue–Sat slot matrix, and refuses to let two sessions share
+the same period — so the plan you build here is the plan you can actually register.
+
+Everything runs client-side: three static files, no framework, no build step, no server, and no
+account. Your selections live in `localStorage` on your own device.
+
+**Live demo:** <https://timetableplanner.vercel.app/>
 
 ## Features
 
-- **Courses** — cards with code, name, category (PC/UC), credit breakdown
-  (`Theory 3 cr + Lab 1 cr`), faculty and every section (slot, venue, faculty).
-  Search by code/name/faculty; filter by category and course type. No seat
-  numbers shown.
-- **One slot per component** — a course can hold exactly **one theory slot and
-  one lab slot** (a lab like `L31+L32` counts as a single slot). Picking another
-  theory/lab slot swaps the current one instead of stacking; the extra buttons
-  read **Swap**, and the `+ Add …` shortcut only offers the component that is
-  still missing. Saved state with duplicates is trimmed on load.
-- **Timetable** — selections are placed on the weekly grid (Tue–Sat,
-  08:00–19:30) straight from the slot timetable. Theory/Lab sessions are
-  colour-coded, clashes flash red, and a toggle reveals the full institute slot
-  schedule behind your picks.
-- **My selections panel** — every chosen section with × to remove, plus
-  **Clear labs**, **Clear theory** and **Clear whole timetable** (in-page
-  confirm + 6-second **Undo**). A **Clear all** button also sits in the header.
-- **Faculty** — directory grouping every course by instructor.
-- **Glass + motion** — frosted header, floating filter toolbar and card
-  surfaces (`backdrop-filter` with a `-webkit-` prefix and a solid fallback),
-  soft ambient colour behind the glass, eased hover/press transitions, a
-  fading view switch, and a scroll-aware header. Everything is disabled under
-  `prefers-reduced-motion: reduce` and stripped back for printing.
-- Selections persist in `localStorage` (key `winter26-planner-v4`).
+| Area | What it does |
+| --- | --- |
+| **Catalogue** | Course cards with code, title, PC/UC category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty, filter by category and course type. |
+| **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
+| **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
+| **My selections** | Every chosen section with a remove button, plus **Clear labs**, **Clear theory** and **Clear whole timetable** behind an in-page confirm dialog and a 6-second **Undo**. |
+| **Export** | Save the timetable as a PNG (html2canvas) or **Print / PDF** using a dedicated print stylesheet. |
+| **Persistence** | Selections survive reloads and are normalised on load, so stale or duplicate entries never corrupt the plan. |
+| **Interface** | Frosted-glass surfaces, eased transitions, keyboard support (`/` to search, `Esc` to clear), visible focus rings, and full `prefers-reduced-motion` support. |
 
-## Run locally
+## Getting started
+
+The site is plain static files — any static server works.
 
 ```bash
-python3 -m http.server 8000   # inside this folder
-# open http://localhost:8000
+# 1. clone
+git clone https://github.com/dommetipavan26-tech/Time_Table_planner.git
+cd Time_Table_planner
+
+# 2. serve (pick one)
+python3 -m http.server 8000
+# or: npx serve .
+# or: open index.html directly in a browser
+
+# 3. visit http://localhost:8000
 ```
 
-## Edit data (`js/data.js`)
+There is **nothing to install and nothing to build**. No `package.json`, no bundler, no lockfile.
 
-- `THEORY_SLOTS` / `LAB_SLOTS` — slot code → period index, per day
-- `TIMELINE` — rows of the timetable grid
-- `COURSES` — each course has `credits`, `theoryCredits`, `labCredits`,
-  `category` (PC/UC), `type`, `faculty[]`, and `sections[]`
-  (`code`, `venue`, `faculty`, `type: 'theory' | 'lab'`).
-  Keep `theoryCredits + labCredits = credits`.
+### Deploy
 
-Section codes follow the VTOP format, e.g. `C2+TCC2` (theory + tutorial) or
-`L9+L10` (two consecutive lab periods).
+| Host | How |
+| --- | --- |
+| **Vercel** | Import the repository → framework preset **Other** → deploy. `index.html` is served as-is. |
+| **GitHub Pages** | Settings → Pages → deploy from branch → `main` / root. |
+| **Anywhere else** | Copy `index.html`, `css/`, `js/`, `favicon.svg` to any static host. |
+
+## The plan
+
+Winter 2026–27 · **6 courses · 21 credits**
+
+| Code | Title | Credits | Breakdown |
+|---|---|:--:|---|
+| `MEC3002` | Theory of Machines | 4 | Theory 3 + Lab 1 |
+| `MEC2018` | Thermal Engineering Systems | 4 | Theory 3 + Lab 1 |
+| `MEC2005` | Fundamentals of Manufacturing Processes | 4 | Theory 3 + Lab 1 |
+| `MAT1010` | Probability and Statistics | 4 | Theory 3 + Lab 1 |
+| `MGT1040` | Entrepreneurship | 4 | Theory 3 + Project 1 |
+| `STS2011` | Qualitative and Quantitative Skills Practice | 1 | Theory only |
+
+> `MEC3011` (Operations and Research) and `MEC4003` (Internal Combustion Engines) are **not** part of
+> the current plan; they were removed from the catalogue and any saved sections for them are dropped
+> automatically on load.
 
 ## Project structure
 
 ```
-index.html        # page shell, header/nav/views
-css/styles.css    # design system (palette, typography, grid)
-js/data.js        # courses, slots, timetable structure
-js/app.js         # rendering, selection, conflict detection
+.
+├── index.html          # app shell: header, views, footer, dialogs
+├── favicon.svg         # gradient "W" mark
+├── manifest.webmanifest# installable-app metadata
+├── css/
+│   └── styles.css      # design system, glass/motion layer, print styles
+├── js/
+│   ├── data.js         # courses, sections, slot → period mapping
+│   └── app.js          # rendering, selection rules, conflicts, exports
+├── docs/
+│   └── banner.svg      # README artwork
+└── README.md
 ```
+
+## Customising the data
+
+All catalogue data lives in `js/data.js` — edit it and reload, no build step:
+
+| Export | Purpose |
+| --- | --- |
+| `THEORY_SLOTS` / `LAB_SLOTS` | slot code → period index for each weekday |
+| `TIMELINE` | rows of the weekly grid |
+| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`UC`), `type`, `faculty[]`, `sections[]` |
+
+Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP slot notation
+(`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep
+`theoryCredits + labCredits = credits`.
+
+Source of the current data: course/faculty details come from the supplied registration lists and
+official course PDFs; the slot structure is transcribed from the official Winter 2026–27 slot
+timetable.
+
+## Accessibility & performance
+
+- Landmarks, a skip link, labelled controls, `aria-pressed` on slot buttons and an
+  `aria-live` region for toasts.
+- Every animation is disabled under `prefers-reduced-motion: reduce`.
+- Glass effects degrade to solid surfaces when `backdrop-filter` is unavailable, and are
+  removed for print.
+- No fonts, frameworks or vendors are required beyond Google Fonts and html2canvas (CDN);
+  the page renders and plans without either.
+
+## Known limitations
+
+- Data is static and hand-maintained; it does **not** read from VTOP live.
+- Seat availability and registration windows are out of scope.
+- Selection state is per browser — clearing site data clears the plan.
+- `localStorage` is the only store, so there is no sync between devices.
+
+## License
+
+This is a personal, non-commercial student project shared for reference. No licence has been
+declared yet — if you intend to reuse the code, add the licence you want (MIT is a good default).
+Not affiliated with VIT or VTOP.
