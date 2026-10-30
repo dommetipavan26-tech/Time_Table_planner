@@ -286,8 +286,11 @@ function confirmDialog({ title, body, ok = 'Yes, clear all' }) {
 function refreshAll() {
   saveState();
   renderHeader();
+  renderSelections();
   renderCourses();
-  renderTimetable();
+  // The timetable is a 200+ cell table in a hidden section — only pay for it
+  // when that view is actually on screen.
+  if (view === 'timetable') renderTimetable();
 }
 /**
  * Remove selections matching `pred` (default: everything) after confirmation.
@@ -848,8 +851,9 @@ function boot() {
   normaliseSavedSelections();
   saveState();
   renderHeader();
+  renderSelections();
   renderCourses();
-  renderTimetable();
+  if (view === 'timetable') renderTimetable();
   $$('.nav-tab').forEach(tab => tab.addEventListener('click', () => switchView(tab.dataset.view)));
   $('#sel-clear-all').addEventListener('click', () => clearSelections());
   $('#hdr-clear').addEventListener('click', () => clearSelections());

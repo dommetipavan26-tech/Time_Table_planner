@@ -256,6 +256,7 @@ h1, h2, h3, h4, .brand-name {
   gap: 22px;
   padding-bottom: 40px;
   align-items: start;
+  min-height: 420px;
 }
 .course-card {
   background: var(--surface);
