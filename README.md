@@ -39,7 +39,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
-| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. |
+| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. Views are deep-linkable: `/#courses`, `/#timetable`. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
 | **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
 | **My selections** | Every chosen section with a remove button, plus **Clear labs**, **Clear theory** and **Clear whole timetable** behind an in-page confirm dialog and a 6-second **Undo**. |
@@ -161,7 +161,8 @@ theory sections only — one pick covers theory and lab, and the 4 credits sit o
 │   └── audit.yml       # Lighthouse (mobile + desktop) and the mobile layout audit
 ├── docs/
 │   ├── banner.svg      # README artwork
-│   └── og-image.png    # 1200×630 social preview card
+│   ├── og-image.png    # 1200×630 social preview card
+│   └── launch-kit.md   # directory/backlink checklist + ready-to-paste copy
 ├── LICENSE             # MIT
 └── README.md
 ```
@@ -258,6 +259,13 @@ Submitting it (one-time, after a deploy):
    off the canonical host.
 
 Both files are static, so they work on Vercel, GitHub Pages and any plain file server.
+
+Each view is addressable too — `/#courses` and `/#timetable` survive a reload, bookmark or shared
+link, and give crawlers real in-page targets alongside the footer's *Jump to* links.
+
+[`docs/launch-kit.md`](docs/launch-kit.md) is the submission checklist: where to list the planner,
+what copy to paste, which channels actually reach students, and why business directories are the
+wrong place for a free student tool.
 
 ## Accessibility & performance
 

@@ -787,13 +787,26 @@ function renderSelections(conflicts = findConflicts()) {
 /* ------------------------------------------------------------------ */
 /* View switching                                                       */
 /* ------------------------------------------------------------------ */
-function switchView(v) {
+const VIEWS = ['courses', 'timetable'];
+/** Views are addressable: /#courses and /#timetable survive a reload,
+    a bookmark or a shared link (and give crawlers real in-page targets). */
+function switchView(v, { updateHash = true } = {}) {
+  if (!VIEWS.includes(v)) v = 'courses';
   view = v;
   $$('.view').forEach(sec => sec.classList.toggle('active', sec.id === 'view-' + v));
+  $$('.nav-tab').forEach(tab => {
+    const on = tab.dataset.view === v;
+    tab.classList.toggle('active', on);
+    if (on) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
   renderHeader();
   if (v === 'courses') renderCourses();
   if (v === 'timetable') renderTimetable();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (updateHash && location.hash !== '#' + v) {
+    history.replaceState(null, '', '#' + v);
+  }
+  if (updateHash) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ------------------------------------------------------------------ */
@@ -855,10 +868,23 @@ function boot() {
   renderCourses();
   if (view === 'timetable') renderTimetable();
   $$('.nav-tab').forEach(tab => tab.addEventListener('click', () => switchView(tab.dataset.view)));
+  window.addEventListener('hashchange', () => switchView(location.hash.replace('#', ''), { updateHash: false }));
+  // Footer "Jump to" links: switch instantly, keep the href so the link works
+  // without JS and is crawlable.
+  $$('.footer-link').forEach(link => link.addEventListener('click', (e) => {
+    const target = (link.getAttribute('href') || '').replace('#', '');
+    if (!VIEWS.includes(target)) return;
+    e.preventDefault();
+    switchView(target);
+  }));
   $('#sel-clear-all').addEventListener('click', () => clearSelections());
   $('#hdr-clear').addEventListener('click', () => clearSelections());
   $('#sel-clear-theory').addEventListener('click', () => clearSelections(s => s.type === 'theory', 'all theory sections'));
   $('#sel-clear-labs').addEventListener('click', () => clearSelections(s => s.type === 'lab', 'all lab sections'));
+
+  // deep link: /#timetable opens the plan straight away
+  const wanted = location.hash.replace('#', '');
+  if (VIEWS.includes(wanted)) switchView(wanted, { updateHash: false });
 
   const yearEl = $('#footer-year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());

@@ -23,6 +23,10 @@ const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const problems = [];
 const fail = (msg) => problems.push(msg);
 
+/* In-page views the app addresses itself: #courses and #timetable are handled
+   by switchView() in js/app.js, so they are valid targets without an element id. */
+const APP_ROUTES = new Set(['courses', 'timetable']);
+
 /* Files that are served by the host, not stored in the repo. */
 const HOST_SERVED = [/^\/_vercel\//, /^\/\.well-known\//];
 
@@ -53,6 +57,7 @@ for (const attr of ['href', 'src', 'poster', 'action']) {
     if (raw.startsWith('#')) {
       linkCount += 1;
       const id = raw.slice(1);
+      if (APP_ROUTES.has(id)) continue;
       if (!new RegExp(`\\bid\\s*=\\s*"${id}"`).test(html)) {
         fail(`href="${raw}" — no element with id "${id}" in index.html`);
       }

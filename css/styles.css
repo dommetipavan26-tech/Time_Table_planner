@@ -1586,6 +1586,16 @@ body {
   color: var(--ink-faint);
 }
 .footer-dot { opacity: .5; }
+.footer-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+}
+.footer-link:hover { text-decoration: underline; }
+
 .footer-top {
   margin-left: auto;
   display: inline-flex;
