@@ -7,7 +7,6 @@
  *                   screenshots (OCR).
  *                   MAT1010, MGT1040, STS2011 — from official course PDFs
  *                   (faculty, venues, slots all extracted via OCR).
- *                   MEC3011 Operations and Research — theory only, 3 credits.
  *                   MEC4003 Internal Combustion Engines — theory + lab.
  *
  * Credit model (VIT-AP FFCS):
@@ -16,7 +15,6 @@
  *     → lab section     = 1 credit
  *   MGT1040 Embedded Theory and Project = 4 credits
  *     → theory registration carries the 1-credit project component; no lab slots
- *   MEC3011 (theory only) = 3 credits
  *   STS2011 (theory only) = 1 credit
  */
 
@@ -146,18 +144,6 @@ const COURSES = [
       { code: 'L3+L4', venue: 'AB2-G18', faculty: 'Suyog Jhavar', type: 'lab' },
       { code: 'L43+L44', venue: 'AB2-G18', faculty: 'Manikanta Ravindra Kumar Fakkalagadda', type: 'lab' },
       { code: 'L31+L32', venue: 'AB2-G18', faculty: 'Kishor E', type: 'lab' },
-    ],
-  },
-  {
-    code: 'MEC3011', name: 'Operations and Research',
-    credits: 3, theoryCredits: 3, labCredits: 0,
-    category: 'PC', type: 'Theory',
-    faculty: [
-      
-    ],
-    sections: [
-      { code: 'E1+TE1', venue: 'CB-215', faculty: '', type: 'theory' },
-      { code: 'E2+TEE2', venue: 'CB-217', faculty: '', type: 'theory' },
     ],
   },
   {
