@@ -39,6 +39,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
+| **GitHub** | Footer link to the source repository, with a star shortcut. |
 | **Dark mode** | One button in the header switches theme; the choice is remembered and the first visit follows the operating system's `prefers-color-scheme`. |
 | **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. Views are deep-linkable: `/#courses`, `/#timetable`. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
@@ -82,7 +83,7 @@ domain is ever changed in Vercel, update these links plus the `canonical` / `og:
 
 ## The plan
 
-Winter 2026–27 · **23 courses · 88 credits · 806 sections**
+Winter 2026–27 · **24 courses · 92 credits · 874 sections**
 
 | Code | Title | Branch | Cat. | Credits | Breakdown |
 |---|---|:--:|:--:|:--:|---|
@@ -98,6 +99,7 @@ Winter 2026–27 · **23 courses · 88 credits · 806 sections**
 | `CSE1021` | Foundations of Blockchain Technology | CSE | PE | 3 | Theory only |
 | `CSE2007` | Database Management Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
 | `CSE2008` | Operating Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
+| `CSE3008` | Introduction to Machine Learning | CSE | PE | 4 | Theory 3 + Lab 1 |
 | `CSE3001` | Agile Development Process | MIS · MIC | PE | 4 | Theory 3 + Project 1 |
 | `CSE3002` | Artificial Intelligence | MIS · MIC | PE | 4 | Theory 3 + Lab 1 |
 | `SWE2004` | Software Design and Architecture | MIS | PC | 4 | Theory 3 + Project 1 |
@@ -189,7 +191,8 @@ Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP s
 
 Source of the current data: course/faculty details come from the supplied VTOP registration
 exports, official course PDFs and VTOP slot-list PDFs (the `MIS` set comes from VTOP
-`checkRegistration` print-outs, `ECE2016` from the Engineering Electromagnetics PDF); the slot structure is transcribed from the
+`checkRegistration` print-outs, `ECE2016` from the Engineering Electromagnetics PDF, `CSE3008` from
+the Machine Learning PDF — 33 theory and 35 lab slots, all seat counts dropped); the slot structure is transcribed from the
 official Winter 2026–27 slot timetable. Categories follow VTOP: `PC` programme core,
 `PE` programme elective, `UC` university core, `UE` university elective — for `CSE1005`,
 `CSE1007`, `CSE2007` and `CSE2008` they are cross-checked against the published VIT-AP B.Tech CSE

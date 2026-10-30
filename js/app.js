@@ -22,7 +22,7 @@ const COURSE_DISPLAY_ORDER = [
   'MAT1010', 'STS2011', 'MGT1040', 'CSE1022',
   'MEC3002', 'MEC2018', 'MEC2005',
   'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'ECE2015', 'ECE2016',
-  'CSE1005', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008',
+  'CSE1005', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008', 'CSE3008',
   'CSE3001', 'CSE3002', 'SWE2004', 'SWE3001', 'SWE2006',
 ];
 
@@ -32,10 +32,12 @@ const COURSE_DISPLAY_ORDER = [
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+// Accent colours for course cards. Deliberately no red, rose or pink: on a
+// planner a red card reads as an error flag, not as a subject colour.
 const PALETTE = [
-  '#4f46e5', '#0ea5e9', '#0d9488', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#14b8a6', '#6366f1', '#f97316', '#22c55e', '#06b6d4',
-  '#a855f7', '#84cc16', '#f43f5e', '#3b82f6',
+  '#4f46e5', '#0ea5e9', '#0d9488', '#f59e0b', '#2563eb', '#8b5cf6',
+  '#7c3aed', '#14b8a6', '#6366f1', '#f97316', '#22c55e', '#06b6d4',
+  '#a855f7', '#84cc16', '#0f766e', '#3b82f6',
 ];
 function colorFor(code) {
   let h = 0;
