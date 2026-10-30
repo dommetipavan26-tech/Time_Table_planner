@@ -6,7 +6,8 @@
  *   npx http-server . -p 8080 &
  *   node tools/check-mobile.mjs http://127.0.0.1:8080/
  *
- * Loads the planner at several phone/tablet widths, on both views, and fails if
+ * Loads the planner at several phone/tablet widths, in both themes, on both
+ * views, and fails if
  *   · the document scrolls sideways (horizontal overflow) — the one layout bug
  *     that is invisible on a desktop monitor and obvious on a phone,
  *   · any element sticks out past the viewport and is not clipped by an ancestor,
@@ -22,6 +23,7 @@ import puppeteer from 'puppeteer';
 
 const URL_ARG = process.argv[2] || 'http://127.0.0.1:8080/';
 const WIDTHS = [320, 360, 390, 414, 768, 1024];
+const THEMES = ['light', 'dark'];
 const VIEWS = [
   { name: 'courses', tab: 'courses' },
   { name: 'timetable', tab: 'timetable' },
@@ -35,9 +37,13 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
 });
 
+for (const theme of THEMES) {
 for (const width of WIDTHS) {
   const page = await browser.newPage();
   await page.setViewport({ width, height: 844, deviceScaleFactor: 2, isMobile: width < 700, hasTouch: width < 700 });
+  if (theme === 'dark') {
+    await page.evaluateOnNewDocument(() => localStorage.setItem('winterPlannerTheme', 'dark'));
+  }
 
   const consoleErrors = [];
   page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
@@ -102,11 +108,11 @@ for (const width of WIDTHS) {
     }, width);
 
     if (report.scrollWidth > report.clientWidth + 1) {
-      fail(`${width}px ${view.name}: document scrolls sideways (${report.scrollWidth} > ${report.clientWidth})`);
+      fail(`${theme} ${width}px ${view.name}: document scrolls sideways (${report.scrollWidth} > ${report.clientWidth})`);
     }
-    if (report.wide.length) fail(`${width}px ${view.name}: ${report.wide.length} element(s) past the viewport — ${report.wide.slice(0, 4).join(', ')}`);
-    if (report.tiny.length) fail(`${width}px ${view.name}: ${report.tiny.length} tap target(s) under 24px — ${report.tiny.slice(0, 4).join(', ')}`);
-    if (report.smallText.length) fail(`${width}px ${view.name}: ${report.smallText.length} text node(s) under 11px — ${report.smallText.slice(0, 4).join(', ')}`);
+    if (report.wide.length) fail(`${theme} ${width}px ${view.name}: ${report.wide.length} element(s) past the viewport — ${report.wide.slice(0, 4).join(', ')}`);
+    if (report.tiny.length) fail(`${theme} ${width}px ${view.name}: ${report.tiny.length} tap target(s) under 24px — ${report.tiny.slice(0, 4).join(', ')}`);
+    if (report.smallText.length) fail(`${theme} ${width}px ${view.name}: ${report.smallText.length} text node(s) under 11px — ${report.smallText.slice(0, 4).join(', ')}`);
   }
 
   // one expanded card + a filled timetable, the two states with the densest layout
@@ -120,10 +126,11 @@ for (const width of WIDTHS) {
   });
   await new Promise((r) => setTimeout(r, 200));
   const afterPick = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
-  if (afterPick.sw > afterPick.cw + 1) fail(`${width}px: sideways scroll after expanding sections and filling the plan (${afterPick.sw} > ${afterPick.cw})`);
+  if (afterPick.sw > afterPick.cw + 1) fail(`${theme} ${width}px: sideways scroll after expanding sections and filling the plan (${afterPick.sw} > ${afterPick.cw})`);
 
-  for (const e of [...new Set(consoleErrors)]) fail(`${width}px: console — ${e}`);
+  for (const e of [...new Set(consoleErrors)]) fail(`${theme} ${width}px: console — ${e}`);
   await page.close();
+}
 }
 
 await browser.close();
@@ -133,5 +140,5 @@ if (problems.length) {
   for (const p of problems) console.error('  · ' + p);
   process.exit(1);
 }
-console.log(`✓ mobile layout clean at ${WIDTHS.join(', ')} px, both views, expanded cards and a filled plan`);
+console.log(`✓ mobile layout clean at ${WIDTHS.join(', ')} px, both themes, both views, expanded cards and a filled plan`);
 console.log('  no sideways scroll · no element past the viewport · tap targets ≥24px · text ≥11px · no console errors');
