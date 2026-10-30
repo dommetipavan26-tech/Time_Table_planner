@@ -38,6 +38,11 @@ VTOP registration screenshots. Edit `js/data.js` to adjust.
   **Clear labs**, **Clear theory** and **Clear whole timetable** (in-page
   confirm + 6-second **Undo**). A **Clear all** button also sits in the header.
 - **Faculty** — directory grouping every course by instructor.
+- **Glass + motion** — frosted header, floating filter toolbar and card
+  surfaces (`backdrop-filter` with a `-webkit-` prefix and a solid fallback),
+  soft ambient colour behind the glass, eased hover/press transitions, a
+  fading view switch, and a scroll-aware header. Everything is disabled under
+  `prefers-reduced-motion: reduce` and stripped back for printing.
 - Selections persist in `localStorage` (key `winter26-planner-v4`).
 
 ## Run locally
