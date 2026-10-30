@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Winter 2026–27 · Course Planner</title>
+  <meta name="description" content="Plan your Winter 2026–27 semester: browse courses, pick sections, and get your personalised timetable." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=4" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-logo">W</div>
+        <div class="brand-text">
+          <div class="brand-name">Winter Planner</div>
+          <div class="brand-sub">2026–27 · Registration</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-tab" data-view="courses">Courses</button>
+        <button class="nav-tab" data-view="timetable">Timetable</button>
+
+      </nav>
+      <div class="header-right">
+        <div class="credit-pill" id="credit-pill"></div>
+        <button class="hdr-clear" id="hdr-clear" title="Clear whole timetable" aria-label="Clear whole timetable">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          <span>Clear all</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== COURSES VIEW ===================== -->
+    <section id="view-courses" class="view active">
+      <div class="hero">
+        <div class="hero-content">
+          <span class="hero-badge">❄ Winter Semester · Classes Tue–Sat</span>
+          <h1>Plan your semester,<br />section by section.</h1>
+          <p>Browse the full course catalogue with slot details and venues, pick your sections,
+             and get an instant personalised timetable — conflicts flagged automatically.</p>
+          <div class="hero-stats" id="hero-stats"></div>
+        </div>
+        <div class="hero-glow"></div>
+      </div>
+
+      <div class="container">
+        <div class="filter-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <input id="search-input" type="text" placeholder="Search by code or name…" />
+          </div>
+          <div class="chips">
+            <div class="chip-group">
+              <span class="chip-label">Category</span>
+              <button class="cat-chip active" data-cat="all">All</button>
+              <button class="cat-chip" data-cat="PC">PC</button>
+              <button class="cat-chip" data-cat="UC">UC</button>
+            </div>
+            <div class="chip-group">
+              <span class="chip-label">Type</span>
+              <button class="type-chip active" data-type="all">All</button>
+              <button class="type-chip" data-type="Embedded Theory and Lab">Theory + Lab</button>
+              <button class="type-chip" data-type="Embedded Theory and Project">Theory + Project</button>
+              <button class="type-chip" data-type="Theory Only">Theory Only</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="course-grid" id="course-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===================== TIMETABLE VIEW ===================== -->
+    <section id="view-timetable" class="view">
+      <div class="container">
+        <div class="tt-header">
+          <div>
+            <h2>Your weekly timetable</h2>
+            <p class="muted">Official Tue–Sat slot matrix · Theory and lab rows · Overlapping selections are prevented automatically.</p>
+          </div>
+          <div class="tt-toolbar" id="tt-toolbar"></div>
+        </div>
+        <div class="tt-stats" id="tt-stats"></div>
+
+        <!-- My selections / Clear all section -->
+        <section class="sel-panel" id="sel-panel" aria-labelledby="sel-title">
+          <div class="sel-head">
+            <div class="sel-title-wrap">
+              <div class="sel-icon">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+              </div>
+              <div>
+                <h3 id="sel-title">My selections</h3>
+                <p class="muted" id="sel-sub">No sections selected yet</p>
+              </div>
+            </div>
+            <div class="sel-actions">
+              <button class="btn-ghost sm" id="sel-clear-labs">Clear labs</button>
+              <button class="btn-ghost sm" id="sel-clear-theory">Clear theory</button>
+              <button class="btn-clear-all" id="sel-clear-all">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                Clear whole timetable
+              </button>
+            </div>
+          </div>
+          <div class="sel-list" id="sel-list"></div>
+        </section>
+
+        <div class="tt-legend" id="tt-legend"></div>
+        <div class="tt-grid" id="tt-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Course and faculty data from the supplied registration lists · Slot structure from the official Winter 2026–27 timetable.</p>
+    </div>
+  </footer>
+
+  <div id="toasts" class="toasts"></div>
+
+  <!-- Confirm dialog (in-page; native confirm() is blocked in sandboxed previews) -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </div>
+      <h3 id="modal-title">Clear whole timetable?</h3>
+      <p id="modal-body" class="muted"></p>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="modal-cancel">Cancel</button>
+        <button class="btn-solid-danger" id="modal-ok">Yes, clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="js/data.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
+</body>
+</html>
