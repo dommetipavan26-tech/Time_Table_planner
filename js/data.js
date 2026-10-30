@@ -14,6 +14,9 @@
  *                   slot-list PDFs (text layer; slot, venue, faculty only).
  *                   CSE2008 — from VTOP registration screenshots (module slot
  *                   table; the seat counts are omitted).
+ *                   CSE3001, CSE3002, ECE2015, SWE3001, SWE2006 — from the
+ *                   VTOP 'Modify Slots' PDFs of 25MIC7153 (printed to PDF, so
+ *                   read visually; the AVAILABILITY column is not stored).
  *
  * Credit model (VIT-AP FFCS):
  *   Embedded Theory and Lab course = 4 credits
@@ -97,9 +100,12 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /*   credits = theoryCredits + labCredits                              */
 /*   Embedded Theory and Lab = 5 cr (3 theory + 2 lab)                */
 /*   STS2011 theory-only      = 1 cr                                   */
-/*   branch = MECH | ECE | CSE | Common                                */
+/*   ECE2015 theory-only      = 4 cr (4 theory hours, no lab)          */
+/*   CSE3001 ETP              = 4 cr (3 theory + 1 project)            */
+/*   branch = MECH | ECE | CSE | MIC | Common                           */
 /*     Common = MGT1040, CSE1022, MAT1010, STS2011 (open to all        */
-/*     branches); the rest sit under their own branch filter.          */
+/*     branches); MIC = the MIC-semester set (CSE3001, CSE3002,        */
+/*     ECE2015, SWE3001, SWE2006); the rest sit under their own branch. */
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
@@ -1190,6 +1196,141 @@ const COURSES = [
       { code: 'L7+L8', venue: 'CB-417', faculty: 'LANKA DIVYA', type: 'lab' },
       { code: 'L9+L10', venue: 'CB-405', faculty: 'Suresh Dara', type: 'lab' },
       { code: 'L9+L10', venue: 'CB-409', faculty: 'Monalisa Sahu', type: 'lab' },
+    ],
+  },
+  {
+    code: 'CSE3001', name: 'Agile Development Process',
+    credits: 4, theoryCredits: 3, labCredits: 0, projectCredits: 1,
+    category: 'PE', branch: 'MIC', type: 'Embedded Theory and Project',
+    faculty: [
+      'Khasim Syed',
+      'KANHAIYA SHARMA',
+      'Annapureddy V N Reddy',
+      'Guruprakash Jayabalasamy',
+      'Bommareddy Lokesh'
+    ],
+    sections: [
+      { code: 'A1+TA1', venue: 'CB-523', faculty: 'Khasim Syed', type: 'theory' },
+      { code: 'A1+TA1', venue: 'CB-524', faculty: 'KANHAIYA SHARMA', type: 'theory' },
+      { code: 'A2+TA2', venue: 'CB-326', faculty: 'Khasim Syed', type: 'theory' },
+      { code: 'A2+TA2', venue: 'CB-327', faculty: 'Annapureddy V N Reddy', type: 'theory' },
+      { code: 'D1+TD1', venue: 'CB-433', faculty: 'Guruprakash Jayabalasamy', type: 'theory' },
+      { code: 'D1+TDD1', venue: 'CB-501', faculty: 'Annapureddy V N Reddy', type: 'theory' },
+      { code: 'D2+TD2', venue: 'CB-432', faculty: 'KANHAIYA SHARMA', type: 'theory' },
+      { code: 'D2+TD2', venue: 'CB-433', faculty: 'Bommareddy Lokesh', type: 'theory' },
+      { code: 'D2+TDD2', venue: 'CB-G14', faculty: 'Khasim Syed', type: 'theory' },
+    ],
+  },
+  {
+    code: 'CSE3002', name: 'Artificial Intelligence',
+    credits: 4, theoryCredits: 3, labCredits: 1,
+    category: 'PE', branch: 'MIC', type: 'Embedded Theory and Lab',
+    faculty: [
+      'Eswaraiah Rayachoti',
+      'VISWANATHAN',
+      'Balusa Bhanu Chander'
+    ],
+    sections: [
+      { code: 'A1+TA1', venue: 'CB-525', faculty: 'Eswaraiah Rayachoti', type: 'theory' },
+      { code: 'A1+TA1', venue: 'CB-526', faculty: 'VISWANATHAN', type: 'theory' },
+      { code: 'A2+TA2', venue: 'CB-407', faculty: 'VISWANATHAN', type: 'theory' },
+      { code: 'A2+TA2', venue: 'CB-408', faculty: 'Balusa Bhanu Chander', type: 'theory' },
+      { code: 'A2+TA2', venue: 'CB-415', faculty: 'Eswaraiah Rayachoti', type: 'theory' },
+      { code: 'D1+TD1', venue: 'CB-504', faculty: 'Balusa Bhanu Chander', type: 'theory' },
+      { code: 'D1+TDD1', venue: 'CB-505', faculty: 'VISWANATHAN', type: 'theory' },
+      { code: 'D2+TD2', venue: 'CB-501', faculty: 'Balusa Bhanu Chander', type: 'theory' },
+      { code: 'D2+TDD2', venue: 'CB-114', faculty: 'Eswaraiah Rayachoti', type: 'theory' },
+      { code: 'L11+L12', venue: 'CB-302', faculty: 'VISWANATHAN', type: 'lab' },
+      { code: 'L23+L24', venue: 'CB-409', faculty: 'Eswaraiah Rayachoti', type: 'lab' },
+      { code: 'L25+L26', venue: 'CB-417', faculty: 'Balusa Bhanu Chander', type: 'lab' },
+      { code: 'L3+L4', venue: 'CB-122', faculty: 'Balusa Bhanu Chander', type: 'lab' },
+      { code: 'L39+L40', venue: 'CB-202', faculty: 'VISWANATHAN', type: 'lab' },
+      { code: 'L41+L42', venue: 'CB-121', faculty: 'Eswaraiah Rayachoti', type: 'lab' },
+      { code: 'L43+L44', venue: 'CB-102', faculty: 'VISWANATHAN', type: 'lab' },
+      { code: 'L49+L50', venue: 'CB-121', faculty: 'Eswaraiah Rayachoti', type: 'lab' },
+      { code: 'L9+L10', venue: 'CB-417', faculty: 'Balusa Bhanu Chander', type: 'lab' },
+    ],
+  },
+  {
+    code: 'ECE2015', name: 'Computer Architecture',
+    credits: 4, theoryCredits: 4, labCredits: 0,
+    category: 'PC', branch: 'MIC', type: 'Theory Only',
+    faculty: [
+      'Jayendra Kumar',
+      'Ashish Gupta',
+      'Agam Das Goswami'
+    ],
+    sections: [
+      { code: 'F1+TBB2+TF1', venue: 'CB-119', faculty: 'Jayendra Kumar', type: 'theory' },
+      { code: 'F1+TBB2+TF1', venue: 'CB-120', faculty: 'Ashish Gupta', type: 'theory' },
+      { code: 'F2+TBB1+TF2', venue: 'CB-216', faculty: 'Ashish Gupta', type: 'theory' },
+      { code: 'F2+TBB1+TF2', venue: 'CB-217', faculty: 'Agam Das Goswami', type: 'theory' },
+      { code: 'F2+TBB1+TF2', venue: 'CB-218', faculty: 'Jayendra Kumar', type: 'theory' },
+    ],
+  },
+  {
+    code: 'SWE3001', name: 'Fundamentals of Computer Networks',
+    credits: 4, theoryCredits: 3, labCredits: 1,
+    category: 'PC', branch: 'MIC', type: 'Embedded Theory and Lab',
+    faculty: [
+      'Reeja S R',
+      'KARNAM BALAJI',
+      'DHARANI SABARI SAMUDRALA',
+      'PARITALA JHANSIRANI',
+      'Shaik Subhani'
+    ],
+    sections: [
+      { code: 'B1+TB1', venue: 'CB-523', faculty: 'Reeja S R', type: 'theory' },
+      { code: 'B1+TB1', venue: 'CB-524', faculty: 'KARNAM BALAJI', type: 'theory' },
+      { code: 'B2+TB2', venue: 'CB-433', faculty: 'KARNAM BALAJI', type: 'theory' },
+      { code: 'B2+TB2', venue: 'CB-501', faculty: 'DHARANI SABARI SAMUDRALA', type: 'theory' },
+      { code: 'B2+TB2', venue: 'CB-504', faculty: 'PARITALA JHANSIRANI', type: 'theory' },
+      { code: 'C1+TC1', venue: 'CB-523', faculty: 'Reeja S R', type: 'theory' },
+      { code: 'C1+TCC1', venue: 'CB-107', faculty: 'Shaik Subhani', type: 'theory' },
+      { code: 'C2+TC2', venue: 'CB-519', faculty: 'KARNAM BALAJI', type: 'theory' },
+      { code: 'C2+TCC2', venue: 'CB-113', faculty: 'PARITALA JHANSIRANI', type: 'theory' },
+      { code: 'L15+L16', venue: 'CB-307', faculty: 'Reeja S R', type: 'lab' },
+      { code: 'L21+L22', venue: 'CB-106', faculty: 'Shaik Subhani', type: 'lab' },
+      { code: 'L23+L24', venue: 'CB-228', faculty: 'PARITALA JHANSIRANI', type: 'lab' },
+      { code: 'L27+L28', venue: 'CB-419', faculty: 'KARNAM BALAJI', type: 'lab' },
+      { code: 'L37+L38', venue: 'CB-307', faculty: 'PARITALA JHANSIRANI', type: 'lab' },
+      { code: 'L43+L44', venue: 'CB-101', faculty: 'DHARANI SABARI SAMUDRALA', type: 'lab' },
+      { code: 'L45+L46', venue: 'CB-228', faculty: 'Reeja S R', type: 'lab' },
+      { code: 'L55+L56', venue: 'CB-409', faculty: 'KARNAM BALAJI', type: 'lab' },
+      { code: 'L7+L8', venue: 'CB-121', faculty: 'KARNAM BALAJI', type: 'lab' },
+    ],
+  },
+  {
+    code: 'SWE2006', name: 'Database Systems',
+    credits: 4, theoryCredits: 3, labCredits: 1,
+    category: 'PC', branch: 'MIC', type: 'Embedded Theory and Lab',
+    faculty: [
+      'Nagaraju Devarakonda',
+      'Hari Seetha',
+      'Monalisa Sahu',
+      'PUTTA DURGA',
+      'Sandipan Maiti',
+      'KANHAIYA SHARMA'
+    ],
+    sections: [
+      { code: 'B1+TB1', venue: 'CB-520', faculty: 'Nagaraju Devarakonda', type: 'theory' },
+      { code: 'B1+TB1', venue: 'CB-521', faculty: 'Hari Seetha', type: 'theory' },
+      { code: 'B2+TB2', venue: 'CB-431', faculty: 'Hari Seetha', type: 'theory' },
+      { code: 'B2+TB2', venue: 'CB-432', faculty: 'Monalisa Sahu', type: 'theory' },
+      { code: 'C1+TC1', venue: 'CB-521', faculty: 'PUTTA DURGA', type: 'theory' },
+      { code: 'C1+TCC1', venue: 'CB-112', faculty: 'Monalisa Sahu', type: 'theory' },
+      { code: 'C2+TC2', venue: 'CB-516', faculty: 'Sandipan Maiti', type: 'theory' },
+      { code: 'C2+TC2', venue: 'CB-518', faculty: 'KANHAIYA SHARMA', type: 'theory' },
+      { code: 'C2+TCC2', venue: 'CB-112', faculty: 'Nagaraju Devarakonda', type: 'theory' },
+      { code: 'L15+L16', venue: 'CB-303', faculty: 'PUTTA DURGA', type: 'lab' },
+      { code: 'L29+L30', venue: 'CB-102', faculty: 'Monalisa Sahu', type: 'lab' },
+      { code: 'L31+L32', venue: 'CB-209', faculty: 'Monalisa Sahu', type: 'lab' },
+      { code: 'L31+L32', venue: 'ONL01002', faculty: 'Sandipan Maiti', type: 'lab' },
+      { code: 'L33+L34', venue: 'CB-301', faculty: 'Nagaraju Devarakonda', type: 'lab' },
+      { code: 'L47+L48', venue: 'CB-409', faculty: 'KANHAIYA SHARMA', type: 'lab' },
+      { code: 'L5+L6', venue: 'CB-209', faculty: 'Hari Seetha', type: 'lab' },
+      { code: 'L51+L52', venue: 'CB-416', faculty: 'Nagaraju Devarakonda', type: 'lab' },
+      { code: 'L9+L10', venue: 'CB-416', faculty: 'Hari Seetha', type: 'lab' },
     ],
   },
 ];

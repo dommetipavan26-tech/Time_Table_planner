@@ -336,6 +336,7 @@ h1, h2, h3, h4, .brand-name {
 .branch-MECH   { background: #fef3c7; color: #92400e; border-color: #fde68a; }
 .branch-ECE    { background: #ccfbf1; color: #115e59; border-color: #99f6e4; }
 .branch-CSE    { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
+.branch-MIC    { background: #ffe4e6; color: #9f1239; border-color: #fecdd3; }
 .branch-Common { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
 
 .faculty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
