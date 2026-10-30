@@ -19,6 +19,7 @@ const SECTION_PREVIEW_LIMIT = 4;
 const COURSE_DISPLAY_ORDER = [
   'MEC3002', 'MEC2018', 'MEC2005', 'MAT1010',
   'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'CSE1022',
+  'CSE1005', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008',
   'MGT1040', 'STS2011',
 ];
 
@@ -335,11 +336,12 @@ function removeOne(key) {
 /* ------------------------------------------------------------------ */
 function renderHeader() {
   const t = totals();
+  const picked = Object.keys(selected).length;
   $('#credit-pill').innerHTML = t.credits > 0
-    ? `<span class="pill-dot"></span>${t.credits} credits · ${Object.keys(selected).length} sections`
+    ? `<span class="pill-dot"></span>${t.credits} credits · ${picked} section${picked === 1 ? '' : 's'}`
     : '';
   $('#credit-pill').classList.toggle('show', t.credits > 0);
-  $('#hdr-clear').classList.toggle('show', Object.keys(selected).length > 0);
+  $('#hdr-clear').classList.toggle('show', picked > 0);
   $$('.nav-tab').forEach(tab => {
     const active = tab.dataset.view === view;
     tab.classList.toggle('active', active);

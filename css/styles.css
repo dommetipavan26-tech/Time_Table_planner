@@ -371,6 +371,8 @@ h1, h2, h3, h4, .brand-name {
   color: var(--c);
   min-width: 76px;
   flex-shrink: 0;
+  /* three-token slots such as A1+TA1+TAA1 must stay on one line */
+  white-space: nowrap;
 }
 .slot-type {
   font-size: 9px;

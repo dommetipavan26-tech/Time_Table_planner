@@ -38,7 +38,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
-| **Catalogue** | Course cards with code, title, PC/UC category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty, filter by category and course type. |
+| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty, filter by category and course type. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
 | **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
 | **My selections** | Every chosen section with a remove button, plus **Clear labs**, **Clear theory** and **Clear whole timetable** behind an in-page confirm dialog and a 6-second **Undo**. |
@@ -75,7 +75,7 @@ There is **nothing to install and nothing to build**. No `package.json`, no bund
 
 ## The plan
 
-Winter 2026–27 · **11 courses · 41 credits · 483 sections**
+Winter 2026–27 · **16 courses · 60 credits · 728 sections**
 
 | Code | Title | Cat. | Credits | Breakdown |
 |---|---|:--:|:--:|---|
@@ -88,11 +88,21 @@ Winter 2026–27 · **11 courses · 41 credits · 483 sections**
 | `ECE2009` | Data Acquisition and Transmission Systems | PE | 4 | Theory 3 + Lab 1 |
 | `ECE3006` | HDL Verification and Methodology | PE | 4 | Theory 3 + Lab 1 |
 | `CSE1022` | Introduction to Programming | UE | 4 | Theory 3 + Lab 1 |
+| `CSE1005` | Software Engineering | PC | 4 | Theory 4 (lab inside the slot) |
+| `CSE1007` | Introduction to Cryptography | PE | 4 | Theory 3 + Lab 1 |
+| `CSE1021` | Foundations of Blockchain Technology | PE | 3 | Theory only |
+| `CSE2007` | Database Management Systems | PC | 4 | Theory 3 + Lab 1 |
+| `CSE2008` | Operating Systems | PC | 4 | Theory 3 + Lab 1 |
 | `MGT1040` | Entrepreneurship | UC | 4 | Theory 3 + Project 1 |
 | `STS2011` | Qualitative and Quantitative Skills Practice | UC | 1 | Theory only |
 
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
-scrollable list behind **Show more sections**.
+scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
+use the same collapsed list.
+
+`CSE1005` is the one 4-credit course whose lab has no slot of its own: every section is a
+three-token slot such as `B2+TB2+TBB2`, where the third hour **is** the lab. It therefore lists
+theory sections only — one pick covers theory and lab, and the 4 credits sit on that pick.
 
 > Seat/availability counts from the registration export are **intentionally not included**; the
 > planner only needs slot, venue and instructor.
@@ -126,16 +136,20 @@ All catalogue data lives in `js/data.js` — edit it and reload, no build step:
 | --- | --- |
 | `THEORY_SLOTS` / `LAB_SLOTS` | slot code → period index for each weekday |
 | `TIMELINE` | rows of the weekly grid |
-| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`UC`), `type`, `faculty[]`, `sections[]` |
+| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `type`, `faculty[]`, `sections[]` |
 
 Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP slot notation
 (`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep
 `theoryCredits + labCredits = credits`.
 
 Source of the current data: course/faculty details come from the supplied VTOP registration
-exports and official course PDFs; the slot structure is transcribed from the official Winter
-2026–27 slot timetable. Categories follow VTOP: `PC` programme core, `PE` programme elective,
-`UC` university core, `UE` university elective.
+exports, official course PDFs and VTOP slot-list PDFs; the slot structure is transcribed from the
+official Winter 2026–27 slot timetable. Categories follow VTOP: `PC` programme core,
+`PE` programme elective, `UC` university core, `UE` university elective — for `CSE1005`,
+`CSE1007`, `CSE2007` and `CSE2008` they are cross-checked against the published VIT-AP B.Tech CSE
+curriculum (programme core, with `CSE1007` a programme/specialisation elective). `CSE1021` is
+listed as a 3-credit theory-only elective; its credit value is inferred from the slot list (the
+export carries no credit column), so correct it if your registration sheet says otherwise.
 
 ## Accessibility & performance
 
