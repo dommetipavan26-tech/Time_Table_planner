@@ -83,7 +83,7 @@ domain is ever changed in Vercel, update these links plus the `canonical` / `og:
 
 ## The plan
 
-Winter 2026–27 · **24 courses · 92 credits · 874 sections**
+Winter 2026–27 · **25 courses · 96 credits · 904 sections**
 
 | Code | Title | Branch | Cat. | Credits | Breakdown |
 |---|---|:--:|:--:|:--:|---|
@@ -95,6 +95,7 @@ Winter 2026–27 · **24 courses · 92 credits · 874 sections**
 | `ECE2009` | Data Acquisition and Transmission Systems | ECE | PE | 4 | Theory 3 + Lab 1 |
 | `ECE3006` | HDL Verification and Methodology | ECE | PE | 4 | Theory 3 + Lab 1 |
 | `CSE1005` | Software Engineering | CSE | PC | 4 | Theory 4 (lab inside the slot) |
+| `CSE1006` | Foundations for Data Analytics | CSE | PE | 4 | Theory 3 + Lab 1 |
 | `CSE1007` | Introduction to Cryptography | CSE | PE | 4 | Theory 3 + Lab 1 |
 | `CSE1021` | Foundations of Blockchain Technology | CSE | PE | 3 | Theory only |
 | `CSE2007` | Database Management Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
@@ -105,7 +106,7 @@ Winter 2026–27 · **24 courses · 92 credits · 874 sections**
 | `SWE2004` | Software Design and Architecture | MIS | PC | 4 | Theory 3 + Project 1 |
 | `SWE3001` | Fundamentals of Computer Networks | MIS · MIC | PC | 4 | Theory 3 + Lab 1 |
 | `SWE2006` | Database Systems | MIS · MIC | PC | 4 | Theory 3 + Lab 1 |
-| `ECE2015` | Computer Architecture | ECE · MIC | PC | 4 | Theory only |
+| `ECE2015` | Computer Architecture | MIC | PC | 4 | Theory only |
 | `ECE2016` | Engineering Electromagnetics | ECE | PC | 4 | Theory only |
 | `MAT1010` | Probability and Statistics | Common | UC | 4 | Theory 3 + Lab 1 |
 | `MGT1040` | Entrepreneurship | Common | UC | 4 | Theory 3 + Project 1 |
@@ -119,7 +120,7 @@ view, since they suit every branch; **MIS** holds the MIS registration list (`CS
 `CSE3001`, `CSE3002`); **MECH**, **ECE** and **CSE** hold the rest. The branch, category and type
 chips combine, and every card repeats its branch as a badge — a course that sits on a second list
 (a `course.also` entry) shows that group as a dashed outline badge beside the primary one, so
-`ECE2015` reads **ECE** (solid) **MIC** (outline) and still appears under both chips.
+`ECE2015` sits under **MIC** only (it is on the MIC registration list, not the ECE one).
 
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
 scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
@@ -192,7 +193,8 @@ Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP s
 Source of the current data: course/faculty details come from the supplied VTOP registration
 exports, official course PDFs and VTOP slot-list PDFs (the `MIS` set comes from VTOP
 `checkRegistration` print-outs, `ECE2016` from the Engineering Electromagnetics PDF, `CSE3008` from
-the Machine Learning PDF — 33 theory and 35 lab slots, all seat counts dropped); the slot structure is transcribed from the
+the Machine Learning PDF — 33 theory and 35 lab slots, `CSE1006` from the Foundations for Data
+Analytics PDF — 15 theory and 15 lab slots; all seat counts dropped); the slot structure is transcribed from the
 official Winter 2026–27 slot timetable. Categories follow VTOP: `PC` programme core,
 `PE` programme elective, `UC` university core, `UE` university elective — for `CSE1005`,
 `CSE1007`, `CSE2007` and `CSE2008` they are cross-checked against the published VIT-AP B.Tech CSE
