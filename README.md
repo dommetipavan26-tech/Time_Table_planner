@@ -143,6 +143,8 @@ theory sections only — one pick covers theory and lab, and the 4 credits sit o
 ├── index.html          # app shell: header, views, footer, dialogs
 ├── favicon.svg         # gradient "W" mark
 ├── manifest.webmanifest# installable-app metadata
+├── robots.txt          # allow-all + points Google at the sitemap
+├── sitemap.xml         # single canonical URL for Search Console
 ├── css/
 │   └── styles.css      # design system, glass/motion layer, print styles
 ├── js/
@@ -197,9 +199,38 @@ It verifies that every course has a valid `code`, `category`, `branch` and `type
 tokens all exist in `THEORY_SLOTS` / `LAB_SLOTS` and resolve to at least one weekly period, that
 no section repeats a slot + venue, and that every section's faculty is listed on the course. It
 also cross-checks the totals line in this README, the `?v=` cache-busting version in `index.html`,
-and that `canonical`, `og:url` and `og:image` point at the same host with an image that exists.
+that `canonical`, `og:url` and `og:image` point at the same host with an image that exists, and
+that `sitemap.xml` / `robots.txt` describe that same canonical host (no `noindex`, an
+`Allow: /`, a well-formed `<urlset>` with real `<lastmod>` dates, and the canonical URL listed).
 
 `.github/workflows/validate.yml` runs it on every push to `main` and on every pull request.
+
+## Search Console & sitemap
+
+The site is one page, so it has exactly one canonical URL. `sitemap.xml` lists it and
+`robots.txt` advertises the sitemap to every crawler:
+
+| File | Purpose |
+|---|---|
+| `/sitemap.xml` | `<loc>https://vitap-slots.vercel.app/</loc>` with `lastmod`, `changefreq` and `priority` |
+| `/robots.txt` | `User-agent: *` / `Allow: /` plus `Sitemap: …/sitemap.xml` |
+| `<link rel="sitemap">` | head hint pointing at `/sitemap.xml` |
+| `<meta name="robots">` | `index, follow, max-image-preview:large` — the page is meant to be listed |
+
+Submitting it (one-time, after a deploy):
+
+1. Open [Google Search Console](https://search.google.com/search-console) → the
+   `vitap-slots.vercel.app` property (it is already verified with the
+   `google-site-verification` meta tag in `index.html`).
+2. **Indexing → Sitemaps**, enter `sitemap.xml`, click **Submit**. The full URL
+   `https://vitap-slots.vercel.app/sitemap.xml` works too.
+3. Status turns **Success** once Google fetches it (usually within a day); *URL Inspection →
+   Request indexing* nudges the page itself into the queue.
+4. `lastmod` in `sitemap.xml` is the only thing to bump when the catalogue changes —
+   `node tools/validate-data.mjs` fails if it stops being a real date or if the sitemap drifts
+   off the canonical host.
+
+Both files are static, so they work on Vercel, GitHub Pages and any plain file server.
 
 ## Accessibility & performance
 

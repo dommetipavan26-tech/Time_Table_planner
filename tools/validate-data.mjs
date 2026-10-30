@@ -179,6 +179,67 @@ if (!ogImage) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Sitemap + robots.txt (what Google Search Console reads)             */
+/* ------------------------------------------------------------------ */
+const origin = canonical ? new URL(canonical[1]).origin : null;
+let sitemapLocs = [];
+
+if (!existsSync(join(ROOT, 'sitemap.xml'))) {
+  fail('sitemap.xml is missing from the repo root');
+} else {
+  const xml = read('sitemap.xml').trim();
+  if (!xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) fail('sitemap.xml: missing the XML declaration');
+  if (!xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+    fail('sitemap.xml: missing the sitemaps.org 0.9 <urlset> namespace');
+  }
+  if (!xml.endsWith('</urlset>')) fail('sitemap.xml: does not close with </urlset>');
+  if ((xml.match(/<url>/g) || []).length !== (xml.match(/<\/url>/g) || []).length) {
+    fail('sitemap.xml: unbalanced <url> elements');
+  }
+  sitemapLocs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim());
+  if (sitemapLocs.length === 0) fail('sitemap.xml: no <loc> entries');
+  if (new Set(sitemapLocs).size !== sitemapLocs.length) fail('sitemap.xml: duplicate <loc> entries');
+  for (const loc of sitemapLocs) {
+    if (!/^https:\/\/[^\s]+$/.test(loc)) fail(`sitemap.xml: <loc> "${loc}" is not an absolute https URL`);
+    else if (origin && new URL(loc).origin !== origin) {
+      fail(`sitemap.xml: <loc> "${loc}" is not on the canonical host ${origin}`);
+    }
+  }
+  for (const [, lastmod] of xml.matchAll(/<lastmod>([^<]*)<\/lastmod>/g)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(lastmod.trim()) || Number.isNaN(Date.parse(lastmod.trim()))) {
+      fail(`sitemap.xml: <lastmod> "${lastmod}" is not a real YYYY-MM-DD date`);
+    }
+  }
+  if (canonical && sitemapLocs.length && !sitemapLocs.includes(canonical[1])) {
+    fail(`sitemap.xml: the canonical URL ${canonical[1]} is not listed`);
+  }
+}
+
+if (!existsSync(join(ROOT, 'robots.txt'))) {
+  fail('robots.txt is missing from the repo root');
+} else {
+  const robots = read('robots.txt');
+  if (!/^\s*Allow:\s*\/\s*$/m.test(robots)) fail('robots.txt: expected "Allow: /"');
+  if (/^\s*Disallow:\s*\/\s*$/m.test(robots)) fail('robots.txt: "Disallow: /" would hide the whole site from Google');
+  const robotsSitemap = robots.match(/^\s*Sitemap:\s*(\S+)\s*$/m);
+  if (!robotsSitemap) {
+    fail('robots.txt: missing a "Sitemap:" line');
+  } else if (origin && new URL(robotsSitemap[1]).origin !== origin) {
+    fail(`robots.txt: Sitemap ${robotsSitemap[1]} is not on the canonical host ${origin}`);
+  } else if (!/\/sitemap\.xml$/.test(robotsSitemap[1])) {
+    fail(`robots.txt: Sitemap ${robotsSitemap[1]} should point at /sitemap.xml`);
+  }
+}
+
+const sitemapLink = html.match(/<link rel="sitemap"[^>]*href="([^"]+)"/);
+if (!sitemapLink) fail('index.html: missing <link rel="sitemap">');
+else if (!/sitemap\.xml$/.test(sitemapLink[1])) fail(`index.html: <link rel="sitemap"> points at "${sitemapLink[1]}"`);
+
+const robotsMeta = html.match(/<meta name="robots" content="([^"]+)"/);
+if (!robotsMeta) fail('index.html: missing <meta name="robots">');
+else if (/noindex/i.test(robotsMeta[1])) fail('index.html: <meta name="robots"> says noindex, so Google cannot list the page');
+
+/* ------------------------------------------------------------------ */
 /* Report                                                              */
 /* ------------------------------------------------------------------ */
 const perBranch = COURSES.reduce((acc, c) => ((acc[c.branch] = (acc[c.branch] || 0) + 1), acc), {});
@@ -196,3 +257,4 @@ console.log(`  ${COURSES.length} courses · ${sections} sections · ${credits} c
 console.log(`  branches: ${Object.entries(perBranch).map(([b, n]) => `${b} ${n}`).join(' · ')}`);
 console.log(`  ${tokenChecks} slot tokens checked · ${sessions} weekly sessions resolved`);
 console.log(`  README totals, asset version ${versions[0]}, canonical/og:url and og:image all consistent`);
+console.log(`  sitemap.xml (${sitemapLocs.length} URL${sitemapLocs.length === 1 ? '' : 's'}) + robots.txt agree with the canonical host`);

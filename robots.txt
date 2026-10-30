@@ -1,0 +1,9 @@
+# Winter Planner — https://vitap-slots.vercel.app/
+# Everything on the site is public: one page, the course catalogue and the
+# slot planner behind it. Nothing here needs a crawler to stay out.
+
+User-agent: *
+Allow: /
+
+# Search Console → Sitemaps → submit https://vitap-slots.vercel.app/sitemap.xml
+Sitemap: https://vitap-slots.vercel.app/sitemap.xml
