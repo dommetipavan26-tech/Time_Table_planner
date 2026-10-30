@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://planner.pavan.in/"><img alt="Live demo" src="https://img.shields.io/badge/live-demo-4f46e5?style=flat-square" /></a>
+  <a href="https://timetableplanner.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/live-demo-4f46e5?style=flat-square" /></a>
   <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
   <img alt="CSS3" src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white" />
   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-ES2020-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
@@ -32,7 +32,7 @@ the same period — so the plan you build here is the plan you can actually regi
 Everything runs client-side: three static files, no framework, no build step, no server, and no
 account. Your selections live in `localStorage` on your own device.
 
-**Live demo:** <https://planner.pavan.in/>
+**Live demo:** <https://timetableplanner.vercel.app/>
 
 ## Features
 
@@ -73,8 +73,9 @@ There is **nothing to install and nothing to build**. No `package.json`, no bund
 | **GitHub Pages** | Settings → Pages → deploy from branch → `main` / root. |
 | **Anywhere else** | Copy `index.html`, `css/`, `js/`, `favicon.svg` to any static host. |
 
-Production runs on Vercel at **<https://planner.pavan.in>**; the project's default
-`timetableplanner.vercel.app` domain keeps serving the same deployment as a fallback.
+Production runs on Vercel at **<https://timetableplanner.vercel.app>** — the project's default
+domain. If the project is ever renamed, that address changes with it and these links (plus the
+`canonical` / `og:url` tags in `index.html`) need updating.
 
 ## The plan
 
