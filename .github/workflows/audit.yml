@@ -6,6 +6,7 @@ name: Lighthouse + mobile audit
 # secrets, but it is slower than the catalogue check, so it is opt-in.
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches: [main]
     paths-ignore: ['**/*.md', 'docs/**']
