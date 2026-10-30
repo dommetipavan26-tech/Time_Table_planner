@@ -10,17 +10,20 @@ A clean course-registration & timetable planner for the Winter Semester 2026–2
 | MEC3002 | Theory of Machines | 4 | Theory 3 + Lab 1 |
 | MEC2018 | Thermal Engineering Systems | 4 | Theory 3 + Lab 1 |
 | MEC2005 | Fundamentals of Manufacturing Processes | 4 | Theory 3 + Lab 1 |
-| MEC3011 | Design of Machine Elements * | 4 | Theory 3 + Lab 1 |
-| MAT1010 | Statistics and Numerical Methods * | 4 | Theory 3 + Lab 1 |
-| MGT1040 | Entrepreneurship * | 4 | Theory 3 + Lab 1 |
-| STS2011 | Qualitative and Quantitative Skills Practice * | 1 | Theory only |
+| MEC4003 | Internal Combustion Engines | 4 | Theory 3 + Lab 1 |
+| MAT1010 | Probability and Statistics | 4 | Theory 3 + Lab 1 |
+| MGT1040 | Entrepreneurship | 4 | Theory 3 + Project 1 |
+| STS2011 | Qualitative and Quantitative Skills Practice | 1 | Theory only |
 
 **Total: 25 credits** if all are registered.
 
-\* Sections, faculty and venues for MEC3011 / MAT1010 / MGT1040 / STS2011 are
-**sample data** mapped to real slots from the official slot timetable — replace
-them in `js/data.js` with your VTOP details. MEC3002 / MEC2018 / MEC2005
-sections are from the VTOP registration screenshots.
+\* MEC3011 (Operations and Research) was removed from the catalogue — it is no
+longer offered in the planner. Any MEC3011 section saved in `localStorage` is
+dropped automatically on load.
+
+Sections, faculty and venues for MAT1010 / MGT1040 / STS2011 are taken from the
+official course PDFs (OCR); MEC3002 / MEC2018 / MEC2005 / MEC4003 sections are
+from the VTOP registration screenshots. Edit `js/data.js` to adjust.
 
 ## Features
 
@@ -36,7 +39,7 @@ sections are from the VTOP registration screenshots.
   **Clear labs**, **Clear theory** and **Clear whole timetable** (in-page
   confirm + 6-second **Undo**). A **Clear all** button also sits in the header.
 - **Faculty** — directory grouping every course by instructor.
-- Selections persist in `localStorage` (key `winter26-planner-v2`).
+- Selections persist in `localStorage` (key `winter26-planner-v4`).
 
 ## Run locally
 
