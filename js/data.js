@@ -22,6 +22,9 @@
  *                   25BEC7153 (theory only; seat counts omitted).
  *                   CSE3008 — from the Machine Learning PDF (embedded theory
  *                   and lab; 33 theory + 35 lab slots, seat counts omitted).
+ *                   CSE1006 — from the Foundations for Data Analytics PDF
+ *                   (15 theory + 15 lab slots; the PDF carries no seat data
+ *                   and no category, so it uses the PE default of its peers).
  *
  * Credit model (VIT-AP FFCS):
  *   Embedded Theory and Lab course = 4 credits
@@ -113,7 +116,7 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /*     SWE2004, SWE3001, SWE2006); MIC = the MIC registration list      */
 /*     (SWE2006, SWE3001, ECE2015, CSE3001, CSE3002).                   */
 /*   also = extra branch groups a course belongs to, e.g.               */
-/*     also: ['MIC'] on an ECE course that is also on the MIC list.    */
+/*     also: ['MIC'] on a MIS course that is also on the MIC list.     */
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
@@ -918,6 +921,53 @@ const COURSES = [
     ],
   },
   {
+    code: 'CSE1006', name: 'Foundations for Data Analytics',
+    credits: 4, theoryCredits: 3, labCredits: 1,
+    category: 'PE', branch: 'CSE', type: 'Embedded Theory and Lab',
+    faculty: [
+      'Palacharla Ravi Kumar',
+      'Prashanth Rajam',
+      'RUPA CHIRAMDASU',
+      'MOHD IRFAN',
+      'Lalitha Kumari P',
+      'Voddelli SriLakshmi',
+      'Debasis Dwibedy',
+      'Naga Jagadesh Bommagani'
+    ],
+    sections: [
+      { code: 'C2+TC2', venue: 'CB-524', faculty: 'Palacharla Ravi Kumar', type: 'theory' },
+      { code: 'C2+TCC2', venue: 'CB-114', faculty: 'Prashanth Rajam', type: 'theory' },
+      { code: 'F2+TF2', venue: 'CB-319', faculty: 'Prashanth Rajam', type: 'theory' },
+      { code: 'F2+TF2', venue: 'CB-322', faculty: 'RUPA CHIRAMDASU', type: 'theory' },
+      { code: 'C1+TC1', venue: 'CB-408', faculty: 'MOHD IRFAN', type: 'theory' },
+      { code: 'C1+TCC1', venue: 'CB-216', faculty: 'Lalitha Kumari P', type: 'theory' },
+      { code: 'C2+TC2', venue: 'CB-325', faculty: 'Lalitha Kumari P', type: 'theory' },
+      { code: 'F1+TF1', venue: 'CB-425', faculty: 'Voddelli SriLakshmi', type: 'theory' },
+      { code: 'F2+TFF2', venue: 'CB-527', faculty: 'Debasis Dwibedy', type: 'theory' },
+      { code: 'C1+TC1', venue: 'CB-524', faculty: 'Prashanth Rajam', type: 'theory' },
+      { code: 'F1+TFF1', venue: 'CB-109', faculty: 'Palacharla Ravi Kumar', type: 'theory' },
+      { code: 'F1+TF1', venue: 'CB-322', faculty: 'RUPA CHIRAMDASU', type: 'theory' },
+      { code: 'C1+TC1', venue: 'CB-407', faculty: 'Palacharla Ravi Kumar', type: 'theory' },
+      { code: 'F2+TF2', venue: 'CB-323', faculty: 'Naga Jagadesh Bommagani', type: 'theory' },
+      { code: 'F1+TF1', venue: 'CB-319', faculty: 'Lalitha Kumari P', type: 'theory' },
+      { code: 'L51+L52', venue: 'CB-405', faculty: 'Palacharla Ravi Kumar', type: 'lab' },
+      { code: 'L29+L30', venue: 'CB-405', faculty: 'Palacharla Ravi Kumar', type: 'lab' },
+      { code: 'L37+L38', venue: 'CB-405', faculty: 'Palacharla Ravi Kumar', type: 'lab' },
+      { code: 'L23+L24', venue: 'CB-417', faculty: 'Debasis Dwibedy', type: 'lab' },
+      { code: 'L1+L2', venue: 'CB-209', faculty: 'RUPA CHIRAMDASU', type: 'lab' },
+      { code: 'L5+L6', venue: 'CB-121', faculty: 'RUPA CHIRAMDASU', type: 'lab' },
+      { code: 'L11+L12', venue: 'CB-102', faculty: 'Prashanth Rajam', type: 'lab' },
+      { code: 'L37+L38', venue: 'CB-321', faculty: 'Lalitha Kumari P', type: 'lab' },
+      { code: 'L45+L46', venue: 'CB-409', faculty: 'Prashanth Rajam', type: 'lab' },
+      { code: 'L39+L40', venue: 'CB-122', faculty: 'MOHD IRFAN', type: 'lab' },
+      { code: 'L41+L42', venue: 'CB-416', faculty: 'Naga Jagadesh Bommagani', type: 'lab' },
+      { code: 'L33+L34', venue: 'CB-307', faculty: 'Voddelli SriLakshmi', type: 'lab' },
+      { code: 'L15+L16', venue: 'CB-228', faculty: 'Prashanth Rajam', type: 'lab' },
+      { code: 'L15+L16', venue: 'CB-209', faculty: 'Lalitha Kumari P', type: 'lab' },
+      { code: 'L55+L56', venue: 'CB-307', faculty: 'Lalitha Kumari P', type: 'lab' },
+    ],
+  },
+  {
     code: 'CSE1007', name: 'Introduction to Cryptography',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PE', branch: 'CSE', type: 'Embedded Theory and Lab',
@@ -1264,8 +1314,7 @@ const COURSES = [
   {
     code: 'ECE2015', name: 'Computer Architecture',
     credits: 4, theoryCredits: 4, labCredits: 0,
-    category: 'PC', branch: 'ECE', type: 'Theory Only',
-    also: ['MIC'],
+    category: 'PC', branch: 'MIC', type: 'Theory Only',
     faculty: [
       'Jayendra Kumar',
       'Ashish Gupta',

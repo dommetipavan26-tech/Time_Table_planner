@@ -22,7 +22,7 @@ const COURSE_DISPLAY_ORDER = [
   'MAT1010', 'STS2011', 'MGT1040', 'CSE1022',
   'MEC3002', 'MEC2018', 'MEC2005',
   'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'ECE2015', 'ECE2016',
-  'CSE1005', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008', 'CSE3008',
+  'CSE1005', 'CSE1006', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008', 'CSE3008',
   'CSE3001', 'CSE3002', 'SWE2004', 'SWE3001', 'SWE2006',
 ];
 
@@ -358,7 +358,7 @@ function renderHeader() {
 /* Courses view                                                        */
 /* ------------------------------------------------------------------ */
 // A course normally belongs to one branch group; `also` lists the extra lists
-// it appears on (a department course that is also on the MIC registration list).
+// it appears on (a course on both the MIS and the MIC registration list).
 const branchesOf = (course) => [course.branch, ...(course.also || [])];
 
 function branchBadges(course) {
