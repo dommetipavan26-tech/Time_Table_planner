@@ -38,7 +38,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
-| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty, filter by category and course type. |
+| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty and stack the branch, category and type filters. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
 | **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
 | **My selections** | Every chosen section with a remove button, plus **Clear labs**, **Clear theory** and **Clear whole timetable** behind an in-page confirm dialog and a 6-second **Undo**. |
@@ -77,24 +77,28 @@ There is **nothing to install and nothing to build**. No `package.json`, no bund
 
 Winter 2026–27 · **16 courses · 60 credits · 728 sections**
 
-| Code | Title | Cat. | Credits | Breakdown |
-|---|---|:--:|:--:|---|
-| `MEC3002` | Theory of Machines | PC | 4 | Theory 3 + Lab 1 |
-| `MEC2018` | Thermal Engineering Systems | PC | 4 | Theory 3 + Lab 1 |
-| `MEC2005` | Fundamentals of Manufacturing Processes | PC | 4 | Theory 3 + Lab 1 |
-| `MAT1010` | Probability and Statistics | UC | 4 | Theory 3 + Lab 1 |
-| `ECE2003` | Control Systems Engineering | PC | 4 | Theory 3 + Lab 1 |
-| `ECE2006` | Communication Systems | PC | 4 | Theory 3 + Lab 1 |
-| `ECE2009` | Data Acquisition and Transmission Systems | PE | 4 | Theory 3 + Lab 1 |
-| `ECE3006` | HDL Verification and Methodology | PE | 4 | Theory 3 + Lab 1 |
-| `CSE1022` | Introduction to Programming | UE | 4 | Theory 3 + Lab 1 |
-| `CSE1005` | Software Engineering | PC | 4 | Theory 4 (lab inside the slot) |
-| `CSE1007` | Introduction to Cryptography | PE | 4 | Theory 3 + Lab 1 |
-| `CSE1021` | Foundations of Blockchain Technology | PE | 3 | Theory only |
-| `CSE2007` | Database Management Systems | PC | 4 | Theory 3 + Lab 1 |
-| `CSE2008` | Operating Systems | PC | 4 | Theory 3 + Lab 1 |
-| `MGT1040` | Entrepreneurship | UC | 4 | Theory 3 + Project 1 |
-| `STS2011` | Qualitative and Quantitative Skills Practice | UC | 1 | Theory only |
+| Code | Title | Branch | Cat. | Credits | Breakdown |
+|---|---|:--:|:--:|:--:|---|
+| `MEC3002` | Theory of Machines | MECH | PC | 4 | Theory 3 + Lab 1 |
+| `MEC2018` | Thermal Engineering Systems | MECH | PC | 4 | Theory 3 + Lab 1 |
+| `MEC2005` | Fundamentals of Manufacturing Processes | MECH | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2003` | Control Systems Engineering | ECE | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2006` | Communication Systems | ECE | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2009` | Data Acquisition and Transmission Systems | ECE | PE | 4 | Theory 3 + Lab 1 |
+| `ECE3006` | HDL Verification and Methodology | ECE | PE | 4 | Theory 3 + Lab 1 |
+| `CSE1005` | Software Engineering | CSE | PC | 4 | Theory 4 (lab inside the slot) |
+| `CSE1007` | Introduction to Cryptography | CSE | PE | 4 | Theory 3 + Lab 1 |
+| `CSE1021` | Foundations of Blockchain Technology | CSE | PE | 3 | Theory only |
+| `CSE2007` | Database Management Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
+| `CSE2008` | Operating Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
+| `MAT1010` | Probability and Statistics | Common | UC | 4 | Theory 3 + Lab 1 |
+| `MGT1040` | Entrepreneurship | Common | UC | 4 | Theory 3 + Project 1 |
+| `CSE1022` | Introduction to Programming | Common | UE | 4 | Theory 3 + Lab 1 |
+| `STS2011` | Qualitative and Quantitative Skills Practice | Common | UC | 1 | Theory only |
+
+Cards are grouped by branch in the filter bar: **Common** (open to every branch) holds
+`MGT1040`, `CSE1022`, `MAT1010` and `STS2011`; **MECH**, **ECE** and **CSE** hold the rest. The
+branch, category and type chips combine, and every card repeats its branch as a badge.
 
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
 scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
@@ -136,7 +140,7 @@ All catalogue data lives in `js/data.js` — edit it and reload, no build step:
 | --- | --- |
 | `THEORY_SLOTS` / `LAB_SLOTS` | slot code → period index for each weekday |
 | `TIMELINE` | rows of the weekly grid |
-| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `type`, `faculty[]`, `sections[]` |
+| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `branch` (`MECH`/`ECE`/`CSE`/`Common`), `type`, `faculty[]`, `sections[]` |
 
 Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP slot notation
 (`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep

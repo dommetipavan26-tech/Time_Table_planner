@@ -10,7 +10,7 @@ const STORAGE_KEY = 'winter26-planner-v4';
 const LEGACY_STORAGE_KEY = 'winter26-planner-v2';
 let selected = loadState();   // sectionKey -> normalised selection
 let view = 'courses';         // courses | timetable
-let filters = { q: '', cat: 'all', type: 'all' };
+let filters = { q: '', branch: 'all', cat: 'all', type: 'all' };
 const expandedCourses = new Set();
 const SECTION_PREVIEW_LIMIT = 4;
 
@@ -356,6 +356,7 @@ function renderHeader() {
 function renderCourses() {
   const q = filters.q.trim().toLowerCase();
   const list = COURSES.filter(c => {
+    if (filters.branch !== 'all' && c.branch !== filters.branch) return false;
     if (filters.cat !== 'all' && c.category !== filters.cat) return false;
     if (filters.type !== 'all' && c.type !== filters.type) return false;
     if (q && !(
@@ -461,6 +462,7 @@ function cardHTML(course) {
         </div>
       </header>
       <div class="meta-row">
+        <span class="branch-badge branch-${esc(course.branch)}">${esc(course.branch)}</span>
         <span class="type-badge">${esc(course.type)}</span>
         <span class="pick-rule">${course.labCredits ? '1 theory + 1 lab' : '1 theory slot'}</span>
       </div>
@@ -838,6 +840,13 @@ function bindFilters() {
       filters.q = '';
       renderCourses();
     }
+  });
+  $$('.branch-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      filters.branch = chip.dataset.branch;
+      $$('.branch-chip').forEach(c => c.classList.toggle('active', c === chip));
+      renderCourses();
+    });
   });
   $$('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
