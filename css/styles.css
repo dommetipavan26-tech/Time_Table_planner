@@ -337,7 +337,7 @@ h1, h2, h3, h4, .brand-name {
 .branch-MECH   { background: #fef3c7; color: #92400e; border-color: #fde68a; }
 .branch-ECE    { background: #ccfbf1; color: #115e59; border-color: #99f6e4; }
 .branch-CSE    { background: #ede9fe; color: #5b21b6; border-color: #ddd6fe; }
-.branch-MIC    { background: #ffe4e6; color: #9f1239; border-color: #fecdd3; }
+.branch-MIS    { background: #ffe4e6; color: #9f1239; border-color: #fecdd3; }
 .branch-Common { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
 
 .sections { display: flex; flex-direction: column; gap: 8px; }
@@ -1633,6 +1633,205 @@ body {
 .matrix-course small { overflow-wrap: anywhere; }
 .course-card { min-width: 0; }
 .sel-list { grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+
+
+/* ============================================================
+   Dark theme
+   Toggled from the header button, remembered in localStorage,
+   defaulting to the OS preference. Everything below overrides a
+   hard-coded light surface; the token block does the rest.
+   ============================================================ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b1020;
+  --surface: #141a2e;
+  --surface-2: #1a2137;
+  --ink: #e9edfb;
+  --ink-soft: #b7c0d6;
+  --ink-faint: #a4adc2;
+  --border: #263049;
+  --border-strong: #36425f;
+
+  --primary: #a5b4fc;
+  --primary-600: #c7d2fe;
+  --primary-soft: #1e2547;
+  --violet: #a78bfa;
+  --accent: #fbbf24;
+
+  --theory: #4338ca;
+  --lab: #0f766e;
+  --warn: #fbbf24;
+  --warn-soft: #2c2210;
+  --danger: #fca5a5;
+  --danger-soft: #331b1b;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .5);
+  --shadow: 0 6px 20px rgba(0, 0, 0, .45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, .6);
+
+  --glass-tint: linear-gradient(150deg, rgba(30, 38, 62, .95), rgba(18, 24, 42, .82));
+  --glass-stroke: rgba(255, 255, 255, .09);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, .07);
+  --glass-shadow: 0 18px 44px -28px rgba(0, 0, 0, .9);
+}
+
+/* ---- header, search, chips ---- */
+[data-theme="dark"] .site-header { background: rgba(11, 16, 32, .86); border-bottom-color: var(--border); }
+[data-theme="dark"] .site-header.is-scrolled { background: rgba(11, 16, 32, .95); }
+[data-theme="dark"] .nav-tab:hover { background: rgba(255, 255, 255, .07); }
+[data-theme="dark"] .nav-tab.active {
+  background: var(--primary-soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), inset 0 0 0 1px rgba(129, 140, 248, .35);
+}
+[data-theme="dark"] .hdr-clear,
+[data-theme="dark"] .theme-toggle { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .12); }
+[data-theme="dark"] .hdr-clear:hover,
+[data-theme="dark"] .theme-toggle:hover { background: rgba(255, 255, 255, .12); color: var(--ink); }
+[data-theme="dark"] .credit-pill { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 8px 18px -14px rgba(0, 0, 0, .9); }
+[data-theme="dark"] .search-box {
+  background: rgba(20, 26, 46, .92);
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+[data-theme="dark"] .search-box:focus-within {
+  background: rgba(26, 33, 55, .98);
+  border-color: rgba(165, 180, 252, .55);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 4px rgba(99, 102, 241, .3);
+}
+[data-theme="dark"] .cat-chip,
+[data-theme="dark"] .branch-chip,
+[data-theme="dark"] .type-chip {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .13);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+  color: var(--ink-soft);
+}
+[data-theme="dark"] .cat-chip:hover,
+[data-theme="dark"] .branch-chip:hover,
+[data-theme="dark"] .type-chip:hover { background: rgba(255, 255, 255, .12); color: var(--ink); }
+[data-theme="dark"] .cat-chip.active,
+[data-theme="dark"] .branch-chip.active,
+[data-theme="dark"] .type-chip.active { background: #4338ca; border-color: #4338ca; color: #fff; }
+
+/* ---- cards, rows, panels ---- */
+[data-theme="dark"] .course-card {
+  background-color: rgba(20, 26, 46, .78);
+  background-image: linear-gradient(160deg, rgba(32, 40, 66, .95), rgba(18, 24, 42, .85));
+  border-color: rgba(255, 255, 255, .08);
+}
+[data-theme="dark"] .course-card:hover { background-color: rgba(26, 33, 55, .92); border-color: rgba(255, 255, 255, .16); }
+[data-theme="dark"] .section-row { background: rgba(255, 255, 255, .045); border-color: rgba(255, 255, 255, .1); }
+[data-theme="dark"] .section-row:hover { background: rgba(255, 255, 255, .085); border-color: rgba(255, 255, 255, .16); }
+[data-theme="dark"] .sel-panel,
+[data-theme="dark"] .tt-stat,
+[data-theme="dark"] .legend-item,
+[data-theme="dark"] .matrix-empty-note,
+[data-theme="dark"] .empty-card { background-color: rgba(20, 26, 46, .72); border-color: rgba(255, 255, 255, .09); }
+[data-theme="dark"] .sel-item { background: color-mix(in srgb, var(--c) 16%, #141a2e); }
+[data-theme="dark"] .clash-detail { background: rgba(255, 255, 255, .06); }
+[data-theme="dark"] .btn-clear-all:disabled { background: #1c2334; color: #7b8499; }
+[data-theme="dark"] .btn-danger { border-color: #5b2a2a; }
+[data-theme="dark"] .btn-danger:hover { background: #3a1d1d; }
+[data-theme="dark"] .toast,
+[data-theme="dark"] .toast-success,
+[data-theme="dark"] .toast-info { background: rgba(20, 26, 46, .97); border-color: rgba(255, 255, 255, .1); }
+[data-theme="dark"] .modal { background: rgba(18, 24, 42, .98); border-color: rgba(255, 255, 255, .12); }
+[data-theme="dark"] .toast-action:hover { background: rgba(129, 140, 248, .18); }
+[data-theme="dark"] .sections.expanded { scrollbar-color: #3a4564 transparent; }
+
+/* the per-card accent colour is mid-tone; lift it for dark surfaces */
+[data-theme="dark"] .code-chip,
+[data-theme="dark"] .slot-code,
+[data-theme="dark"] .btn-more,
+[data-theme="dark"] .btn-register,
+[data-theme="dark"] .matrix-cell.is-selected .matrix-slot,
+[data-theme="dark"] .fac-course { color: color-mix(in srgb, var(--c) 45%, #ffffff); }
+
+/* ---- category + branch badges ---- */
+[data-theme="dark"] .cat-PE { background: #3a2c12; color: #fcd34d; }
+[data-theme="dark"] .cat-PC { background: #232a55; color: #c7d2fe; }
+[data-theme="dark"] .cat-UC,
+[data-theme="dark"] .cat-FE { background: #10322a; color: #6ee7b7; }
+[data-theme="dark"] .cat-UE { background: #2b2150; color: #d8b4fe; }
+[data-theme="dark"] .branch-MECH { background: #3a2c12; color: #fcd34d; border-color: #5a4318; }
+[data-theme="dark"] .branch-ECE { background: #0e3330; color: #5eead4; border-color: #14504a; }
+[data-theme="dark"] .branch-CSE { background: #2b2150; color: #d8b4fe; border-color: #3f3270; }
+[data-theme="dark"] .branch-MIS { background: #3b1524; color: #fda4af; border-color: #571f33; }
+[data-theme="dark"] .branch-Common { background: #232a3b; color: #cbd5e1; border-color: #333d55; }
+
+/* ---- timetable matrix ---- */
+[data-theme="dark"] .schedule-wrap { background: #0f1526; border-color: #263049; }
+[data-theme="dark"] .schedule-table th,
+[data-theme="dark"] .schedule-table td { border-color: #2c3651; }
+[data-theme="dark"] .matrix-band { color: #dfe5f7; }
+[data-theme="dark"] .theory-band { background: #241f45; }
+[data-theme="dark"] .lab-band { background: #10303c; }
+[data-theme="dark"] .matrix-label { background: #1a2137; color: #b7c0d6; }
+[data-theme="dark"] .matrix-time { background: #232a4a; color: #cbd3e8; }
+[data-theme="dark"] .matrix-time.is-lunch { background: #202636 !important; color: #9aa3b8; }
+[data-theme="dark"] .matrix-day { background: #1a2137; color: #cbd3e8; }
+[data-theme="dark"] .matrix-kind { background: #171d31; color: #cbd3e8; }
+[data-theme="dark"] .matrix-cell { background: #1b2333; color: #c9d2e6; }
+[data-theme="dark"] .matrix-cell.is-gap { background: #151b2b; color: #7b8499; }
+[data-theme="dark"] .matrix-cell.is-lunch { background: #1c2334; color: #9aa3b8; }
+[data-theme="dark"] .matrix-cell.is-selected { background: color-mix(in srgb, var(--c) 26%, #16203a); }
+[data-theme="dark"] .matrix-course b { color: #e9edfb; }
+[data-theme="dark"] .matrix-course small { color: #a4adc2; }
+[data-theme="dark"] .matrix-scroll-note,
+[data-theme="dark"] .matrix-empty-note { color: var(--ink-soft); }
+
+/* ---- fallback when backdrop-filter is unavailable ---- */
+@supports not (backdrop-filter: blur(1px)) {
+  [data-theme="dark"] .filter-bar,
+  [data-theme="dark"] .course-card,
+  [data-theme="dark"] .sel-panel,
+  [data-theme="dark"] .tt-stat,
+  [data-theme="dark"] .legend-item,
+  [data-theme="dark"] .matrix-empty-note,
+  [data-theme="dark"] .empty-card,
+  [data-theme="dark"] .toast,
+  [data-theme="dark"] .modal,
+  [data-theme="dark"] .schedule-wrap { background: #141a2e; }
+}
+
+/* ---- printing from dark mode should still give white paper ---- */
+@media print {
+  [data-theme="dark"] .schedule-wrap { background: #fff !important; }
+  [data-theme="dark"] .matrix-cell { background: #fffbd0 !important; color: #566075 !important; }
+  [data-theme="dark"] .matrix-cell.is-gap { background: #fffde3 !important; color: #a2a8b4 !important; }
+  [data-theme="dark"] .matrix-cell.is-lunch { background: #e7e9ed !important; color: #687386 !important; }
+  [data-theme="dark"] .matrix-band { color: #354159 !important; }
+  [data-theme="dark"] .theory-band { background: #e5e2fb !important; }
+  [data-theme="dark"] .lab-band { background: #cde9f8 !important; }
+  [data-theme="dark"] .matrix-label { background: #edf0f4 !important; color: #556075 !important; }
+  [data-theme="dark"] .matrix-time { background: #dcd9f5 !important; color: #43506a !important; }
+  [data-theme="dark"] .matrix-day { background: #f0f2f5 !important; color: #47526a !important; }
+  [data-theme="dark"] .matrix-kind { background: #f5f6f8 !important; color: #47526a !important; }
+  [data-theme="dark"] .matrix-course b { color: #172038 !important; }
+  [data-theme="dark"] .matrix-course small { color: #545e73 !important; }
+}
+
+/* ---- the toggle button ---- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 11px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.theme-toggle:hover { color: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
+.theme-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
 /* ==================== PRINT STYLES ==================== */
 @media print {

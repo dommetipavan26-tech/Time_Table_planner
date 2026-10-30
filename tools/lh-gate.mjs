@@ -2,14 +2,14 @@
 /**
  * Fail the build only on the things that matter.
  *
- *   node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt
+ *   node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt
  *
  * Gates (deliberately generous on performance, strict on correctness):
  *   accessibility    ≥ 0.95 on both form factors
  *   best practices   ≥ 0.90
  *   SEO              = 1.00 (the page is meant to be found)
  *   performance      ≥ 0.70 mobile, ≥ 0.90 desktop
- * plus: the mobile layout audit must have exited 0.
+ * plus: the mobile layout audit and the light/dark contrast audit must have exited 0.
  *
  * Everything else Lighthouse reports is printed by lh-summary.mjs but does not
  * block — a CDN font that arrives late should not fail a data fix.
@@ -44,6 +44,14 @@ if (existsSync('mobile.txt')) {
   report(code === '0', `mobile layout audit exited ${code ?? 'unknown'}${code === '0' ? '' : ' — see the PR comment for the list'}`);
 } else {
   report(false, 'mobile layout audit produced no output');
+}
+
+if (existsSync('contrast.txt')) {
+  const txt = readFileSync('contrast.txt', 'utf8');
+  const code = (txt.match(/exit=(\d+)/) || [])[1];
+  report(code === '0', `contrast audit exited ${code ?? 'unknown'} (light + dark)`);
+} else {
+  report(false, 'contrast audit produced no output');
 }
 
 process.exit(failed ? 1 : 0);
