@@ -17,6 +17,7 @@
   <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-ES2020-F7DF1E?style=flat-square&logo=javascript&logoColor=black" />
   <img alt="No build step" src="https://img.shields.io/badge/build-none-22c55e?style=flat-square" />
   <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-22c55e?style=flat-square" />
+  <img alt="Catalogue validated" src="https://img.shields.io/badge/catalogue-validated-22c55e?style=flat-square" />
   <img alt="Deployed on Vercel" src="https://img.shields.io/badge/deploy-Vercel-000000?style=flat-square&logo=vercel&logoColor=white" />
 </p>
 
@@ -132,8 +133,14 @@ theory sections only — one pick covers theory and lab, and the 4 credits sit o
 ├── js/
 │   ├── data.js         # courses, sections, slot → period mapping
 │   └── app.js          # rendering, selection rules, conflicts, exports
+├── tools/
+│   └── validate-data.mjs  # dependency-free catalogue checker
+├── .github/workflows/
+│   └── validate.yml    # runs the checker on every push and pull request
 ├── docs/
-│   └── banner.svg      # README artwork
+│   ├── banner.svg      # README artwork
+│   └── og-image.png    # 1200×630 social preview card
+├── LICENSE             # MIT
 └── README.md
 ```
 
@@ -160,6 +167,24 @@ curriculum (programme core, with `CSE1007` a programme/specialisation elective).
 listed as a 3-credit theory-only elective; its credit value is inferred from the slot list (the
 export carries no credit column), so correct it if your registration sheet says otherwise.
 
+## Validation
+
+A dependency-free checker guards the catalogue, so a mistyped slot token or a broken credit
+split fails loudly instead of quietly drawing a wrong timetable:
+
+```bash
+node tools/validate-data.mjs
+```
+
+It verifies that every course has a valid `code`, `category`, `branch` and `type`, that
+`theoryCredits + labCredits (+ projectCredits) = credits`, that each section is a real slot whose
+tokens all exist in `THEORY_SLOTS` / `LAB_SLOTS` and resolve to at least one weekly period, that
+no section repeats a slot + venue, and that every section's faculty is listed on the course. It
+also cross-checks the totals line in this README, the `?v=` cache-busting version in `index.html`,
+and that `canonical`, `og:url` and `og:image` point at the same host with an image that exists.
+
+`.github/workflows/validate.yml` runs it on every push to `main` and on every pull request.
+
 ## Accessibility & performance
 
 - Landmarks, a skip link, labelled controls, `aria-pressed` on slot buttons and an
@@ -170,6 +195,12 @@ export carries no credit column), so correct it if your registration sheet says 
 - No fonts, frameworks or vendors are required beyond Google Fonts and html2canvas (CDN);
   the page renders and plans without either.
 
+## Privacy
+
+Everything you pick stays in your own browser — selections are written to `localStorage` and
+never sent anywhere. The only outbound request the page makes for the site owner is Vercel Web
+Analytics (`/_vercel/insights/script.js`), which records cookieless, aggregate page views.
+
 ## Known limitations
 
 - Data is static and hand-maintained; it does **not** read from VTOP live.
@@ -179,6 +210,5 @@ export carries no credit column), so correct it if your registration sheet says 
 
 ## License
 
-This is a personal, non-commercial student project shared for reference. No licence has been
-declared yet — if you intend to reuse the code, add the licence you want (MIT is a good default).
-Not affiliated with VIT or VTOP.
+Released under the [MIT License](LICENSE) — © 2026 Dommeti Pavan Sesha Kumar. Use it, fork it,
+or lift the styles for your own planner. Not affiliated with VIT or VTOP.

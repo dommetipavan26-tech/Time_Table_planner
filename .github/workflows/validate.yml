@@ -1,0 +1,25 @@
+name: Validate catalogue
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  data:
+    name: Data, README and meta tags
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # No install step: the site and the checker have no dependencies.
+      - name: Run the catalogue validator
+        run: node tools/validate-data.mjs
