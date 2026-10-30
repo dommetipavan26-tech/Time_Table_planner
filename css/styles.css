@@ -1507,6 +1507,9 @@ body {
   transition: top var(--t-med) var(--ease-out);
 }
 .skip-link:focus { top: 12px; }
+/* dark mode lightens --primary for text use, so the skip link needs its own
+   solid brand fill to keep white label text at 7.9:1 */
+[data-theme="dark"] .skip-link { background: #4338ca; color: #fff; }
 
 .noscript-note {
   padding: 14px 18px;
