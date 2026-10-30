@@ -97,12 +97,15 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /*   credits = theoryCredits + labCredits                              */
 /*   Embedded Theory and Lab = 5 cr (3 theory + 2 lab)                */
 /*   STS2011 theory-only      = 1 cr                                   */
+/*   branch = MECH | ECE | CSE | Common                                */
+/*     Common = MGT1040, CSE1022, MAT1010, STS2011 (open to all        */
+/*     branches); the rest sit under their own branch filter.          */
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
     code: 'MEC3002', name: 'Theory of Machines',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'MECH', type: 'Embedded Theory and Lab',
     faculty: [
       'Santosh Kumar Sahu',
       'Rama Sreekanth P S'
@@ -120,7 +123,7 @@ const COURSES = [
   {
     code: 'MEC2018', name: 'Thermal Engineering Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'MECH', type: 'Embedded Theory and Lab',
     faculty: [
       'Shirin Naresh Patil',
       'Sinha Nishant Ranjan',
@@ -139,7 +142,7 @@ const COURSES = [
   {
     code: 'MEC2005', name: 'Fundamentals of Manufacturing Processes',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'MECH', type: 'Embedded Theory and Lab',
     faculty: [
       'Suyog Jhavar',
       'Manikanta Ravindra Kumar Fakkalagadda',
@@ -158,7 +161,7 @@ const COURSES = [
   {
     code: 'MAT1010', name: 'Probability and Statistics',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'UC', type: 'Embedded Theory and Lab',
+    category: 'UC', branch: 'Common', type: 'Embedded Theory and Lab',
     faculty: [
       'Arun Kumar Yadav',
       'Banoth Veeranna',
@@ -307,7 +310,7 @@ const COURSES = [
   {
     code: 'MGT1040', name: 'Entrepreneurship',
     credits: 4, theoryCredits: 3, projectCredits: 1, labCredits: 0,
-    category: 'UC', type: 'Embedded Theory and Project',
+    category: 'UC', branch: 'Common', type: 'Embedded Theory and Project',
     faculty: [
       'A S Arunkumar',
       'Aditya Muppa',
@@ -367,7 +370,7 @@ const COURSES = [
   {
     code: 'STS2011', name: 'Qualitative and Quantitative Skills Practice',
     credits: 1, theoryCredits: 1, labCredits: 0,
-    category: 'UC', type: 'Theory Only',
+    category: 'UC', branch: 'Common', type: 'Theory Only',
     faculty: [
       'Deva Naveen Kumar',
       'Gowrabathinatanoj',
@@ -450,7 +453,7 @@ const COURSES = [
   {
     code: 'ECE2003', name: 'Control Systems Engineering',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [
       'Subhasish Mahapatra',
       'Pradosh Ranjan Sahoo',
@@ -475,7 +478,7 @@ const COURSES = [
   {
     code: 'ECE2006', name: 'Communication Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [
       'Hanumantharao Bitra',
       'Suseela Vappangi',
@@ -499,7 +502,7 @@ const COURSES = [
   {
     code: 'ECE2009', name: 'Data Acquisition and Transmission Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PE', type: 'Embedded Theory and Lab',
+    category: 'PE', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [
       'SUNKESULA MOULANA ABDUL KALAM AZAD',
       'Ashish Gupta'
@@ -516,7 +519,7 @@ const COURSES = [
   {
     code: 'ECE3006', name: 'HDL Verification and Methodology',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PE', type: 'Embedded Theory and Lab',
+    category: 'PE', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [
       'PILLUTLA SIVA RAMAKRISHNA',
       'Aruru Sai Kumar'
@@ -535,7 +538,7 @@ const COURSES = [
   {
     code: 'CSE1022', name: 'Introduction to Programming',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'UE', type: 'Embedded Theory and Lab',
+    category: 'UE', branch: 'Common', type: 'Embedded Theory and Lab',
     faculty: [
       'Yallanti Sowjanya Kumari',
       'MARRIBOYINA SREEDEVI',
@@ -825,7 +828,7 @@ const COURSES = [
   {
     code: 'CSE1005', name: 'Software Engineering',
     credits: 4, theoryCredits: 4, labCredits: 0,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'CSE', type: 'Embedded Theory and Lab',
     faculty: [
       'Anurag De',
       'Shaik Kareemulla',
@@ -903,7 +906,7 @@ const COURSES = [
   {
     code: 'CSE1007', name: 'Introduction to Cryptography',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PE', type: 'Embedded Theory and Lab',
+    category: 'PE', branch: 'CSE', type: 'Embedded Theory and Lab',
     faculty: [
       'MOHAMMAD SIRAJUDDIN',
       'Udit Narayana Kar',
@@ -935,7 +938,7 @@ const COURSES = [
   {
     code: 'CSE1021', name: 'Foundations of Blockchain Technology',
     credits: 3, theoryCredits: 3, labCredits: 0,
-    category: 'PE', type: 'Theory Only',
+    category: 'PE', branch: 'CSE', type: 'Theory Only',
     faculty: [
       'PARITALA JHANSIRANI',
       'Naresh Sammeta',
@@ -950,7 +953,7 @@ const COURSES = [
   {
     code: 'CSE2007', name: 'Database Management Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'CSE', type: 'Embedded Theory and Lab',
     faculty: [
       'THOTA RAMATHULASI',
       'VASAVI SANIKOMMU',
@@ -1071,7 +1074,7 @@ const COURSES = [
   {
     code: 'CSE2008', name: 'Operating Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'CSE', type: 'Embedded Theory and Lab',
     faculty: [
       'Prabha Selvaraj',
       'POPURI SRINIVASA RAO',
