@@ -7,7 +7,6 @@
  *                   screenshots (OCR).
  *                   MAT1010, MGT1040, STS2011 — from official course PDFs
  *                   (faculty, venues, slots all extracted via OCR).
- *                   MEC4003 Internal Combustion Engines — theory + lab.
  *
  * Credit model (VIT-AP FFCS):
  *   Embedded Theory and Lab course = 4 credits
@@ -144,18 +143,6 @@ const COURSES = [
       { code: 'L3+L4', venue: 'AB2-G18', faculty: 'Suyog Jhavar', type: 'lab' },
       { code: 'L43+L44', venue: 'AB2-G18', faculty: 'Manikanta Ravindra Kumar Fakkalagadda', type: 'lab' },
       { code: 'L31+L32', venue: 'AB2-G18', faculty: 'Kishor E', type: 'lab' },
-    ],
-  },
-  {
-    code: 'MEC4003', name: 'Internal Combustion Engines',
-    credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', type: 'Embedded Theory and Lab',
-    faculty: [
-      'Rajan Deorao Lanjekar'
-    ],
-    sections: [
-      { code: 'F1+TF1', venue: 'CB-220', faculty: 'Rajan Deorao Lanjekar', type: 'theory' },
-      { code: 'L33+L34', venue: 'AB2-G11', faculty: 'Rajan Deorao Lanjekar', type: 'lab' },
     ],
   },
   {
