@@ -30,6 +30,11 @@ VTOP registration screenshots. Edit `js/data.js` to adjust.
   (`Theory 3 cr + Lab 1 cr`), faculty and every section (slot, venue, faculty).
   Search by code/name/faculty; filter by category and course type. No seat
   numbers shown.
+- **One slot per component** — a course can hold exactly **one theory slot and
+  one lab slot** (a lab like `L31+L32` counts as a single slot). Picking another
+  theory/lab slot swaps the current one instead of stacking; the extra buttons
+  read **Swap**, and the `+ Add …` shortcut only offers the component that is
+  still missing. Saved state with duplicates is trimmed on load.
 - **Timetable** — selections are placed on the weekly grid (Tue–Sat,
   08:00–19:30) straight from the slot timetable. Theory/Lab sessions are
   colour-coded, clashes flash red, and a toggle reveals the full institute slot

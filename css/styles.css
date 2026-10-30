@@ -1736,6 +1736,31 @@ body {
   }
 }
 
+/* ---------------- Pick limits: 1 theory + 1 lab per course ---------------- */
+.pick-rule {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--primary);
+  background: rgba(79, 70, 229, .09);
+  border: 1px solid rgba(79, 70, 229, .16);
+  transition: background var(--t-fast) var(--ease-soft), color var(--t-fast) var(--ease-soft);
+}
+.btn-select.swap {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--c, var(--primary)) 45%, var(--border-strong));
+  color: var(--c, var(--primary));
+  background: rgba(255, 255, 255, .7);
+}
+.btn-select.swap:hover {
+  background: color-mix(in srgb, var(--c, var(--primary)) 10%, #fff);
+  border-color: var(--c, var(--primary));
+}
+
 /* ==================== PRINT STYLES ==================== */
 @media print {
   body * { visibility: hidden; }

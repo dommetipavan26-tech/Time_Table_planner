@@ -49,6 +49,30 @@ function esc(s) {
 function sectionKey(course, section) {
   return course.code + '::' + section.code + '::' + section.venue;
 }
+/** The single active selection for a course component ('theory' | 'lab').
+ *  Each course may hold at most one theory slot and one lab slot. */
+function selectedOfType(courseCode, type) {
+  for (const key in selected) {
+    if (selected[key].courseCode === courseCode && selected[key].type === type) {
+      return { key, sel: selected[key] };
+    }
+  }
+  return null;
+}
+
+/** Next component a course still needs — one theory slot, one lab slot. */
+function nextMissingSection(course) {
+  if (!selectedOfType(course.code, 'theory')) {
+    const theory = course.sections.find(s => s.type === 'theory');
+    if (theory) return { section: theory, label: 'theory' };
+  }
+  if (!selectedOfType(course.code, 'lab')) {
+    const lab = course.sections.find(s => s.type === 'lab');
+    if (lab) return { section: lab, label: 'lab' };
+  }
+  return null;
+}
+
 function loadState() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY))
@@ -64,6 +88,7 @@ function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(selected
  */
 function normaliseSavedSelections() {
   const clean = {};
+  const filled = new Set();   // "COURSE::type" that already has its one slot
   for (const saved of Object.values(selected)) {
     const course = COURSES.find(c => c.code === saved.courseCode);
     if (!course) continue;
@@ -73,6 +98,10 @@ function normaliseSavedSelections() {
       sec.type === saved.type
     );
     if (!section) continue;
+    // One theory slot + one lab slot per course: drop any extra saved slot.
+    const slot = course.code + '::' + section.type;
+    if (filled.has(slot)) continue;
+    filled.add(slot);
     const key = sectionKey(course, section);
     clean[key] = {
       courseCode: course.code,
@@ -345,8 +374,8 @@ function renderCourses() {
   $$('#course-grid [data-register]').forEach(btn => {
     btn.addEventListener('click', () => {
       const course = COURSES.find(c => c.code === btn.dataset.register);
-      const theory = course.sections.find(s => s.type === 'theory') || course.sections[0];
-      toggleSection(course, theory);
+      const missing = nextMissingSection(course);
+      if (missing) toggleSection(course, missing.section);
     });
   });
   $$('#course-grid [data-expand]').forEach(btn => {
@@ -374,9 +403,14 @@ function cardHTML(course) {
     ? course.sections
     : course.sections.slice(0, SECTION_PREVIEW_LIMIT);
   const hiddenCount = course.sections.length - visibleSections.length;
+  const theoryPick = selectedOfType(course.code, 'theory');
+  const labPick = selectedOfType(course.code, 'lab');
   const sections = visibleSections.map(sec => {
     const key = sectionKey(course, sec);
     const isOn = !!selected[key];
+    // Only one theory + one lab per course, so a second pick swaps the first.
+    const current = sec.type === 'lab' ? labPick : theoryPick;
+    const willSwap = !isOn && !!current;
     const sess = sessionsFor(sec.code, sec.type);
     const days = [...new Set(sess.map(s => s.day))].join(' · ');
     return `
@@ -386,12 +420,14 @@ function cardHTML(course) {
         <span class="venue">${esc(sec.venue)}</span>
         ${sec.faculty ? `<span class="prof">${esc(sec.faculty)}</span>` : ''}
         <span class="slot-days">${esc(days)}</span>
-        <button class="btn-select ${isOn ? 'on' : ''}" data-toggle
-          data-code="${esc(course.code)}" data-slot="${esc(sec.code)}" data-venue="${esc(sec.venue)}">
-          ${isOn ? '✓ Selected' : 'Select'}
+        <button class="btn-select ${isOn ? 'on' : ''}${willSwap ? ' swap' : ''}" data-toggle
+          data-code="${esc(course.code)}" data-slot="${esc(sec.code)}" data-venue="${esc(sec.venue)}"
+          ${willSwap ? `title="Replaces your current ${sec.type} slot ${esc(current.sel.sectionCode)}"` : ''}>
+          ${isOn ? '✓ Selected' : willSwap ? 'Swap' : 'Select'}
         </button>
       </div>`;
   }).join('');
+  const missing = nextMissingSection(course);
 
   return `
     <article class="course-card" style="--c:${color}">
@@ -414,13 +450,14 @@ function cardHTML(course) {
       </header>
       <div class="meta-row">
         <span class="type-badge">${esc(course.type)}</span>
+        <span class="pick-rule">${course.labCredits ? '1 theory + 1 lab' : '1 theory slot'}</span>
       </div>
       <div class="sections ${expanded ? 'expanded' : ''}">${sections}</div>
       ${course.sections.length > SECTION_PREVIEW_LIMIT ? `
         <button class="btn-more" data-expand="${esc(course.code)}" aria-expanded="${expanded}">
           ${expanded ? 'Show fewer sections' : `Show ${hiddenCount} more section${hiddenCount === 1 ? '' : 's'}`}
         </button>` : ''}
-      <button class="btn-register" data-register="${esc(course.code)}">+ Add first section</button>
+      ${missing ? `<button class="btn-register" data-register="${esc(course.code)}">+ Add ${missing.label} section</button>` : ''}
     </article>`;
 }
 
@@ -430,6 +467,12 @@ function toggleSection(course, section, btn) {
     delete selected[key];
     toast(`Removed ${course.code} · ${section.code}`, 'info');
   } else {
+    // A course can hold exactly one theory slot and one lab slot, so picking
+    // another slot of the same kind swaps it out (an L31+L32 lab is one slot).
+    const prev = selectedOfType(course.code, section.type);
+    const restore = prev ? { key: prev.key, value: { ...prev.sel } } : null;
+    if (restore) delete selected[restore.key];
+
     selected[key] = {
       courseCode: course.code,
       courseName: course.name,
@@ -448,7 +491,10 @@ function toggleSection(course, section, btn) {
       const detail = myClash.clashes
         .map(c => `${c.day} ${c.slot1}/${c.slot2} · ${c.time1} ↔ ${c.time2}`).join(' · ');
       delete selected[key];
+      if (restore) selected[restore.key] = restore.value;   // keep the old slot
       toast(`Cannot add ${course.code} · ${section.code}: it overlaps with ${other.courseCode} · ${other.sectionCode} — ${detail}`, 'error');
+    } else if (restore) {
+      toast(`Swapped ${course.code} ${section.type} · ${restore.value.sectionCode} → ${section.code}`, 'info');
     } else {
       toast(`Added ${course.code} · ${section.code} to timetable`);
     }
