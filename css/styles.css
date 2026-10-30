@@ -436,8 +436,10 @@ h1, h2, h3, h4, .brand-name {
 }
 .btn-select:hover { border-color: var(--primary); color: var(--primary); }
 .btn-select.on {
-  background: var(--c, var(--primary));
-  border-color: var(--c, var(--primary));
+  /* the accent palette is bright, so white label text on the raw colour lands
+     around 2–4:1; deepening the fill keeps every hue above 4.5:1 */
+  background: color-mix(in srgb, var(--c, var(--primary)) 57%, #0b1020);
+  border-color: color-mix(in srgb, var(--c, var(--primary)) 57%, #0b1020);
   color: #fff;
   box-shadow: 0 5px 12px color-mix(in srgb, var(--c, var(--primary)) 30%, transparent);
 }
