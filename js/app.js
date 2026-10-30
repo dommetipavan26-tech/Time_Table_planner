@@ -793,5 +793,13 @@ function boot() {
   $('#hdr-clear').addEventListener('click', () => clearSelections());
   $('#sel-clear-theory').addEventListener('click', () => clearSelections(s => s.type === 'theory', 'all theory sections'));
   $('#sel-clear-labs').addEventListener('click', () => clearSelections(s => s.type === 'lab', 'all lab sections'));
+
+  // Glass header: deepen the frosted panel as soon as the page scrolls.
+  const header = document.querySelector('.site-header');
+  if (header) {
+    const syncHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    syncHeader();
+    window.addEventListener('scroll', syncHeader, { passive: true });
+  }
 }
 document.addEventListener('DOMContentLoaded', boot);
