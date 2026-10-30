@@ -154,6 +154,36 @@ for (const cls of boundClasses) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Structured data                                                      */
+/* ------------------------------------------------------------------ */
+const canonicalTag = html.match(/<link rel="canonical" href="([^"]+)"/);
+const canonicalUrl = canonicalTag ? canonicalTag[1] : null;
+if (!canonicalUrl) fail('index.html: missing canonical link, so structured data has nothing to match');
+
+const ldBlocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+if (ldBlocks.length === 0) fail('index.html: no application/ld+json structured data');
+for (const [, body] of ldBlocks) {
+  let data;
+  try {
+    data = JSON.parse(body);
+  } catch (e) {
+    fail(`structured data is not valid JSON: ${e.message}`);
+    continue;
+  }
+  const nodes = Array.isArray(data['@graph']) ? data['@graph'] : [data];
+  if (!nodes.length) fail('structured data: @graph is empty');
+  for (const node of nodes) {
+    if (!node['@type']) fail('structured data: a node has no @type');
+    if (node.url && canonicalUrl && new URL(node.url).origin !== new URL(canonicalUrl).origin) {
+      fail(`structured data: ${node['@type']}.url ${node.url} is not on the canonical host`);
+    }
+  }
+  if (!nodes.some((n) => ['WebSite', 'WebApplication', 'WebPage', 'SoftwareApplication'].includes(n['@type']))) {
+    fail('structured data: none of WebSite / WebApplication / WebPage / SoftwareApplication');
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Manifest, sitemap, README                                           */
 /* ------------------------------------------------------------------ */
 const manifest = JSON.parse(read('manifest.webmanifest'));
@@ -207,4 +237,5 @@ console.log('✓ links, forms and controls all check out');
 console.log(`  ${linkCount} href/src/action references · ${controlCount} form control${controlCount === 1 ? '' : 's'} · ${buttonCount} button${buttonCount === 1 ? '' : 's'}`);
 console.log(`  ${seenIds.size} unique ids · no duplicates, no dead app.js bindings`);
 console.log(`  ${readmeLinks} README file links · manifest icons, sitemap and robots.txt present`);
+console.log(`  ${ldBlocks.length} JSON-LD block${ldBlocks.length === 1 ? '' : 's'} parse and point at the canonical host`);
 console.log(`  ${files.length} files in the repo`);

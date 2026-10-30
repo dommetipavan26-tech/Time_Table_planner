@@ -39,7 +39,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
-| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code/name/faculty and stack the branch, category and type filters. |
+| **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
 | **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
 | **My selections** | Every chosen section with a remove button, plus **Clear labs**, **Clear theory** and **Clear whole timetable** behind an in-page confirm dialog and a 6-second **Undo**. |
@@ -151,9 +151,14 @@ theory sections only — one pick covers theory and lab, and the 4 credits sit o
 │   ├── data.js         # courses, sections, slot → period mapping
 │   └── app.js          # rendering, selection rules, conflicts, exports
 ├── tools/
-│   └── validate-data.mjs  # dependency-free catalogue checker
+│   ├── validate-data.mjs  # dependency-free catalogue checker
+│   ├── check-links.mjs    # broken links, labels, ids, dead bindings
+│   ├── check-mobile.mjs   # puppeteer layout audit at phone widths
+│   ├── lh-summary.mjs     # readable Lighthouse summary
+│   └── lh-gate.mjs        # fails the audit job on the scores that matter
 ├── .github/workflows/
-│   └── validate.yml    # runs the checker on every push and pull request
+│   ├── validate.yml    # catalogue + link checks on every push and pull request
+│   └── audit.yml       # Lighthouse (mobile + desktop) and the mobile layout audit
 ├── docs/
 │   ├── banner.svg      # README artwork
 │   └── og-image.png    # 1200×630 social preview card
@@ -204,6 +209,28 @@ that `sitemap.xml` / `robots.txt` describe that same canonical host (no `noindex
 `Allow: /`, a well-formed `<urlset>` with real `<lastmod>` dates, and the canonical URL listed).
 
 `.github/workflows/validate.yml` runs it on every push to `main` and on every pull request.
+
+### Links, controls and layout
+
+```bash
+node tools/check-links.mjs                       # no dependencies
+npm i --no-save puppeteer && node tools/check-mobile.mjs http://127.0.0.1:8080/
+```
+
+`check-links.mjs` fails on a `href`/`src`/`action` that points at a file which is not in the repo, an
+in-page `#anchor` with no matching `id`, an external link that is not https or lacks
+`rel="noopener"`, a form control with no label, a button with no accessible name, a duplicate `id`,
+an `#id` or `.class` that `app.js` queries but the markup never defines, a malformed JSON-LD block,
+a README link to a renamed file, or a missing manifest icon.
+
+`check-mobile.mjs` drives real Chrome at 320/360/390/414/768/1024 px on both views and fails on
+sideways scrolling, elements past the viewport (unless an ancestor clips them), tap targets under
+24 px and text under 11 px — with an explicit 8.5 px floor inside the dense timetable matrix, which
+scrolls and has its own print layout.
+
+`.github/workflows/audit.yml` runs Lighthouse for mobile and desktop, posts the scores and the
+mobile report as a pull-request comment, uploads the HTML reports, and gates on accessibility
+≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mobile / ≥ 90 desktop.
 
 ## Search Console & sitemap
 

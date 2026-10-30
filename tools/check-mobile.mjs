@@ -9,9 +9,11 @@
  * Loads the planner at several phone/tablet widths, on both views, and fails if
  *   · the document scrolls sideways (horizontal overflow) — the one layout bug
  *     that is invisible on a desktop monitor and obvious on a phone,
- *   · any element sticks out past the viewport,
+ *   · any element sticks out past the viewport and is not clipped by an ancestor,
  *   · a button is smaller than the 24×24 CSS-px minimum tap target,
- *   · text is set below 11px (hard to read on a phone),
+ *   · text is set below 11px — except inside the timetable matrix, which is a
+ *     deliberately dense 21-column grid (it scrolls and has its own print
+ *     layout), where 8.5px is the floor,
  *   · the page logs a console error or a failed request.
  *
  * Set CHROME_PATH to use a specific Chromium build.
@@ -64,6 +66,13 @@ for (const width of WIDTHS) {
         tiny: [],
         smallText: [],
       };
+      const clipped = (el) => {
+        for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+          const st = getComputedStyle(p);
+          if (/hidden|clip/.test(st.overflowX) || /hidden|clip/.test(st.overflowY)) return true;
+        }
+        return false;
+      };
       const label = (el) => {
         const id = el.id ? `#${el.id}` : '';
         const cls = el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '';
@@ -74,16 +83,20 @@ for (const width of WIDTHS) {
         if (r.width === 0 && r.height === 0) continue;
         const style = getComputedStyle(el);
         if (style.visibility === 'hidden' || style.display === 'none') continue;
-        // ignore things intentionally clipped by a scroll container
-        const scroller = el.closest('.sections.expanded, .tt-scroll, .table-wrap, .sel-list, .matrix-scroll');
-        if (!scroller && r.right > vw + 1 && style.position !== 'fixed') out.wide.push(`${label(el)} right=${Math.round(r.right)}`);
-        if (!scroller && r.left < -1 && style.position !== 'fixed') out.wide.push(`${label(el)} left=${Math.round(r.left)}`);
+        // the timetable matrix is a deliberate horizontal scroller (it says so on screen)
+        const scroller = el.closest('.schedule-wrap, .sections.expanded, .sel-list');
+        if (!scroller && !clipped(el) && style.position !== 'fixed') {
+          if (r.right > vw + 1) out.wide.push(`${label(el)} right=${Math.round(r.right)}`);
+          if (r.left < -1) out.wide.push(`${label(el)} left=${Math.round(r.left)}`);
+        }
         if (el.matches('button, a, [role="button"], select, input[type="checkbox"]')) {
           if (r.width > 0 && (r.width < 24 || r.height < 24)) out.tiny.push(`${label(el)} ${Math.round(r.width)}×${Math.round(r.height)}`);
         }
         const fs = parseFloat(style.fontSize);
         const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
-        if (hasText && fs < 11) out.smallText.push(`${label(el)} ${fs}px`);
+        const inMatrix = !!el.closest('.schedule-table');
+        const floor = inMatrix ? 8.5 : 11;
+        if (hasText && fs < floor) out.smallText.push(`${label(el)} ${fs}px (floor ${floor})`);
       }
       return out;
     }, width);
