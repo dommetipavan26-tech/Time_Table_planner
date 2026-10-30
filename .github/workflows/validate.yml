@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   data:
-    name: Data, README and meta tags
+    name: Data, README, links and meta tags
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,3 +23,7 @@ jobs:
       # No install step: the site and the checker have no dependencies.
       - name: Run the catalogue validator
         run: node tools/validate-data.mjs
+
+      # Broken links, unlabelled controls, dead app.js bindings, JSON-LD.
+      - name: Run the link and control checker
+        run: node tools/check-links.mjs
