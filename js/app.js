@@ -40,10 +40,6 @@ function colorFor(code) {
   for (let i = 0; i < code.length; i++) h = (h * 31 + code.charCodeAt(i)) >>> 0;
   return PALETTE[h % PALETTE.length];
 }
-function initials(name) {
-  return name.replace(/^(dr|prof)\.?\s*/i, '')
-    .split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
-}
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -290,8 +286,11 @@ function confirmDialog({ title, body, ok = 'Yes, clear all' }) {
 function refreshAll() {
   saveState();
   renderHeader();
+  renderSelections();
   renderCourses();
-  renderTimetable();
+  // The timetable is a 200+ cell table in a hidden section — only pay for it
+  // when that view is actually on screen.
+  if (view === 'timetable') renderTimetable();
 }
 /**
  * Remove selections matching `pred` (default: everything) after confirmation.
@@ -360,9 +359,13 @@ function renderCourses() {
     if (filters.branch !== 'all' && c.branch !== filters.branch) return false;
     if (filters.cat !== 'all' && c.category !== filters.cat) return false;
     if (filters.type !== 'all' && c.type !== filters.type) return false;
+    // Search covers the course code, the title, every instructor on the course
+    // and every room it uses, so "dhara" or "CB-216" both find their courses.
     if (q && !(
       c.code.toLowerCase().includes(q) ||
-      c.name.toLowerCase().includes(q)
+      c.name.toLowerCase().includes(q) ||
+      c.faculty.some(f => f.toLowerCase().includes(q)) ||
+      c.sections.some(s => s.venue.toLowerCase().includes(q))
     )) return false;
     return true;
   }).sort((a, b) => COURSE_DISPLAY_ORDER.indexOf(a.code) - COURSE_DISPLAY_ORDER.indexOf(b.code));
@@ -782,40 +785,28 @@ function renderSelections(conflicts = findConflicts()) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Faculty view                                                        */
-/* ------------------------------------------------------------------ */
-function renderFaculty() {
-  const map = {};
-  for (const c of COURSES) {
-    for (const f of c.faculty) (map[f] = map[f] || []).push(c);
-  }
-  const list = Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
-  $('#faculty-grid').innerHTML = list.map(([name, courses]) => {
-    const color = colorFor(courses[0].code);
-    return `
-      <div class="fac-card" style="--c:${color}">
-        <div class="avatar lg" style="background:${color}22;color:${color}">${esc(initials(name))}</div>
-        <div class="fac-info">
-          <h4>${esc(name)}</h4>
-          <div class="fac-courses">
-            ${courses.map(c => `<span class="fac-course">${esc(c.code)} · ${esc(c.name)}</span>`).join('')}
-          </div>
-        </div>
-        <span class="fac-count">${courses.length} course${courses.length > 1 ? 's' : ''}</span>
-      </div>`;
-  }).join('');
-}
-
-/* ------------------------------------------------------------------ */
 /* View switching                                                       */
 /* ------------------------------------------------------------------ */
-function switchView(v) {
+const VIEWS = ['courses', 'timetable'];
+/** Views are addressable: /#courses and /#timetable survive a reload,
+    a bookmark or a shared link (and give crawlers real in-page targets). */
+function switchView(v, { updateHash = true } = {}) {
+  if (!VIEWS.includes(v)) v = 'courses';
   view = v;
   $$('.view').forEach(sec => sec.classList.toggle('active', sec.id === 'view-' + v));
+  $$('.nav-tab').forEach(tab => {
+    const on = tab.dataset.view === v;
+    tab.classList.toggle('active', on);
+    if (on) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
   renderHeader();
   if (v === 'courses') renderCourses();
   if (v === 'timetable') renderTimetable();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (updateHash && location.hash !== '#' + v) {
+    history.replaceState(null, '', '#' + v);
+  }
+  if (updateHash) window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ------------------------------------------------------------------ */
@@ -873,13 +864,27 @@ function boot() {
   normaliseSavedSelections();
   saveState();
   renderHeader();
+  renderSelections();
   renderCourses();
-  renderTimetable();
+  if (view === 'timetable') renderTimetable();
   $$('.nav-tab').forEach(tab => tab.addEventListener('click', () => switchView(tab.dataset.view)));
+  window.addEventListener('hashchange', () => switchView(location.hash.replace('#', ''), { updateHash: false }));
+  // Footer "Jump to" links: switch instantly, keep the href so the link works
+  // without JS and is crawlable.
+  $$('.footer-link').forEach(link => link.addEventListener('click', (e) => {
+    const target = (link.getAttribute('href') || '').replace('#', '');
+    if (!VIEWS.includes(target)) return;
+    e.preventDefault();
+    switchView(target);
+  }));
   $('#sel-clear-all').addEventListener('click', () => clearSelections());
   $('#hdr-clear').addEventListener('click', () => clearSelections());
   $('#sel-clear-theory').addEventListener('click', () => clearSelections(s => s.type === 'theory', 'all theory sections'));
   $('#sel-clear-labs').addEventListener('click', () => clearSelections(s => s.type === 'lab', 'all lab sections'));
+
+  // deep link: /#timetable opens the plan straight away
+  const wanted = location.hash.replace('#', '');
+  if (VIEWS.includes(wanted)) switchView(wanted, { updateHash: false });
 
   const yearEl = $('#footer-year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());

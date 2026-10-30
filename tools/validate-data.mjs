@@ -231,6 +231,19 @@ if (!existsSync(join(ROOT, 'robots.txt'))) {
   }
 }
 
+/* The hero stats are pre-rendered in the HTML (so the hero does not grow on
+   boot and shift the page), which means they can go stale — check them here. */
+const heroStats = html.match(/<div class="hero-stats"[^>]*>([\s\S]*?)<\/div>\s*<div class="hero-glow"/);
+if (!heroStats) {
+  fail('index.html: hero stats block not found');
+} else {
+  const nums = [...heroStats[1].matchAll(/<b>([^<]+)<\/b>/g)].map((m) => m[1].trim());
+  const want = [String(COURSES.length), String(sections), 'Tue–Sat', String(COURSES.filter((c) => c.credits === 4).length)];
+  if (nums.join('|') !== want.join('|')) {
+    fail(`index.html: hero stats say ${nums.join(' / ')}, data says ${want.join(' / ')}`);
+  }
+}
+
 const sitemapLink = html.match(/<link rel="sitemap"[^>]*href="([^"]+)"/);
 if (!sitemapLink) fail('index.html: missing <link rel="sitemap">');
 else if (!/sitemap\.xml$/.test(sitemapLink[1])) fail(`index.html: <link rel="sitemap"> points at "${sitemapLink[1]}"`);

@@ -32,10 +32,50 @@
   <meta name="twitter:description" content="Pick one theory and one lab slot per course and get an instant, conflict-checked weekly timetable for Winter 2026–27." />
   <meta name="twitter:image" content="https://vitap-slots.vercel.app/docs/og-image.png" />
 
+  <!-- Structured data: what this page is, so search results can show it as a free web app -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://vitap-slots.vercel.app/#website",
+        "url": "https://vitap-slots.vercel.app/",
+        "name": "Winter Planner",
+        "description": "Course catalogue and conflict-checked timetable planner for the Winter 2026–27 FFCS registration at VIT-AP.",
+        "inLanguage": "en-IN"
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://vitap-slots.vercel.app/#app",
+        "name": "Winter Planner — Course & Timetable Planner",
+        "url": "https://vitap-slots.vercel.app/",
+        "description": "Browse 21 courses and 796 sections, pick one theory and one lab slot per course, and get an instant, conflict-checked weekly timetable.",
+        "applicationCategory": "EducationalApplication",
+        "applicationSubCategory": "Timetable planner",
+        "operatingSystem": "Any device with a browser",
+        "browserRequirements": "Requires JavaScript",
+        "isAccessibleForFree": true,
+        "inLanguage": "en-IN",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+        "isPartOf": { "@id": "https://vitap-slots.vercel.app/#website" },
+        "screenshot": "https://vitap-slots.vercel.app/docs/og-image.png",
+        "featureList": [
+          "Every theory and lab section with slot, venue and instructor",
+          "One theory and one lab per course, with automatic clash detection",
+          "Weekly Tue–Sat timetable on the official slot matrix",
+          "Export the plan as text, image or PDF",
+          "Branch, category and type filters plus search by faculty or room"
+        ]
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=10" />
+  <link rel="stylesheet" href="css/styles.css?v=11" />
 
   <!-- Vercel Web Analytics -->
   <script>
@@ -43,7 +83,15 @@
       (window.vaq = window.vaq || []).push(arguments); 
     };
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <!-- Vercel Web Analytics exists only on Vercel deployments; requesting it elsewhere is a 404 -->
+  <script>
+    if (location.hostname.endsWith('.vercel.app')) {
+      var va = document.createElement('script');
+      va.defer = true;
+      va.src = '/_vercel/insights/script.js';
+      document.head.appendChild(va);
+    }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -85,7 +133,12 @@
           <h1>Plan your semester,<br />section by section.</h1>
           <p>Browse the full course catalogue with slot details and venues, pick your sections,
              and get an instant personalised timetable — conflicts flagged automatically.</p>
-          <div class="hero-stats" id="hero-stats"></div>
+          <div class="hero-stats" id="hero-stats">
+            <div class="hero-stat"><b>21</b><span>courses</span></div>
+            <div class="hero-stat"><b>796</b><span>sections</span></div>
+            <div class="hero-stat"><b>Tue–Sat</b><span>class days</span></div>
+            <div class="hero-stat"><b>19</b><span>4-credit courses</span></div>
+          </div>
         </div>
         <div class="hero-glow"></div>
       </div>
@@ -96,10 +149,10 @@
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path>
             </svg>
-            <label class="sr-only" for="search-input">Search courses by code or name</label>
-            <input id="search-input" type="search" placeholder="Search by code or name…"
+            <label class="sr-only" for="search-input">Search courses by code, name, faculty or room</label>
+            <input id="search-input" type="search" placeholder="Search code, name, faculty or room…"
                    autocomplete="off" spellcheck="false" aria-describedby="search-hint" />
-            <span class="sr-only" id="search-hint">Press the slash key anywhere to focus this field.</span>
+            <span class="sr-only" id="search-hint">Matches course code, title, faculty name or room. Press the slash key anywhere to focus this field.</span>
           </div>
           <div class="chips">
             <div class="chip-group">
@@ -129,6 +182,7 @@
           </div>
         </div>
 
+        <h2 class="sr-only">Course catalogue</h2>
         <div class="course-grid" id="course-grid"></div>
       </div>
     </section>
@@ -199,6 +253,15 @@
       </div>
 
       <div class="footer-col">
+        <h4>Jump to</h4>
+        <ul>
+          <li><a class="footer-link" href="#courses">Course catalogue</a></li>
+          <li><a class="footer-link" href="#timetable">Weekly timetable</a></li>
+          <li><a class="footer-link" href="#courses">Search by faculty</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
         <h4>How it works</h4>
         <ul>
           <li>Classes run Tuesday to Saturday</li>
@@ -234,7 +297,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="js/data.js?v=10"></script>
-  <script src="js/app.js?v=10"></script>
+  <script src="js/data.js?v=11"></script>
+  <script src="js/app.js?v=11"></script>
 </body>
 </html>

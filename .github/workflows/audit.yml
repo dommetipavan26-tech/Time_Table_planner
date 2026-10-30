@@ -1,0 +1,93 @@
+name: Lighthouse + mobile audit
+
+# Real Chrome, real numbers: Lighthouse (mobile emulation + desktop) and a
+# puppeteer pass that looks for sideways scrolling, tiny tap targets and
+# sub-11px text at phone widths. Results are posted as a PR comment (and the
+# HTML reports are uploaded) so the numbers are readable without the raw log.
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore: ['**/*.md', 'docs/**']
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      URL: http://127.0.0.1:8080/
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Serve the site
+        run: |
+          npx --yes http-server@14 . -p 8080 -a 127.0.0.1 --silent &
+          for i in $(seq 1 40); do
+            curl -fsS "$URL" >/dev/null && break
+            sleep 1
+          done
+          curl -fsS "$URL" | head -c 120
+
+      - name: Lighthouse — mobile
+        run: |
+          npx --yes lighthouse@12 "$URL" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output=html --output-path=./lh-mobile \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --quiet || true
+          mv lh-mobile.report.json lh-mobile.json 2>/dev/null || true
+
+      - name: Lighthouse — desktop
+        run: |
+          npx --yes lighthouse@12 "$URL" \
+            --preset=desktop \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output=html --output-path=./lh-desktop \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --quiet || true
+          mv lh-desktop.report.json lh-desktop.json 2>/dev/null || true
+
+      - name: Mobile layout audit
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i --no-save puppeteer@23 >/dev/null 2>&1
+          node tools/check-mobile.mjs "$URL" > mobile.txt 2>&1; echo "exit=$?" >> mobile.txt
+          cat mobile.txt
+
+      - name: Collect the audit report
+        if: always()
+        run: |
+          node tools/lh-summary.mjs lh-mobile.json lh-desktop.json > lh-summary.txt 2>&1 || true
+          { echo '### Lighthouse + mobile audit'; echo;
+            echo '```'; cat lh-summary.txt; echo '```'; echo;
+            echo '<details><summary>Mobile layout audit (320–1024 px, both views)</summary>'; echo;
+            echo '```'; cat mobile.txt; echo '```'; echo '</details>'; } > audit-report.md
+          cat audit-report.md
+
+      - name: Publish the report on the pull request
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr comment "${{ github.event.pull_request.number }}" --body-file audit-report.md
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: |
+            lh-mobile.report.html
+            lh-desktop.report.html
+            audit-report.md
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Gate on the scores that actually matter
+        if: always()
+        run: node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt
