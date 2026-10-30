@@ -339,21 +339,6 @@ h1, h2, h3, h4, .brand-name {
 .branch-MIC    { background: #ffe4e6; color: #9f1239; border-color: #fecdd3; }
 .branch-Common { background: #e2e8f0; color: #334155; border-color: #cbd5e1; }
 
-.faculty-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-.avatar {
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 13px;
-  font-family: 'Outfit', sans-serif;
-  flex-shrink: 0;
-}
-.avatar.lg { width: 52px; height: 52px; font-size: 18px; }
-.faculty-names { display: flex; flex-direction: column; gap: 1px; }
-.faculty-names span { font-size: 13.5px; font-weight: 600; color: var(--ink); }
-
 .sections { display: flex; flex-direction: column; gap: 8px; }
 .sections.expanded {
   max-height: 520px;
@@ -994,54 +979,6 @@ thead tr:nth-child(4) .matrix-time { background: #bfe0f4; }
   background: var(--warn-soft);
 }
 
-/* ---------------- Faculty ---------------- */
-.page-head { margin: 34px 0 22px; }
-.page-head h2 { font-size: 26px; font-weight: 800; }
-.page-head p { font-size: 14px; margin-top: 4px; }
-
-.fac-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 16px;
-  padding-bottom: 52px;
-}
-.fac-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: var(--shadow-sm);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
-.fac-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.fac-info { flex: 1; min-width: 0; }
-.fac-info h4 { font-size: 15.5px; font-weight: 700; margin-bottom: 6px; }
-.fac-courses { display: flex; flex-direction: column; gap: 4px; }
-.fac-course {
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 4px 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.fac-count {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink-faint);
-  border-radius: 8px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  padding: 6px 10px;
-  white-space: nowrap;
-}
-
 /* ---------------- Footer ---------------- */
 .site-footer {
   border-top: 1px solid var(--border);
@@ -1564,17 +1501,6 @@ body {
               0 30px 58px -30px rgba(49, 46, 129, .55);
 }
 
-.fac-card {
-  background-color: rgba(255, 255, 255, .5);
-  background-image: linear-gradient(160deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .58));
-  border-color: rgba(255, 255, 255, .8);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  backdrop-filter: blur(12px) saturate(150%);
-  box-shadow: var(--glass-highlight), 0 14px 30px -30px rgba(30, 35, 60, .9);
-  transition: transform var(--t-med) var(--ease-out),
-              box-shadow var(--t-med) var(--ease-out);
-}
-.fac-card:hover { transform: translateY(-3px); }
 
 .section-row {
   background: rgba(255, 255, 255, .55);
@@ -1719,7 +1645,6 @@ body {
   .site-header { background: rgba(255, 255, 255, .97); }
   .filter-bar,
   .course-card,
-  .fac-card,
   .sel-panel,
   .tt-stat,
   .legend-item,
@@ -1917,12 +1842,9 @@ body {
 .section-row .venue,
 .section-row .prof,
 .sel-line2,
-.fac-course,
 .matrix-course b,
 .matrix-course small { overflow-wrap: anywhere; }
-.course-card,
-.fac-card { min-width: 0; }
-.fac-grid { grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); }
+.course-card { min-width: 0; }
 .sel-list { grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
 
 /* ==================== PRINT STYLES ==================== */

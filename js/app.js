@@ -40,10 +40,6 @@ function colorFor(code) {
   for (let i = 0; i < code.length; i++) h = (h * 31 + code.charCodeAt(i)) >>> 0;
   return PALETTE[h % PALETTE.length];
 }
-function initials(name) {
-  return name.replace(/^(dr|prof)\.?\s*/i, '')
-    .split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
-}
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -360,9 +356,13 @@ function renderCourses() {
     if (filters.branch !== 'all' && c.branch !== filters.branch) return false;
     if (filters.cat !== 'all' && c.category !== filters.cat) return false;
     if (filters.type !== 'all' && c.type !== filters.type) return false;
+    // Search covers the course code, the title, every instructor on the course
+    // and every room it uses, so "dhara" or "CB-216" both find their courses.
     if (q && !(
       c.code.toLowerCase().includes(q) ||
-      c.name.toLowerCase().includes(q)
+      c.name.toLowerCase().includes(q) ||
+      c.faculty.some(f => f.toLowerCase().includes(q)) ||
+      c.sections.some(s => s.venue.toLowerCase().includes(q))
     )) return false;
     return true;
   }).sort((a, b) => COURSE_DISPLAY_ORDER.indexOf(a.code) - COURSE_DISPLAY_ORDER.indexOf(b.code));
@@ -779,31 +779,6 @@ function renderSelections(conflicts = findConflicts()) {
 
   $$('#sel-list [data-remove]').forEach(btn =>
     btn.addEventListener('click', () => removeOne(btn.dataset.remove)));
-}
-
-/* ------------------------------------------------------------------ */
-/* Faculty view                                                        */
-/* ------------------------------------------------------------------ */
-function renderFaculty() {
-  const map = {};
-  for (const c of COURSES) {
-    for (const f of c.faculty) (map[f] = map[f] || []).push(c);
-  }
-  const list = Object.entries(map).sort((a, b) => a[0].localeCompare(b[0]));
-  $('#faculty-grid').innerHTML = list.map(([name, courses]) => {
-    const color = colorFor(courses[0].code);
-    return `
-      <div class="fac-card" style="--c:${color}">
-        <div class="avatar lg" style="background:${color}22;color:${color}">${esc(initials(name))}</div>
-        <div class="fac-info">
-          <h4>${esc(name)}</h4>
-          <div class="fac-courses">
-            ${courses.map(c => `<span class="fac-course">${esc(c.code)} · ${esc(c.name)}</span>`).join('')}
-          </div>
-        </div>
-        <span class="fac-count">${courses.length} course${courses.length > 1 ? 's' : ''}</span>
-      </div>`;
-  }).join('');
 }
 
 /* ------------------------------------------------------------------ */

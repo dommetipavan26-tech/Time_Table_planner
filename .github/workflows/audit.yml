@@ -1,0 +1,72 @@
+name: Lighthouse + mobile audit
+
+# Runs the real thing on a real Chrome: Lighthouse (mobile emulation and
+# desktop) plus a puppeteer pass that looks for sideways scrolling, tiny tap
+# targets and sub-11px text at phone widths. Manual on purpose — it needs no
+# secrets, but it is slower than the catalogue check, so it is opt-in.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ['**/*.md', 'docs/**']
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Serve the site
+        run: |
+          npx --yes http-server@14 . -p 8080 -a 127.0.0.1 --silent &
+          for i in $(seq 1 40); do
+            curl -fsS http://127.0.0.1:8080/ >/dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/ | head -c 120
+
+      - name: Lighthouse — mobile
+        run: |
+          npx --yes lighthouse@12 http://127.0.0.1:8080/ \
+            --preset=perf --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output=html --output-path=./lh-mobile \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+            --quiet || true
+          mv lh-mobile.report.json lh-mobile.json 2>/dev/null || true
+
+      - name: Lighthouse — desktop
+        run: |
+          npx --yes lighthouse@12 http://127.0.0.1:8080/ \
+            --preset=desktop --only-categories=performance,accessibility,best-practices,seo \
+            --output=json --output=html --output-path=./lh-desktop \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" \
+            --quiet || true
+          mv lh-desktop.report.json lh-desktop.json 2>/dev/null || true
+
+      - name: Lighthouse summary
+        run: node tools/lh-summary.mjs lh-mobile.json lh-desktop.json
+
+      - name: Mobile layout audit
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i --no-save puppeteer@23 >/dev/null 2>&1
+          node tools/check-mobile.mjs http://127.0.0.1:8080/
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: |
+            lh-mobile.report.html
+            lh-desktop.report.html
+          if-no-files-found: warn
+          retention-days: 14
