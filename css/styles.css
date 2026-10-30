@@ -694,7 +694,7 @@ h1, h2, h3, h4, .brand-name {
 }
 thead tr:nth-child(3) .matrix-time,
 thead tr:nth-child(4) .matrix-time { background: #bfe0f4; }
-.matrix-time.is-lunch { background: #e4e6ea !important; color: #697386; }
+.matrix-time.is-lunch { background: #e4e6ea !important; color: #4f5866; }
 .matrix-day {
   padding: 8px 4px;
   background: #f0f2f5;
@@ -1769,6 +1769,8 @@ body {
 [data-theme="dark"] .lab-band { background: #10303c; }
 [data-theme="dark"] .matrix-label { background: #1a2137; color: #b7c0d6; }
 [data-theme="dark"] .matrix-time { background: #232a4a; color: #cbd3e8; }
+[data-theme="dark"] thead tr:nth-child(3) .matrix-time,
+[data-theme="dark"] thead tr:nth-child(4) .matrix-time { background: #16323f; color: #dbe6f5; }
 [data-theme="dark"] .matrix-time.is-lunch { background: #202636 !important; color: #9aa3b8; }
 [data-theme="dark"] .matrix-day { background: #1a2137; color: #cbd3e8; }
 [data-theme="dark"] .matrix-kind { background: #171d31; color: #cbd3e8; }
