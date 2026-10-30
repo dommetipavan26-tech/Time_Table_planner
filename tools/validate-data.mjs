@@ -16,7 +16,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 
 const CATEGORIES = new Set(['PC', 'PE', 'UC', 'UE']);
-const BRANCHES = new Set(['MECH', 'ECE', 'CSE', 'MIC', 'Common']);
+const BRANCHES = new Set(['MECH', 'ECE', 'CSE', 'MIS', 'Common']);
 const TYPES = new Set(['Embedded Theory and Lab', 'Embedded Theory and Project', 'Theory Only']);
 const COURSE_CODE = /^[A-Z]{3}\d{4}$/;
 // Rooms come as CB-516 / AB2-114 / CB-G15, or as a bare online room such as ONL01002.
@@ -82,7 +82,7 @@ for (const course of COURSES) {
 
   if (typeof course.name !== 'string' || !course.name.trim()) fail(`${id}: missing name`);
   if (!CATEGORIES.has(course.category)) fail(`${id}: category "${course.category}" is not PC/PE/UC/UE`);
-  if (!BRANCHES.has(course.branch)) fail(`${id}: branch "${course.branch}" is not MECH/ECE/CSE/MIC/Common`);
+  if (!BRANCHES.has(course.branch)) fail(`${id}: branch "${course.branch}" is not MECH/ECE/CSE/MIS/Common`);
   if (!TYPES.has(course.type)) fail(`${id}: type "${course.type}" is not a known course type`);
 
   const sum = (course.theoryCredits || 0) + (course.labCredits || 0) + (course.projectCredits || 0);

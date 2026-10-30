@@ -39,6 +39,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
+| **Dark mode** | One button in the header switches theme; the choice is remembered and the first visit follows the operating system's `prefers-color-scheme`. |
 | **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. Views are deep-linkable: `/#courses`, `/#timetable`. |
 | **Slot rules** | Each course holds exactly **one theory slot and one lab slot** — a paired lab such as `L31+L32` counts as a single slot. Picking another one swaps it in; the buttons read **Swap** and a blocked swap rolls back to the previous slot. |
 | **Timetable** | Selections land on the official Tue–Sat grid (08:00–19:30) with colour-coded theory/lab sessions and instantaneous clash detection. |
@@ -81,7 +82,7 @@ domain is ever changed in Vercel, update these links plus the `canonical` / `og:
 
 ## The plan
 
-Winter 2026–27 · **21 courses · 80 credits · 796 sections**
+Winter 2026–27 · **23 courses · 88 credits · 806 sections**
 
 | Code | Title | Branch | Cat. | Credits | Breakdown |
 |---|---|:--:|:--:|:--:|---|
@@ -97,30 +98,32 @@ Winter 2026–27 · **21 courses · 80 credits · 796 sections**
 | `CSE1021` | Foundations of Blockchain Technology | CSE | PE | 3 | Theory only |
 | `CSE2007` | Database Management Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
 | `CSE2008` | Operating Systems | CSE | PC | 4 | Theory 3 + Lab 1 |
-| `CSE3001` | Agile Development Process | MIC | PE | 4 | Theory 3 + Project 1 |
-| `CSE3002` | Artificial Intelligence | MIC | PE | 4 | Theory 3 + Lab 1 |
-| `ECE2015` | Computer Architecture | MIC | PC | 4 | Theory only |
-| `SWE3001` | Fundamentals of Computer Networks | MIC | PC | 4 | Theory 3 + Lab 1 |
-| `SWE2006` | Database Systems | MIC | PC | 4 | Theory 3 + Lab 1 |
+| `CSE3001` | Agile Development Process | MIS | PE | 4 | Theory 3 + Project 1 |
+| `CSE3002` | Artificial Intelligence | MIS | PE | 4 | Theory 3 + Lab 1 |
+| `SWE2004` | Software Design and Architecture | MIS | PC | 4 | Theory 3 + Project 1 |
+| `SWE3001` | Fundamentals of Computer Networks | MIS | PC | 4 | Theory 3 + Lab 1 |
+| `SWE2006` | Database Systems | MIS | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2015` | Computer Architecture | ECE | PC | 4 | Theory only |
+| `ECE2016` | Engineering Electromagnetics | ECE | PC | 4 | Theory only |
 | `MAT1010` | Probability and Statistics | Common | UC | 4 | Theory 3 + Lab 1 |
 | `MGT1040` | Entrepreneurship | Common | UC | 4 | Theory 3 + Project 1 |
 | `CSE1022` | Introduction to Programming | Common | UE | 4 | Theory 3 + Lab 1 |
 | `STS2011` | Qualitative and Quantitative Skills Practice | Common | UC | 1 | Theory only |
 
 Cards are grouped by branch in the filter bar: **Common** (open to every branch) holds
-`MGT1040`, `CSE1022`, `MAT1010` and `STS2011`; **MIC** holds the five courses registered for the
-MIC semester (`CSE3001`, `CSE3002`, `ECE2015`, `SWE3001`, `SWE2006`); **MECH**, **ECE** and **CSE**
-hold the rest. The branch, category and type chips combine, and every card repeats its branch as a
+`MGT1040`, `CSE1022`, `MAT1010` and `STS2011` — these four are also pinned to the top of the **All**
+view, since they suit every branch; **MIS** holds the MIS registration list (`CSE3001`, `CSE3002`,
+`SWE2004`, `SWE3001`, `SWE2006`); **MECH**, **ECE** and **CSE** hold the rest. The branch, category and type chips combine, and every card repeats its branch as a
 badge.
 
 `CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
 scrollable list behind **Show more sections**. `CSE2007` (89 sections) and `CSE2008` (90 sections)
 use the same collapsed list.
 
-`ECE2015` is theory-only but still 4 credits — four theory hours a week in a three-token slot such
-as `F2+TBB1+TF2` — so it carries no lab rows. `CSE3001` is **embedded theory + project**: its
-project component is mapped automatically by the theory instructor, so it lists theory rows only
-and the 1 project credit sits on that pick.
+`ECE2015` and `ECE2016` are theory-only but still 4 credits — four theory hours a week in a
+three-token slot such as `F2+TBB1+TF2` — so they carry no lab rows. `CSE3001` and `SWE2004` are
+**embedded theory + project**: the project component is mapped automatically by the theory
+instructor, so they list theory rows only and the 1 project credit sits on that pick.
 
 `SWE2006` has one lab row in an online room (`ONL01002`); venues are shown exactly as VTOP prints
 them.
@@ -175,15 +178,15 @@ All catalogue data lives in `js/data.js` — edit it and reload, no build step:
 | --- | --- |
 | `THEORY_SLOTS` / `LAB_SLOTS` | slot code → period index for each weekday |
 | `TIMELINE` | rows of the weekly grid |
-| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `branch` (`MECH`/`ECE`/`CSE`/`MIC`/`Common`), `type`, `faculty[]`, `sections[]` |
+| `COURSES` | array of courses: `code`, `name`, `credits`, `theoryCredits`, `labCredits`, `category` (`PC`/`PE`/`UC`/`UE`), `branch` (`MECH`/`ECE`/`CSE`/`MIS`/`Common`), `type`, `faculty[]`, `sections[]` |
 
 Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP slot notation
 (`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep
 `theoryCredits + labCredits = credits`.
 
 Source of the current data: course/faculty details come from the supplied VTOP registration
-exports, official course PDFs and VTOP slot-list PDFs (the `MIC` set comes from the VTOP
-`checkRegistration` print-outs of `25MIC7153`); the slot structure is transcribed from the
+exports, official course PDFs and VTOP slot-list PDFs (the `MIS` set comes from VTOP
+`checkRegistration` print-outs, `ECE2016` from the Engineering Electromagnetics PDF); the slot structure is transcribed from the
 official Winter 2026–27 slot timetable. Categories follow VTOP: `PC` programme core,
 `PE` programme elective, `UC` university core, `UE` university elective — for `CSE1005`,
 `CSE1007`, `CSE2007` and `CSE2008` they are cross-checked against the published VIT-AP B.Tech CSE

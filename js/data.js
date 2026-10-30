@@ -14,9 +14,12 @@
  *                   slot-list PDFs (text layer; slot, venue, faculty only).
  *                   CSE2008 — from VTOP registration screenshots (module slot
  *                   table; the seat counts are omitted).
- *                   CSE3001, CSE3002, ECE2015, SWE3001, SWE2006 — from the
- *                   VTOP 'Modify Slots' PDFs of 25MIC7153 (printed to PDF, so
- *                   read visually; the AVAILABILITY column is not stored).
+ *                   CSE3001, CSE3002, SWE2004, SWE3001, SWE2006 — the MIS
+ *                   registration list (VTOP 'Modify Slots' print-outs, read
+ *                   visually; the AVAILABILITY column is not stored).
+ *                   ECE2015 — VTOP print-out (theory only, 4 credits).
+ *                   ECE2016 — from the Engineering Electromagnetics PDF of
+ *                   25BEC7153 (theory only; seat counts omitted).
  *
  * Credit model (VIT-AP FFCS):
  *   Embedded Theory and Lab course = 4 credits
@@ -100,12 +103,12 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /*   credits = theoryCredits + labCredits                              */
 /*   Embedded Theory and Lab = 5 cr (3 theory + 2 lab)                */
 /*   STS2011 theory-only      = 1 cr                                   */
-/*   ECE2015 theory-only      = 4 cr (4 theory hours, no lab)          */
-/*   CSE3001 ETP              = 4 cr (3 theory + 1 project)            */
-/*   branch = MECH | ECE | CSE | MIC | Common                           */
+/*   ECE2015 / ECE2016 theory-only = 4 cr (4 theory hours, no lab)     */
+/*   CSE3001 / SWE2004 ETP    = 4 cr (3 theory + 1 project)            */
+/*   branch = MECH | ECE | CSE | MIS | Common                           */
 /*     Common = MGT1040, CSE1022, MAT1010, STS2011 (open to all        */
-/*     branches); MIC = the MIC-semester set (CSE3001, CSE3002,        */
-/*     ECE2015, SWE3001, SWE2006); the rest sit under their own branch. */
+/*     branches); MIS = the MIS registration list (CSE3001, CSE3002,   */
+/*     SWE2004, SWE3001, SWE2006); the rest sit under their own branch. */
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
@@ -1201,7 +1204,7 @@ const COURSES = [
   {
     code: 'CSE3001', name: 'Agile Development Process',
     credits: 4, theoryCredits: 3, labCredits: 0, projectCredits: 1,
-    category: 'PE', branch: 'MIC', type: 'Embedded Theory and Project',
+    category: 'PE', branch: 'MIS', type: 'Embedded Theory and Project',
     faculty: [
       'Khasim Syed',
       'KANHAIYA SHARMA',
@@ -1224,7 +1227,7 @@ const COURSES = [
   {
     code: 'CSE3002', name: 'Artificial Intelligence',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PE', branch: 'MIC', type: 'Embedded Theory and Lab',
+    category: 'PE', branch: 'MIS', type: 'Embedded Theory and Lab',
     faculty: [
       'Eswaraiah Rayachoti',
       'VISWANATHAN',
@@ -1254,7 +1257,7 @@ const COURSES = [
   {
     code: 'ECE2015', name: 'Computer Architecture',
     credits: 4, theoryCredits: 4, labCredits: 0,
-    category: 'PC', branch: 'MIC', type: 'Theory Only',
+    category: 'PC', branch: 'ECE', type: 'Theory Only',
     faculty: [
       'Jayendra Kumar',
       'Ashish Gupta',
@@ -1271,7 +1274,7 @@ const COURSES = [
   {
     code: 'SWE3001', name: 'Fundamentals of Computer Networks',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', branch: 'MIC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'MIS', type: 'Embedded Theory and Lab',
     faculty: [
       'Reeja S R',
       'KARNAM BALAJI',
@@ -1303,7 +1306,7 @@ const COURSES = [
   {
     code: 'SWE2006', name: 'Database Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
-    category: 'PC', branch: 'MIC', type: 'Embedded Theory and Lab',
+    category: 'PC', branch: 'MIS', type: 'Embedded Theory and Lab',
     faculty: [
       'Nagaraju Devarakonda',
       'Hari Seetha',
@@ -1331,6 +1334,41 @@ const COURSES = [
       { code: 'L5+L6', venue: 'CB-209', faculty: 'Hari Seetha', type: 'lab' },
       { code: 'L51+L52', venue: 'CB-416', faculty: 'Nagaraju Devarakonda', type: 'lab' },
       { code: 'L9+L10', venue: 'CB-416', faculty: 'Hari Seetha', type: 'lab' },
+    ],
+  },
+  {
+    code: 'SWE2004', name: 'Software Design and Architecture',
+    credits: 4, theoryCredits: 3, labCredits: 0, projectCredits: 1,
+    category: 'PC', branch: 'MIS', type: 'Embedded Theory and Project',
+    faculty: [
+      'Hussain Syed',
+      'Yelepi Usha Rani',
+      'N MD JUBAIR BASHA'
+    ],
+    sections: [
+      { code: 'E1+TE1', venue: 'CB-510', faculty: 'N MD JUBAIR BASHA', type: 'theory' },
+      { code: 'E1+TE1', venue: 'CB-511', faculty: 'Hussain Syed', type: 'theory' },
+      { code: 'E2+TE2', venue: 'CB-523', faculty: 'Hussain Syed', type: 'theory' },
+      { code: 'E2+TE2', venue: 'CB-524', faculty: 'N MD JUBAIR BASHA', type: 'theory' },
+      { code: 'E2+TE2', venue: 'CB-525', faculty: 'Yelepi Usha Rani', type: 'theory' },
+    ],
+  },
+  {
+    code: 'ECE2016', name: 'Engineering Electromagnetics',
+    credits: 4, theoryCredits: 4, labCredits: 0,
+    category: 'PC', branch: 'ECE', type: 'Theory Only',
+    faculty: [
+      'ANSHUMAN CHOUDHARY',
+      'Sameeulla Khan Md',
+      'Khairnar Vikas Vishnu',
+      'G Bharat Reddy'
+    ],
+    sections: [
+      { code: 'A1+TA1+TAA1', venue: 'CB-110', faculty: 'ANSHUMAN CHOUDHARY', type: 'theory' },
+      { code: 'A1+TA1+TAA1', venue: 'CB-213', faculty: 'Sameeulla Khan Md', type: 'theory' },
+      { code: 'A2+TA2+TAA2', venue: 'AB1-323', faculty: 'ANSHUMAN CHOUDHARY', type: 'theory' },
+      { code: 'A2+TA2+TAA2', venue: 'CB-111', faculty: 'G Bharat Reddy', type: 'theory' },
+      { code: 'B1+TB1+TBB1', venue: 'CB-112', faculty: 'Khairnar Vikas Vishnu', type: 'theory' },
     ],
   },
 ];

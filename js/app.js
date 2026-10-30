@@ -16,12 +16,14 @@ const SECTION_PREVIEW_LIMIT = 4;
 
 // Keep short cards together and place MGT1040 / STS2011 after the
 // embedded theory+lab courses instead of leaving large blank grid tracks.
+// The four Common courses come first (they apply to every branch), then the
+// branch courses; short cards stay together so no grid track is left blank.
 const COURSE_DISPLAY_ORDER = [
-  'MEC3002', 'MEC2018', 'MEC2005', 'MAT1010',
-  'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'CSE1022',
+  'MAT1010', 'STS2011', 'MGT1040', 'CSE1022',
+  'MEC3002', 'MEC2018', 'MEC2005',
+  'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'ECE2015', 'ECE2016',
   'CSE1005', 'CSE1007', 'CSE1021', 'CSE2007', 'CSE2008',
-  'CSE3001', 'CSE3002', 'ECE2015', 'SWE3001', 'SWE2006',
-  'MGT1040', 'STS2011',
+  'CSE3001', 'CSE3002', 'SWE2004', 'SWE3001', 'SWE2006',
 ];
 
 /* ------------------------------------------------------------------ */
@@ -857,9 +859,59 @@ function bindFilters() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Theme (light / dark)                                                */
+/* ------------------------------------------------------------------ */
+const THEME_KEY = 'winterPlannerTheme';
+const THEME_META = { light: '#4f46e5', dark: '#0b1020' };
+
+function systemTheme() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  const dark = theme === 'dark';
+  document.documentElement.dataset.theme = theme;
+  const btn = $('#theme-toggle');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(dark));
+    const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    btn.setAttribute('aria-label', label);
+    btn.title = label;
+  }
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? THEME_META.dark : THEME_META.light);
+}
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch { saved = null; }
+  applyTheme(saved === 'dark' || saved === 'light' ? saved : systemTheme());
+
+  const btn = $('#theme-toggle');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      try { localStorage.setItem(THEME_KEY, next); } catch { /* private mode */ }
+      toast(next === 'dark' ? 'Dark mode on' : 'Light mode on', 'info');
+    });
+  }
+  // follow the OS while the visitor has not picked a side yet
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => {
+      let picked = null;
+      try { picked = localStorage.getItem(THEME_KEY); } catch { picked = null; }
+      if (picked !== 'dark' && picked !== 'light') applyTheme(mq.matches ? 'dark' : 'light');
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Boot                                                                */
 /* ------------------------------------------------------------------ */
 function boot() {
+  initTheme();
   bindFilters();
   normaliseSavedSelections();
   saveState();
