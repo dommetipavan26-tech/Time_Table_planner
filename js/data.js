@@ -105,10 +105,13 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /*   STS2011 theory-only      = 1 cr                                   */
 /*   ECE2015 / ECE2016 theory-only = 4 cr (4 theory hours, no lab)     */
 /*   CSE3001 / SWE2004 ETP    = 4 cr (3 theory + 1 project)            */
-/*   branch = MECH | ECE | CSE | MIS | Common                           */
+/*   branch = MECH | ECE | CSE | MIS | MIC | Common                    */
 /*     Common = MGT1040, CSE1022, MAT1010, STS2011 (open to all        */
 /*     branches); MIS = the MIS registration list (CSE3001, CSE3002,   */
-/*     SWE2004, SWE3001, SWE2006); the rest sit under their own branch. */
+/*     SWE2004, SWE3001, SWE2006); MIC = the MIC registration list      */
+/*     (SWE2006, SWE3001, ECE2015, CSE3001, CSE3002).                   */
+/*   also = extra branch groups a course belongs to, e.g.               */
+/*     also: ['MIC'] on an ECE course that is also on the MIC list.    */
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
@@ -1205,6 +1208,7 @@ const COURSES = [
     code: 'CSE3001', name: 'Agile Development Process',
     credits: 4, theoryCredits: 3, labCredits: 0, projectCredits: 1,
     category: 'PE', branch: 'MIS', type: 'Embedded Theory and Project',
+    also: ['MIC'],
     faculty: [
       'Khasim Syed',
       'KANHAIYA SHARMA',
@@ -1228,6 +1232,7 @@ const COURSES = [
     code: 'CSE3002', name: 'Artificial Intelligence',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PE', branch: 'MIS', type: 'Embedded Theory and Lab',
+    also: ['MIC'],
     faculty: [
       'Eswaraiah Rayachoti',
       'VISWANATHAN',
@@ -1258,6 +1263,7 @@ const COURSES = [
     code: 'ECE2015', name: 'Computer Architecture',
     credits: 4, theoryCredits: 4, labCredits: 0,
     category: 'PC', branch: 'ECE', type: 'Theory Only',
+    also: ['MIC'],
     faculty: [
       'Jayendra Kumar',
       'Ashish Gupta',
@@ -1275,6 +1281,7 @@ const COURSES = [
     code: 'SWE3001', name: 'Fundamentals of Computer Networks',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PC', branch: 'MIS', type: 'Embedded Theory and Lab',
+    also: ['MIC'],
     faculty: [
       'Reeja S R',
       'KARNAM BALAJI',
@@ -1307,6 +1314,7 @@ const COURSES = [
     code: 'SWE2006', name: 'Database Systems',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PC', branch: 'MIS', type: 'Embedded Theory and Lab',
+    also: ['MIC'],
     faculty: [
       'Nagaraju Devarakonda',
       'Hari Seetha',

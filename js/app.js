@@ -355,10 +355,22 @@ function renderHeader() {
 /* ------------------------------------------------------------------ */
 /* Courses view                                                        */
 /* ------------------------------------------------------------------ */
+// A course normally belongs to one branch group; `also` lists the extra lists
+// it appears on (a department course that is also on the MIC registration list).
+const branchesOf = (course) => [course.branch, ...(course.also || [])];
+
+function branchBadges(course) {
+  return branchesOf(course).map((b, i) => {
+    const alt = i > 0 ? ' is-alt' : '';
+    const hint = i > 0 ? ` title="Also on the ${esc(b)} list"` : '';
+    return `<span class="branch-badge branch-${esc(b)}${alt}"${hint}>${esc(b)}</span>`;
+  }).join('');
+}
+
 function renderCourses() {
   const q = filters.q.trim().toLowerCase();
   const list = COURSES.filter(c => {
-    if (filters.branch !== 'all' && c.branch !== filters.branch) return false;
+    if (filters.branch !== 'all' && !branchesOf(c).includes(filters.branch)) return false;
     if (filters.cat !== 'all' && c.category !== filters.cat) return false;
     if (filters.type !== 'all' && c.type !== filters.type) return false;
     // Search covers the course code, the title, every instructor on the course
@@ -468,7 +480,7 @@ function cardHTML(course) {
         </div>
       </header>
       <div class="meta-row">
-        <span class="branch-badge branch-${esc(course.branch)}">${esc(course.branch)}</span>
+        ${branchBadges(course)}
         <span class="type-badge">${esc(course.type)}</span>
         <span class="pick-rule">${course.labCredits ? '1 theory + 1 lab' : '1 theory slot'}</span>
       </div>

@@ -16,7 +16,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 
 const CATEGORIES = new Set(['PC', 'PE', 'UC', 'UE']);
-const BRANCHES = new Set(['MECH', 'ECE', 'CSE', 'MIS', 'Common']);
+const BRANCHES = new Set(['MECH', 'ECE', 'CSE', 'MIS', 'MIC', 'Common']);
 const TYPES = new Set(['Embedded Theory and Lab', 'Embedded Theory and Project', 'Theory Only']);
 const COURSE_CODE = /^[A-Z]{3}\d{4}$/;
 // Rooms come as CB-516 / AB2-114 / CB-G15, or as a bare online room such as ONL01002.
@@ -82,7 +82,16 @@ for (const course of COURSES) {
 
   if (typeof course.name !== 'string' || !course.name.trim()) fail(`${id}: missing name`);
   if (!CATEGORIES.has(course.category)) fail(`${id}: category "${course.category}" is not PC/PE/UC/UE`);
-  if (!BRANCHES.has(course.branch)) fail(`${id}: branch "${course.branch}" is not MECH/ECE/CSE/MIS/Common`);
+  if (!BRANCHES.has(course.branch)) fail(`${id}: branch "${course.branch}" is not MECH/ECE/CSE/MIS/MIC/Common`);
+  // `also` = extra branch groups (e.g. an ECE course that is also on the MIC list)
+  if (course.also !== undefined) {
+    if (!Array.isArray(course.also) || course.also.length === 0) fail(`${id}: also must be a non-empty array`);
+    else for (const b of course.also) {
+      if (!BRANCHES.has(b)) fail(`${id}: also "${b}" is not MECH/ECE/CSE/MIS/MIC/Common`);
+      if (b === course.branch) fail(`${id}: also repeats the primary branch "${b}"`);
+      if (course.also.indexOf(b) !== course.also.lastIndexOf(b)) fail(`${id}: also lists "${b}" twice`);
+    }
+  }
   if (!TYPES.has(course.type)) fail(`${id}: type "${course.type}" is not a known course type`);
 
   const sum = (course.theoryCredits || 0) + (course.labCredits || 0) + (course.projectCredits || 0);
@@ -255,7 +264,10 @@ else if (/noindex/i.test(robotsMeta[1])) fail('index.html: <meta name="robots"> 
 /* ------------------------------------------------------------------ */
 /* Report                                                              */
 /* ------------------------------------------------------------------ */
-const perBranch = COURSES.reduce((acc, c) => ((acc[c.branch] = (acc[c.branch] || 0) + 1), acc), {});
+const perBranch = COURSES.reduce((acc, c) => {
+  for (const b of [c.branch, ...(c.also || [])]) acc[b] = (acc[b] || 0) + 1;
+  return acc;
+}, {});
 const fourCredit = COURSES.filter((c) => c.credits === 4).length;
 
 if (errors.length) {
