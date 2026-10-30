@@ -340,7 +340,10 @@ function renderHeader() {
   $('#credit-pill').classList.toggle('show', t.credits > 0);
   $('#hdr-clear').classList.toggle('show', Object.keys(selected).length > 0);
   $$('.nav-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.view === view);
+    const active = tab.dataset.view === view;
+    tab.classList.toggle('active', active);
+    if (active) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
   });
 }
 
@@ -422,6 +425,12 @@ function cardHTML(course) {
         <span class="slot-days">${esc(days)}</span>
         <button class="btn-select ${isOn ? 'on' : ''}${willSwap ? ' swap' : ''}" data-toggle
           data-code="${esc(course.code)}" data-slot="${esc(sec.code)}" data-venue="${esc(sec.venue)}"
+          aria-pressed="${isOn}"
+          aria-label="${esc(isOn
+            ? `Remove ${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`
+            : willSwap
+              ? `Swap ${course.code} ${sec.type} slot to ${sec.code} at ${sec.venue}, replacing ${current.sel.sectionCode}`
+              : `Select ${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`)}"
           ${willSwap ? `title="Replaces your current ${sec.type} slot ${esc(current.sel.sectionCode)}"` : ''}>
           ${isOn ? '✓ Selected' : willSwap ? 'Swap' : 'Select'}
         </button>
@@ -808,6 +817,25 @@ function switchView(v) {
 /* ------------------------------------------------------------------ */
 function bindFilters() {
   $('#search-input').addEventListener('input', e => { filters.q = e.target.value; renderCourses(); });
+
+  // "/" focuses the search field from anywhere; Escape clears it.
+  document.addEventListener('keydown', e => {
+    const el = e.target;
+    const typing = el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+    if (e.key === '/' && !typing) {
+      e.preventDefault();
+      $('#search-input').focus();
+      $('#search-input').select();
+    }
+  });
+  $('#search-input').addEventListener('keydown', e => {
+    if (e.key === 'Escape' && e.target.value) {
+      e.stopPropagation();           // don't let Escape close a dialog too
+      e.target.value = '';
+      filters.q = '';
+      renderCourses();
+    }
+  });
   $$('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       filters.cat = chip.dataset.cat;
@@ -839,6 +867,9 @@ function boot() {
   $('#hdr-clear').addEventListener('click', () => clearSelections());
   $('#sel-clear-theory').addEventListener('click', () => clearSelections(s => s.type === 'theory', 'all theory sections'));
   $('#sel-clear-labs').addEventListener('click', () => clearSelections(s => s.type === 'lab', 'all lab sections'));
+
+  const yearEl = $('#footer-year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
   // Glass header: deepen the frosted panel as soon as the page scrolls.
   const header = document.querySelector('.site-header');

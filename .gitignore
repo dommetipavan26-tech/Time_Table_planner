@@ -1,0 +1,20 @@
+# OS / editor noise
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Tooling (the site itself has no build step or dependencies)
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+
+# Local scratch
+*.local
+*.log
