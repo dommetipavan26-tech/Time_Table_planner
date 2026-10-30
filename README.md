@@ -75,17 +75,28 @@ There is **nothing to install and nothing to build**. No `package.json`, no bund
 
 ## The plan
 
-Winter 2026–27 · **6 courses · 21 credits**
+Winter 2026–27 · **11 courses · 41 credits · 483 sections**
 
-| Code | Title | Credits | Breakdown |
-|---|---|:--:|---|
-| `MEC3002` | Theory of Machines | 4 | Theory 3 + Lab 1 |
-| `MEC2018` | Thermal Engineering Systems | 4 | Theory 3 + Lab 1 |
-| `MEC2005` | Fundamentals of Manufacturing Processes | 4 | Theory 3 + Lab 1 |
-| `MAT1010` | Probability and Statistics | 4 | Theory 3 + Lab 1 |
-| `MGT1040` | Entrepreneurship | 4 | Theory 3 + Project 1 |
-| `STS2011` | Qualitative and Quantitative Skills Practice | 1 | Theory only |
+| Code | Title | Cat. | Credits | Breakdown |
+|---|---|:--:|:--:|---|
+| `MEC3002` | Theory of Machines | PC | 4 | Theory 3 + Lab 1 |
+| `MEC2018` | Thermal Engineering Systems | PC | 4 | Theory 3 + Lab 1 |
+| `MEC2005` | Fundamentals of Manufacturing Processes | PC | 4 | Theory 3 + Lab 1 |
+| `MAT1010` | Probability and Statistics | UC | 4 | Theory 3 + Lab 1 |
+| `ECE2003` | Control Systems Engineering | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2006` | Communication Systems | PC | 4 | Theory 3 + Lab 1 |
+| `ECE2009` | Data Acquisition and Transmission Systems | PE | 4 | Theory 3 + Lab 1 |
+| `ECE3006` | HDL Verification and Methodology | PE | 4 | Theory 3 + Lab 1 |
+| `CSE1022` | Introduction to Programming | UE | 4 | Theory 3 + Lab 1 |
+| `MGT1040` | Entrepreneurship | UC | 4 | Theory 3 + Project 1 |
+| `STS2011` | Qualitative and Quantitative Skills Practice | UC | 1 | Theory only |
 
+`CSE1022` carries the full VTOP export — 115 theory and 114 lab slots — so its card opens with a
+scrollable list behind **Show more sections**.
+
+> Seat/availability counts from the registration export are **intentionally not included**; the
+> planner only needs slot, venue and instructor.
+>
 > `MEC3011` (Operations and Research) and `MEC4003` (Internal Combustion Engines) are **not** part of
 > the current plan; they were removed from the catalogue and any saved sections for them are dropped
 > automatically on load.
@@ -121,9 +132,10 @@ Each section is `{ code, venue, faculty, type: 'theory' | 'lab' }`, using VTOP s
 (`C2+TCC2` = theory + tutorial, `L9+L10` = two consecutive lab periods). Keep
 `theoryCredits + labCredits = credits`.
 
-Source of the current data: course/faculty details come from the supplied registration lists and
-official course PDFs; the slot structure is transcribed from the official Winter 2026–27 slot
-timetable.
+Source of the current data: course/faculty details come from the supplied VTOP registration
+exports and official course PDFs; the slot structure is transcribed from the official Winter
+2026–27 slot timetable. Categories follow VTOP: `PC` programme core, `PE` programme elective,
+`UC` university core, `UE` university elective.
 
 ## Accessibility & performance
 

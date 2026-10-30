@@ -18,6 +18,7 @@ const SECTION_PREVIEW_LIMIT = 4;
 // embedded theory+lab courses instead of leaving large blank grid tracks.
 const COURSE_DISPLAY_ORDER = [
   'MEC3002', 'MEC2018', 'MEC2005', 'MAT1010',
+  'ECE2003', 'ECE2006', 'ECE2009', 'ECE3006', 'CSE1022',
   'MGT1040', 'STS2011',
 ];
 
