@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Winter Planner — https://vitap-slots.vercel.app/
+  Single-page app: filter state lives in the hash-free query-less UI, every
+  course card is rendered from js/data.js on the same document, so the
+  catalogue has exactly one canonical URL.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vitap-slots.vercel.app/</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
