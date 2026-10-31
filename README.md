@@ -235,7 +235,9 @@ that `sitemap.xml` / `robots.txt` describe that same canonical host (no `noindex
 
 ```bash
 node tools/check-links.mjs                       # no dependencies
-npm i --no-save puppeteer && node tools/check-mobile.mjs http://127.0.0.1:8080/
+npm i --no-save puppeteer
+node tools/check-mobile.mjs http://127.0.0.1:8080/
+node tools/check-print.mjs  http://127.0.0.1:8080/   # also needs pdfjs-dist
 ```
 
 `check-links.mjs` fails on a `href`/`src`/`action` that points at a file which is not in the repo, an
@@ -249,9 +251,25 @@ sideways scrolling, elements past the viewport (unless an ancestor clips them), 
 24 px and text under 11 px — with an explicit 8.5 px floor inside the dense timetable matrix, which
 scrolls and has its own print layout.
 
-`.github/workflows/audit.yml` runs Lighthouse for mobile and desktop, posts the scores and the
-mobile report as a pull-request comment, uploads the HTML reports, and gates on accessibility
-≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mobile / ≥ 90 desktop.
+`check-print.mjs` is the guard for the printed sheet. It picks a realistic plan straight out of
+`js/data.js`, switches Chrome into print media, saves a real PDF and reads it back with `pdf.js`, so
+the assertions come from the bytes a student would download. It fails when:
+
+- the sheet is not **A4 portrait**, is rotated, or spills over more than two pages — a landscape or
+  rotated sheet *is* the sideways timetable;
+- any glyph run is tilted instead of reading left to right, or ends past the right margin (clipped
+  column);
+- anything other than the timetable is printed (header, filters, selection panel, footer);
+- the grid is wider than the printable area, any cell clips its text, any cell is missing a border,
+  or text drops below 6 pt.
+
+It then puts the grid into `.is-exporting` and applies the layout checks to the PNG download,
+because `html2canvas` only ever sees the screen stylesheet.
+
+`.github/workflows/audit.yml` runs Lighthouse for mobile and desktop, posts the scores, the mobile
+report, the contrast audit and the print/PDF sheet as a pull-request comment, uploads the HTML
+reports, and gates on accessibility ≥ 95, best practices ≥ 90, SEO = 100, performance ≥ 70 mobile /
+≥ 90 desktop, a clean contrast audit and a clean print audit.
 
 ## Search Console & sitemap
 
@@ -296,6 +314,22 @@ wrong place for a free student tool.
   removed for print.
 - No fonts, frameworks or vendors are required beyond Google Fonts and html2canvas (CDN);
   the page renders and plans without either.
+
+## Printing & exporting
+
+**Print / PDF** on the timetable view hands the browser one clean sheet: a title line, the sections
+that were picked, then the matrix. The sheet is A4 **portrait** on purpose — the paper is portrait, so
+nothing is ever rotated to fit, and the browser never has to shrink the page down and clip the
+Saturday column. `@page { size: A4 portrait; margin: 10mm 8mm; }` plus a single `@media print` block
+(no competing rules) keeps the grid inside the printable width: the label columns take 9 % and 8 %,
+the twelve period columns share the rest, captions wrap instead of being ellipsised, and every cell
+carries a real collapsed border, so the grid survives being printed in black and white or from dark
+mode.
+
+**Save image** produces the PNG through `html2canvas`, which ignores `@media print`. While the
+capture runs the grid wears `.is-exporting`, which re-lays it as one wide sheet (1240 px) with the
+same wrapped captions and borders, then removes the class. Both paths are covered by
+`tools/check-print.mjs`.
 
 ## Privacy
 

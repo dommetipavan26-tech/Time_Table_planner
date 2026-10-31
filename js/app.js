@@ -776,9 +776,14 @@ async function saveTimetableImage() {
   const btn = $('#tt-save-img');
   const label = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Preparing…'; }
+  const grid = $('#tt-grid');
   try {
     const h2c = await loadHtml2canvas();
-    const canvas = await h2c($('#tt-grid'), { scale: 2, backgroundColor: '#ffffff' });
+    // .is-exporting re-lays the grid like paper (wide sheet, wrapped captions,
+    // a border on every cell) — html2canvas never sees @media print.
+    grid.classList.add('is-exporting');
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const canvas = await h2c(grid, { scale: 2, backgroundColor: '#ffffff' });
     await new Promise((resolve, reject) => {
       canvas.toBlob(blob => {
         if (!blob) { reject(new Error('empty canvas')); return; }
@@ -795,6 +800,7 @@ async function saveTimetableImage() {
   } catch (e) {
     toast('Could not capture image — try Print to save a PDF', 'error');
   } finally {
+    grid.classList.remove('is-exporting');
     if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = label; }
   }
 }

@@ -1918,22 +1918,6 @@ body {
   [data-theme="dark"] .schedule-wrap { background: #141a2e; }
 }
 
-/* ---- printing from dark mode should still give white paper ---- */
-@media print {
-  [data-theme="dark"] .schedule-wrap { background: #fff !important; }
-  [data-theme="dark"] .matrix-cell { background: #fffbd0 !important; color: #566075 !important; }
-  [data-theme="dark"] .matrix-cell.is-gap { background: #fffde3 !important; color: #a2a8b4 !important; }
-  [data-theme="dark"] .matrix-cell.is-lunch { background: #e7e9ed !important; color: #687386 !important; }
-  [data-theme="dark"] .matrix-band { color: #354159 !important; }
-  [data-theme="dark"] .theory-band { background: #e5e2fb !important; }
-  [data-theme="dark"] .lab-band { background: #cde9f8 !important; }
-  [data-theme="dark"] .matrix-label { background: #edf0f4 !important; color: #556075 !important; }
-  [data-theme="dark"] .matrix-time { background: #dcd9f5 !important; color: #43506a !important; }
-  [data-theme="dark"] .matrix-day { background: #f0f2f5 !important; color: #47526a !important; }
-  [data-theme="dark"] .matrix-kind { background: #f5f6f8 !important; color: #47526a !important; }
-  [data-theme="dark"] .matrix-course b { color: #172038 !important; }
-  [data-theme="dark"] .matrix-course small { color: #545e73 !important; }
-}
 
 /* ---- the toggle button ---- */
 .theme-toggle {
@@ -1956,21 +1940,269 @@ body {
 [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
 [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
 
-/* ==================== PRINT STYLES ==================== */
-@media print {
-  body * { visibility: hidden; }
-  #view-timetable, #view-timetable * { visibility: visible; }
-  #view-timetable { position: absolute; left: 0; top: 0; width: 100%; }
-  .matrix-cell { min-height: 40px; }
-  .tt-header, .tt-stats, .sel-panel, .site-footer, .about-block, .toasts, .matrix-empty-note, .matrix-scroll-note { display: none !important; }
-  .container { max-width: 100% !important; padding: 0 !important; }
-  .schedule-wrap { overflow: visible !important; box-shadow: none !important; border-radius: 0 !important; }
-  .schedule-table { width: 100% !important; min-width: 0 !important; font-size: 6px !important; }
-  .schedule-table th, .schedule-table td { min-width: 0 !important; width: auto !important; }
-  .matrix-band, .matrix-day, .matrix-label, .matrix-kind { position: static !important; }
-  .matrix-cell { height: 34px !important; padding: 1px !important; }
-  .matrix-slot { font-size: 6px !important; }
-  .matrix-course b { font-size: 5.5px !important; }
-  .matrix-course small { font-size: 5px !important; }
+/* ---------------- PNG export ----------------
+   html2canvas reads the screen stylesheet only, so the download used to keep the
+   on-screen 64 px cells with ellipsised captions. While a capture is running the
+   grid wears .is-exporting, which re-lays the table exactly like paper: one wide
+   sheet, wrapped text, a border on every cell. */
+.tt-grid.is-exporting {
+  width: max-content;
+  min-width: 0;
+  max-width: none;
+  padding: 16px;
+  background: #fff;
 }
-@page { size: landscape; margin: 7mm; }
+.tt-grid.is-exporting .matrix-empty-note,
+.tt-grid.is-exporting .matrix-scroll-note { display: none !important; }
+.tt-grid.is-exporting .schedule-wrap {
+  overflow: visible !important;
+  max-height: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+}
+.tt-grid.is-exporting .schedule-table {
+  width: 1240px !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  background: #fff !important;
+}
+.tt-grid.is-exporting .schedule-table th,
+.tt-grid.is-exporting .schedule-table td {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  position: static !important;
+  box-shadow: none !important;
+  border: 1px solid #98a2b3 !important;
+  padding: 5px 3px !important;
+  vertical-align: top !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  background-color: #fff !important;
+  background-image: none !important;
+  color: #111 !important;
+}
+.tt-grid.is-exporting .schedule-table th:first-child { width: 10% !important; }
+.tt-grid.is-exporting .schedule-table th:nth-child(2) { width: 9% !important; }
+.tt-grid.is-exporting .matrix-band,
+.tt-grid.is-exporting .matrix-day,
+.tt-grid.is-exporting .matrix-kind,
+.tt-grid.is-exporting .matrix-label,
+.tt-grid.is-exporting .matrix-time {
+  background: #eef1f6 !important;
+  color: #1a2233 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+.tt-grid.is-exporting .theory-band { background: #e7e5fb !important; }
+.tt-grid.is-exporting .lab-band { background: #dcecfb !important; }
+.tt-grid.is-exporting .matrix-day { font-size: 13px !important; letter-spacing: .04em !important; }
+.tt-grid.is-exporting .matrix-cell {
+  height: auto !important;
+  min-height: 46px;
+  background: #fff !important;
+  color: #111 !important;
+  font-size: 11px !important;
+}
+.tt-grid.is-exporting .matrix-cell.is-gap { background: #fafbfc !important; color: #9aa2b1 !important; }
+.tt-grid.is-exporting .matrix-cell.is-lunch { background: #eef0f3 !important; color: #3d4760 !important; }
+.tt-grid.is-exporting .matrix-cell.is-selected {
+  background: #e9efff !important;
+  border: 2px solid #46536b !important;
+}
+.tt-grid.is-exporting .matrix-cell.has-overlap {
+  background: #fff4d6 !important;
+  border: 2px solid #8a5a00 !important;
+}
+.tt-grid.is-exporting .matrix-slot { font-size: 11px !important; font-weight: 700 !important; color: #1a2233 !important; }
+.tt-grid.is-exporting .matrix-cell.is-selected .matrix-slot { color: #1a2233 !important; }
+.tt-grid.is-exporting .matrix-course b,
+.tt-grid.is-exporting .matrix-course small {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+.tt-grid.is-exporting .matrix-course b { font-size: 11.5px !important; color: #172038 !important; }
+.tt-grid.is-exporting .matrix-course small { font-size: 10px !important; color: #545e73 !important; }
+
+/* ==================== PRINT STYLES ==================== */
+/* One sheet of paper: a title line, the sections that were picked, then the
+   matrix. Portrait A4 on purpose — print dialogs disagree about landscape and
+   some rotate the page instead of resizing it, which is how a timetable ends up
+   sideways with clipped cells. Everything here beats the theme rules, so a
+   print from dark mode gives the same white sheet. */
+.print-head { display: none; }
+
+@page { size: A4 portrait; margin: 10mm 8mm; }
+
+@media print {
+  html, body { background: #fff !important; color: #111 !important; }
+  body { margin: 0 !important; }
+
+  /* only the timetable sheet goes on paper, whichever tab is open */
+  .site-header, .hero, .nav, .filter-bar, .sel-panel, .site-footer, .about-block,
+  .skip-link, .noscript-note, .toasts, .modal-backdrop, .theme-toggle,
+  .tt-header, .tt-stats, .matrix-empty-note, .matrix-scroll-note { display: none !important; }
+  #view-courses { display: none !important; }
+  #view-timetable { display: block !important; }
+  .container { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+
+  /* the sheet header the screen never shows */
+  .print-head { display: block !important; margin: 0 0 7px; }
+  .print-head h2 { margin: 0; font-size: 13pt; font-weight: 800; color: #111 !important; }
+  .print-head p { margin: 2px 0 0; font-size: 8pt; color: #555 !important; }
+
+  /* the picked sections, as one compact line */
+  .tt-legend {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px 12px;
+    margin: 8px 0;
+    font-size: 7.5pt;
+    color: #111 !important;
+  }
+  .legend-title { font-weight: 700; color: #111 !important; }
+  .legend-item { display: inline-flex; align-items: center; gap: 4px; }
+  .legend-swatch {
+    width: 7px; height: 7px;
+    border-radius: 2px;
+    border: .5pt solid #444 !important;
+    background: var(--c, #cfd6e4) !important;
+  }
+  .legend-sec { color: #444 !important; }
+
+  .schedule-wrap {
+    overflow: visible !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  .schedule-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .schedule-table thead { display: table-header-group; }
+  .schedule-table tr { break-inside: avoid; page-break-inside: avoid; }
+
+  /* cells: every one bounded, wrapped, hairline-free borders */
+  .schedule-table th,
+  .schedule-table td {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    border: .5pt solid #98a2b3 !important;
+    padding: 1.5px 1px !important;
+    vertical-align: top !important;
+    position: static !important;
+    box-shadow: none !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    color: #111 !important;
+    background-color: #fff !important;
+    background-image: none !important;
+  }
+  /* the label columns stay narrow, the periods share the rest of the width */
+  .schedule-table th:first-child { width: 9% !important; }
+  .schedule-table th:nth-child(2) { width: 8% !important; }
+
+  .matrix-band, .matrix-day, .matrix-kind, .matrix-label, .matrix-time {
+    background: #eef1f6 !important;
+    color: #1a2233 !important;
+    font-size: 6.5pt !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+  }
+  .matrix-day { font-size: 7.5pt !important; letter-spacing: .04em !important; }
+  .theory-band { background: #e7e5fb !important; }
+  .lab-band { background: #dcecfb !important; }
+
+  .matrix-cell {
+    height: auto !important;
+    min-height: 0 !important;
+    font-size: 6.5pt !important;
+    line-height: 1.15 !important;
+    background: #fff !important;
+  }
+  .matrix-cell.is-gap { background: #fafbfc !important; color: #9aa2b1 !important; }
+  .matrix-cell.is-lunch {
+    background: #eef0f3 !important;
+    color: #3d4760 !important;
+    font-size: 6.5pt !important;
+  }
+  .matrix-cell.is-selected {
+    background: #e9efff !important;
+    border: 1pt solid #46536b !important;
+  }
+  .matrix-cell.is-selected .matrix-slot { color: #1a2233 !important; }
+  .matrix-cell.has-overlap {
+    background: #fff4d6 !important;
+    border: 1pt solid #8a5a00 !important;
+  }
+
+  .matrix-slot {
+    font-size: 6.5pt !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    color: #1a2233 !important;
+  }
+  .matrix-course { margin-top: 1px !important; line-height: 1.1 !important; }
+  .matrix-course b,
+  .matrix-course small {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+  .matrix-course b { font-size: 6.5pt !important; color: #172038 !important; }
+  .matrix-course small { font-size: 6pt !important; color: #545e73 !important; }
+
+  /* The dark palette lives in plain class rules, so it still matches while
+     printing — an id prefix outranks it and keeps the paper white. */
+  #view-timetable .schedule-table th,
+  #view-timetable .schedule-table td {
+    background-color: #fff !important;
+    color: #111 !important;
+    border-color: #98a2b3 !important;
+  }
+  #view-timetable .matrix-band,
+  #view-timetable .matrix-day,
+  #view-timetable .matrix-kind,
+  #view-timetable .matrix-label,
+  #view-timetable .matrix-time { background: #eef1f6 !important; color: #1a2233 !important; }
+  #view-timetable .theory-band { background: #e7e5fb !important; }
+  #view-timetable .lab-band { background: #dcecfb !important; }
+  #view-timetable .matrix-cell { background: #fff !important; }
+  #view-timetable .matrix-cell.is-gap { background: #fafbfc !important; color: #9aa2b1 !important; }
+  #view-timetable .matrix-cell.is-lunch { background: #eef0f3 !important; color: #3d4760 !important; }
+  #view-timetable .matrix-cell.is-selected {
+    background: #e9efff !important;
+    border: 1pt solid #46536b !important;
+  }
+  #view-timetable .matrix-cell.has-overlap {
+    background: #fff4d6 !important;
+    border: 1pt solid #8a5a00 !important;
+  }
+  #view-timetable .matrix-slot { color: #1a2233 !important; }
+  #view-timetable .matrix-course b { color: #172038 !important; }
+  #view-timetable .matrix-course small { color: #545e73 !important; }
+  #view-timetable .print-head h2,
+  #view-timetable .print-head p { color: #111 !important; }
+  #view-timetable .print-head p { color: #555 !important; }
+  #view-timetable .legend-title,
+  #view-timetable .legend-item { color: #111 !important; }
+  #view-timetable .legend-sec { color: #444 !important; }
+}
