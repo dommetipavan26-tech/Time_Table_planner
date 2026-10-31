@@ -15,10 +15,11 @@ are registering for Winter 2026–27, and giving search engines and other sites 
 | Sitemap | `sitemap.xml` | submitted-ready, one canonical URL |
 | robots.txt | `robots.txt` | `Allow: /` + `Sitemap:` line |
 | Search Console verification | `index.html` | `google-site-verification` meta tag present |
-| Structured data | `index.html` | `WebSite` + `WebApplication` JSON-LD |
+| Structured data | `index.html` | `WebSite` + `WebApplication` + `FAQPage` JSON-LD |
 | Social preview | `index.html` + `docs/og-image.png` | 1200×630, `summary_large_image` |
 | Deep links | `js/app.js` | `/#courses`, `/#timetable` — shareable, crawlable in-page targets |
-| Internal links | footer | *Jump to* column: catalogue, timetable, faculty search |
+| Internal links | footer | *Jump to* column: catalogue, timetable, faculty search, About |
+| Search copy | `index.html` | title, H1, description and a static About section naming VIT-AP — see [`google-indexing.md`](google-indexing.md) |
 | GitHub repo | repo settings | description + homepage `https://vitap-slots.vercel.app/` |
 
 ## 2. What I cannot do for you

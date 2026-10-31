@@ -747,25 +747,56 @@ function saveTimetableText() {
   toast('Timetable saved as text file', 'success');
 }
 
-function saveTimetableImage() {
-  if (Object.keys(selected).length === 0) { toast('Nothing to save — add sections first', 'error'); return; }
-  if (typeof html2canvas === 'undefined') {
-    toast('Image library not loaded — use Print to save as PDF', 'error');
-    return;
+/* html2canvas is only needed for the PNG export. It used to load on every page
+   view, in front of the app's own scripts; now it is fetched the first time
+   somebody actually asks for an image, which keeps the first paint fast on a
+   phone with a slow connection. */
+const HTML2CANVAS_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+let html2canvasLoading = null;
+
+function loadHtml2canvas() {
+  if (typeof window.html2canvas === 'function') return Promise.resolve(window.html2canvas);
+  if (!html2canvasLoading) {
+    html2canvasLoading = new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = HTML2CANVAS_SRC;
+      tag.async = true;
+      tag.onload = () => (typeof window.html2canvas === 'function'
+        ? resolve(window.html2canvas)
+        : reject(new Error('html2canvas did not register')));
+      tag.onerror = () => reject(new Error('html2canvas failed to load'));
+      document.head.appendChild(tag);
+    }).catch((error) => { html2canvasLoading = null; throw error; });
   }
-  html2canvas($('#tt-grid'), { scale: 2, backgroundColor: '#ffffff' })
-    .then(canvas => {
+  return html2canvasLoading;
+}
+
+async function saveTimetableImage() {
+  if (Object.keys(selected).length === 0) { toast('Nothing to save — add sections first', 'error'); return; }
+  const btn = $('#tt-save-img');
+  const label = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Preparing…'; }
+  try {
+    const h2c = await loadHtml2canvas();
+    const canvas = await h2c($('#tt-grid'), { scale: 2, backgroundColor: '#ffffff' });
+    await new Promise((resolve, reject) => {
       canvas.toBlob(blob => {
+        if (!blob) { reject(new Error('empty canvas')); return; }
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = 'Winter2026-27_timetable.png';
         a.click();
         URL.revokeObjectURL(url);
-        toast('Timetable saved as PNG image', 'success');
+        resolve();
       });
-    })
-    .catch(() => toast('Could not capture image — try Print instead', 'error'));
+    });
+    toast('Timetable saved as PNG image', 'success');
+  } catch (e) {
+    toast('Could not capture image — try Print to save a PDF', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = label; }
+  }
 }
 
 /* ------------------------------------------------------------------ */

@@ -53,6 +53,33 @@ Google normally crawls a newly requested page within a few hours to a few days. 
 - Optional: DuckDuckGo and Yahoo follow Bing; Yandex and Baidu need their own consoles and are not
   worth it for a VIT-AP audience.
 
+## 4a. What happens after you press “Request indexing”
+
+Requesting indexing puts the URL in a queue; it is not a publish button.
+
+| When | What you should see | Where |
+|---|---|---|
+| Minutes | “Indexing requested” under the URL, sometimes “URL is on Google” within the hour | Search Console → URL Inspection |
+| 1–3 days | **Pages** report moves the URL from *Discovered / Crawled – currently not indexed* to **Indexed** | Indexing → Pages |
+| 3–7 days | `site:vitap-slots.vercel.app` returns the page; it may sit at position 30+ for a while | Google |
+| 1–3 weeks | Impressions appear for long-tail phrases (“vitap ffcs planner”, “cse1006 slot”, …) | Performance → Queries |
+
+Two states that look like failure but are normal:
+
+- **“Crawled – currently not indexed”** — Google has the page and thinks it is not worth ranking yet.
+  Real fix: more inbound links and fresher content, not more markup.
+- **“Discovered – currently not indexed”** — the URL is known but the crawl budget has not reached it.
+  It usually resolves on its own; a link from a page that is already crawled speeds it up.
+
+Do **not** request indexing repeatedly for the same URL — the queue remembers, and hammering it does
+nothing. One request after each meaningful change is right.
+
+## 4b. Keep it fast (Google's tie-breaker)
+
+The mobile Lighthouse run in CI is the early-warning system. The PNG export used to pull `html2canvas`
+from a CDN in front of the app's own scripts on every page load; it now loads only when someone taps
+**Save image**, so the catalogue paints without waiting for a third-party download.
+
 ## 5. Why a brand-new site ranks low, and what actually moves it
 
 Google ranks by usefulness **and** by who points at you. A three-week-old `*.vercel.app` page with no
@@ -82,6 +109,8 @@ do nothing but add noise.
   “VIT-AP FFCS Planner”) + `FAQPage` mirroring the visible questions.
 - **Crawl basics:** canonical, `robots.txt` with the sitemap, single-URL `sitemap.xml`, `index,
   follow, max-image-preview:large`, no `noindex` anywhere.
+- **Fast first paint:** no third-party script in the critical path (`html2canvas` is fetched on demand
+  for the PNG export), one CSS file, fonts with `display=swap`.
 - **`tools/validate-data.mjs` now fails the build** if the title stops naming VIT-AP, if the
   description leaves 90–175 characters, if the static course list drifts from `js/data.js`, or if a
   FAQ schema question is not visible on the page.
