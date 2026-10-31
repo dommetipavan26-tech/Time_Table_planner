@@ -262,6 +262,57 @@ if (!robotsMeta) fail('index.html: missing <meta name="robots">');
 else if (/noindex/i.test(robotsMeta[1])) fail('index.html: <meta name="robots"> says noindex, so Google cannot list the page');
 
 /* ------------------------------------------------------------------ */
+/* Search listing: title, description, static copy, FAQ schema         */
+/* ------------------------------------------------------------------ */
+// The page is aimed at "vitap time table planner" style searches, so the
+// title and description have to name VIT-AP and say what the page is.
+const title = (html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+const desc = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '';
+if (!/VIT-?AP/i.test(title)) fail(`index.html <title> ("${title}") does not mention VIT-AP, so it cannot rank for VIT-AP searches`);
+if (!/time table|timetable/i.test(title)) fail(`index.html <title> ("${title}") does not say "time table"`);
+if (title.length > 65) fail(`index.html <title> is ${title.length} characters — Google truncates past ~65`);
+if (!/VIT-?AP/i.test(desc)) fail('index.html meta description does not mention VIT-AP');
+if (desc.length < 90 || desc.length > 175) fail(`index.html meta description is ${desc.length} characters (aim for 90–175)`);
+
+// The catalogue is rendered by JS; the static course list is what a crawler
+// reads without running scripts, so it has to match the data exactly.
+const about = (html.match(/<ul class="course-index">([\s\S]*?)<\/ul>/) || [])[1] || '';
+if (!about) fail('index.html: the static course list (<ul class="course-index">) is missing');
+else {
+  const listed = [...about.matchAll(/<code>([A-Z]{3}\d{4})<\/code>\s*([^<\n]+)/g)]
+    .map((m) => [m[1], m[2].trim()]);
+  const want = COURSES.map((c) => [c.code, c.name]);
+  if (listed.length !== want.length) {
+    fail(`index.html static course list has ${listed.length} entries, data has ${want.length}`);
+  } else {
+    want.forEach(([code, name], i) => {
+      if (listed[i][0] !== code || listed[i][1] !== name) {
+        fail(`index.html static course list #${i + 1} is "${listed[i][0]} ${listed[i][1]}", data says "${code} ${name}"`);
+      }
+    });
+  }
+}
+
+// FAQPage has to mirror the questions actually shown on the page.
+const ld = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+if (!ld) fail('index.html: no JSON-LD block');
+else {
+  let graph = null;
+  try { graph = JSON.parse(ld[1]); } catch (e) { fail(`index.html: JSON-LD does not parse — ${e.message}`); }
+  const faqPage = graph && (graph['@graph'] || [graph]).find((n) => n['@type'] === 'FAQPage');
+  if (!faqPage) fail('index.html: JSON-LD has no FAQPage node');
+  else {
+    const visible = (about + (html.match(/<dl class="faq">([\s\S]*?)<\/dl>/) || [])[1] || '');
+    for (const q of faqPage.mainEntity || []) {
+      if (!visible.includes(q.name)) fail(`index.html: FAQ schema question "${q.name}" is not visible on the page`);
+      const answer = (q.acceptedAnswer || {}).text || '';
+      const short = answer.split('.')[0].trim();
+      if (short && !visible.includes(short)) fail(`index.html: FAQ schema answer for "${q.name}" is not visible on the page`);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Report                                                              */
 /* ------------------------------------------------------------------ */
 const perBranch = COURSES.reduce((acc, c) => {

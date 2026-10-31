@@ -39,6 +39,7 @@ account. Your selections live in `localStorage` on your own device.
 
 | Area | What it does |
 | --- | --- |
+| **Search listing** | Title, H1, description, an About section, the full course list, six FAQs and `WebSite`/`WebApplication`/`FAQPage` schema — all in static HTML, so crawlers see the catalogue without running JavaScript. |
 | **GitHub** | Footer link to the source repository, with a star shortcut. |
 | **Dark mode** | One button in the header switches theme; the choice is remembered and the first visit follows the operating system's `prefers-color-scheme`. |
 | **Catalogue** | Course cards with code, title, PC/PE/UC/UE category, credit breakdown, instructor list and every section (slot + venue + faculty). Search by code, title, faculty or room and stack the branch, category and type filters. Views are deep-linkable: `/#courses`, `/#timetable`. |
@@ -200,7 +201,9 @@ Source of the current data: course/faculty details come from the supplied VTOP r
 exports, official course PDFs and VTOP slot-list PDFs (the `MIS` set comes from VTOP
 `checkRegistration` print-outs, `ECE2016` from the Engineering Electromagnetics PDF, `CSE3008` from
 the Machine Learning PDF — 33 theory and 35 lab slots, `CSE1006` from the Foundations for Data
-Analytics PDF — 15 theory and 15 lab slots; all seat counts dropped); the slot structure is transcribed from the
+Analytics PDF — 15 theory and 15 lab slots; all seat counts dropped).
+Getting the page listed on Google is covered step by step in
+[`docs/google-indexing.md`](docs/google-indexing.md). the slot structure is transcribed from the
 official Winter 2026–27 slot timetable. Categories follow VTOP: `PC` programme core,
 `PE` programme elective, `UC` university core, `UE` university elective — for `CSE1005`,
 `CSE1007`, `CSE2007` and `CSE2008` they are cross-checked against the published VIT-AP B.Tech CSE
