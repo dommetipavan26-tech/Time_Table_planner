@@ -174,6 +174,13 @@ h1, h2, h3, h4, .brand-name {
   line-height: 1.12;
   margin-bottom: 16px;
 }
+.hero h1 .h1-sub {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(17px, 2.2vw, 24px);
+  font-weight: 600;
+  color: rgba(255, 255, 255, .9);
+}
 .hero p {
   max-width: 620px;
   font-size: 16px;
@@ -1535,6 +1542,58 @@ body {
 }
 
 /* ---------------- Footer ---------------- */
+/* ---------------- About + FAQ (static, indexable copy) ---------------- */
+.about-block { padding-top: 46px; padding-bottom: 14px; }
+.about-block h2 {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.about-block p {
+  max-width: 78ch;
+  margin-bottom: 12px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+.about-sub {
+  margin: 26px 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.course-index {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+  gap: 9px 26px;
+}
+.course-index li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+.course-index code {
+  flex: none;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.faq { display: grid; gap: 15px; max-width: 82ch; }
+.faq-item dt { font-size: 14px; font-weight: 700; color: var(--ink); }
+.faq-item dd { margin: 5px 0 0; font-size: 13.5px; line-height: 1.7; color: var(--ink-soft); }
+
 .site-footer {
   background-color: rgba(255, 255, 255, .62);
   background-image: linear-gradient(180deg, rgba(255, 255, 255, .7), rgba(255, 255, 255, .94));
@@ -1903,7 +1962,7 @@ body {
   #view-timetable, #view-timetable * { visibility: visible; }
   #view-timetable { position: absolute; left: 0; top: 0; width: 100%; }
   .matrix-cell { min-height: 40px; }
-  .tt-header, .tt-stats, .sel-panel, .site-footer, .toasts, .matrix-empty-note, .matrix-scroll-note { display: none !important; }
+  .tt-header, .tt-stats, .sel-panel, .site-footer, .about-block, .toasts, .matrix-empty-note, .matrix-scroll-note { display: none !important; }
   .container { max-width: 100% !important; padding: 0 !important; }
   .schedule-wrap { overflow: visible !important; box-shadow: none !important; border-radius: 0 !important; }
   .schedule-table { width: 100% !important; min-width: 0 !important; font-size: 6px !important; }

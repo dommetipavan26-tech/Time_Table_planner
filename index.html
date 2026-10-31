@@ -4,8 +4,8 @@
   <meta name="google-site-verification" content="b4TffC88QJJZiPkaB0fR9VJNgeLzIqiI1Ec2n8nTvog" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Winter Planner · Course &amp; Timetable Planner (Winter 2026–27)</title>
-  <meta name="description" content="Browse the Winter 2026–27 course catalogue, pick one theory and one lab slot per course, and get an instant, conflict-checked weekly timetable." />
+  <title>VIT-AP Time Table Planner · FFCS Winter 2026–27</title>
+  <meta name="description" content="Free VIT-AP time table planner for FFCS winter 2026–27: browse 25 courses and 904 sections, pick one theory and one lab slot, and get a clash-free weekly timetable." />
   <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#4f46e5" />
   <meta name="author" content="Winter Planner" />
@@ -18,18 +18,18 @@
 
   <!-- Social preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Winter Planner" />
-  <meta property="og:title" content="Winter Planner · Course &amp; Timetable Planner" />
-  <meta property="og:description" content="Pick one theory and one lab slot per course and get an instant, conflict-checked weekly timetable for Winter 2026–27." />
+  <meta property="og:site_name" content="Winter Planner · VIT-AP Time Table Planner" />
+  <meta property="og:title" content="VIT-AP Time Table Planner · FFCS Winter 2026–27" />
+  <meta property="og:description" content="Free VIT-AP time table planner for FFCS Winter 2026–27 — pick one theory and one lab slot per course and get a clash-free weekly timetable." />
   <meta property="og:url" content="https://vitap-slots.vercel.app/" />
   <meta property="og:image" content="https://vitap-slots.vercel.app/docs/og-image.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Winter Planner — pick one theory and one lab slot per course and get a clash-free weekly timetable" />
+  <meta property="og:image:alt" content="VIT-AP Time Table Planner — pick one theory and one lab slot per course and get a clash-free weekly timetable" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Winter Planner · Course &amp; Timetable Planner" />
-  <meta name="twitter:description" content="Pick one theory and one lab slot per course and get an instant, conflict-checked weekly timetable for Winter 2026–27." />
+  <meta name="twitter:title" content="VIT-AP Time Table Planner · FFCS Winter 2026–27" />
+  <meta name="twitter:description" content="Free VIT-AP time table planner for FFCS Winter 2026–27 — pick one theory and one lab slot per course and get a clash-free weekly timetable." />
   <meta name="twitter:image" content="https://vitap-slots.vercel.app/docs/og-image.png" />
 
   <!-- Structured data: what this page is, so search results can show it as a free web app -->
@@ -42,13 +42,15 @@
         "@id": "https://vitap-slots.vercel.app/#website",
         "url": "https://vitap-slots.vercel.app/",
         "name": "Winter Planner",
+        "alternateName": ["VIT-AP Time Table Planner", "VITAP Time Table Planner", "VIT-AP FFCS Planner"],
         "description": "Course catalogue and conflict-checked timetable planner for the Winter 2026–27 FFCS registration at VIT-AP.",
         "inLanguage": "en-IN"
       },
       {
         "@type": "WebApplication",
         "@id": "https://vitap-slots.vercel.app/#app",
-        "name": "Winter Planner — Course & Timetable Planner",
+        "name": "VIT-AP Time Table Planner",
+        "alternateName": ["Winter Planner", "VITAP time table planner", "VIT-AP FFCS slot planner"],
         "url": "https://vitap-slots.vercel.app/",
         "description": "Browse 25 courses and 904 sections, pick one theory and one lab slot per course, and get an instant, conflict-checked weekly timetable.",
         "applicationCategory": "EducationalApplication",
@@ -67,7 +69,62 @@
           "Export the plan as text, image or PDF",
           "Branch, category and type filters plus search by faculty or room"
         ]
-      }
+      },
+{
+      "@type": "FAQPage",
+      "@id": "https://vitap-slots.vercel.app/#faq",
+      "inLanguage": "en-IN",
+      "mainEntity": [
+            {
+                  "@type": "Question",
+                  "name": "Is this the official VIT-AP time table?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. Winter Planner is a student project, not affiliated with VIT. It copies the sections published in the official slot timetable and VTOP registration lists so you can plan beforehand — always confirm and register on VTOP itself."
+                  }
+            },
+            {
+                  "@type": "Question",
+                  "name": "Do I need to log in to use it?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No account, no login and no upload. The planner runs entirely in your browser, and your picks are stored in that browser's local storage, so nobody — including us — can see your timetable."
+                  }
+            },
+            {
+                  "@type": "Question",
+                  "name": "How do I pick a slot?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Every course takes one theory slot and one lab slot. Open a course card, tap the slot you want and the planner draws it on the weekly matrix; a second theory slot or a second lab slot replaces the first, and any overlap with another course is blocked."
+                  }
+            },
+            {
+                  "@type": "Question",
+                  "name": "Which VIT-AP semester does this cover?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The winter semester 2026–27 FFCS registration, with classes Tuesday to Saturday. Slots, rooms and instructors come from the official Winter 2026-27 slot timetable and the registration print-outs."
+                  }
+            },
+            {
+                  "@type": "Question",
+                  "name": "Can I use it on my phone?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. The catalogue, the weekly matrix and the export buttons work from a 320 px screen upwards, in light or dark mode, and the page keeps working once it has loaded."
+                  }
+            },
+            {
+                  "@type": "Question",
+                  "name": "Can I export or share the timetable?",
+                  "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "You can copy the plan as text, save it as an image or print it as a PDF from the timetable view. Sharing the plan is manual — nothing leaves your device automatically."
+                  }
+            }
+      ]
+}
     ]
   }
   </script>
@@ -75,7 +132,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=16" />
+  <link rel="stylesheet" href="css/styles.css?v=17" />
 
   <!-- Vercel Web Analytics -->
   <script>
@@ -138,10 +195,10 @@
     <section id="view-courses" class="view active">
       <div class="hero">
         <div class="hero-content">
-          <span class="hero-badge">❄ Winter Semester · Classes Tue–Sat</span>
-          <h1>Plan your semester,<br />section by section.</h1>
-          <p>Browse the full course catalogue with slot details and venues, pick your sections,
-             and get an instant personalised timetable — conflicts flagged automatically.</p>
+          <span class="hero-badge">❄ VIT-AP · FFCS Winter Semester 2026–27</span>
+          <h1>VIT-AP time table planner<span class="h1-sub"> Plan your semester, section by section.</span></h1>
+          <p>Browse the full FFCS course catalogue with slots, venues and instructors, pick one theory and
+             one lab per course, and get an instant clash-free timetable for Winter 2026–27.</p>
           <div class="hero-stats" id="hero-stats">
             <div class="hero-stat"><b>25</b><span>courses</span></div>
             <div class="hero-stat"><b>904</b><span>sections</span></div>
@@ -238,6 +295,78 @@
       </div>
     </section>
 
+    <section class="container about-block" id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About this VIT-AP time table planner</h2>
+      <p>
+        Winter Planner is a free time table planner for the <strong>VIT-AP FFCS winter semester
+        2026–27</strong> registration. It keeps every theory and lab section of the 25 courses in the
+        catalogue — slot code, room and instructor — so a clashing week can be spotted before the VTOP
+        window opens.
+      </p>
+      <p>
+        Pick one theory slot and one lab slot per course and the planner blocks any section that
+        overlaps another, then draws the week on VIT-AP's own Tue–Sat slot matrix. Everything stays in
+        your browser: no account, no upload, nothing to sign up for.
+      </p>
+
+      <h3 class="about-sub">Every course in the catalogue</h3>
+      <ul class="course-index">
+          <li><code>MEC3002</code> Theory of Machines</li>
+          <li><code>MEC2018</code> Thermal Engineering Systems</li>
+          <li><code>MEC2005</code> Fundamentals of Manufacturing Processes</li>
+          <li><code>MAT1010</code> Probability and Statistics</li>
+          <li><code>MGT1040</code> Entrepreneurship</li>
+          <li><code>STS2011</code> Qualitative and Quantitative Skills Practice</li>
+          <li><code>ECE2003</code> Control Systems Engineering</li>
+          <li><code>ECE2006</code> Communication Systems</li>
+          <li><code>ECE2009</code> Data Acquisition and Transmission Systems</li>
+          <li><code>ECE3006</code> HDL Verification and Methodology</li>
+          <li><code>CSE1022</code> Introduction to Programming</li>
+          <li><code>CSE1005</code> Software Engineering</li>
+          <li><code>CSE1006</code> Foundations for Data Analytics</li>
+          <li><code>CSE1007</code> Introduction to Cryptography</li>
+          <li><code>CSE1021</code> Foundations of Blockchain Technology</li>
+          <li><code>CSE2007</code> Database Management Systems</li>
+          <li><code>CSE2008</code> Operating Systems</li>
+          <li><code>CSE3001</code> Agile Development Process</li>
+          <li><code>CSE3002</code> Artificial Intelligence</li>
+          <li><code>ECE2015</code> Computer Architecture</li>
+          <li><code>SWE3001</code> Fundamentals of Computer Networks</li>
+          <li><code>SWE2006</code> Database Systems</li>
+          <li><code>SWE2004</code> Software Design and Architecture</li>
+          <li><code>ECE2016</code> Engineering Electromagnetics</li>
+          <li><code>CSE3008</code> Introduction to Machine Learning</li>
+      </ul>
+
+      <h3 class="about-sub">Common questions</h3>
+      <dl class="faq">
+            <div class="faq-item">
+              <dt>Is this the official VIT-AP time table?</dt>
+              <dd>No. Winter Planner is a student project, not affiliated with VIT. It copies the sections published in the official slot timetable and VTOP registration lists so you can plan beforehand — always confirm and register on VTOP itself.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Do I need to log in to use it?</dt>
+              <dd>No account, no login and no upload. The planner runs entirely in your browser, and your picks are stored in that browser's local storage, so nobody — including us — can see your timetable.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>How do I pick a slot?</dt>
+              <dd>Every course takes one theory slot and one lab slot. Open a course card, tap the slot you want and the planner draws it on the weekly matrix; a second theory slot or a second lab slot replaces the first, and any overlap with another course is blocked.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Which VIT-AP semester does this cover?</dt>
+              <dd>The winter semester 2026–27 FFCS registration, with classes Tuesday to Saturday. Slots, rooms and instructors come from the official Winter 2026-27 slot timetable and the registration print-outs.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Can I use it on my phone?</dt>
+              <dd>Yes. The catalogue, the weekly matrix and the export buttons work from a 320 px screen upwards, in light or dark mode, and the page keeps working once it has loaded.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Can I export or share the timetable?</dt>
+              <dd>You can copy the plan as text, save it as an image or print it as a PDF from the timetable view. Sharing the plan is manual — nothing leaves your device automatically.</dd>
+            </div>
+      </dl>
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -271,6 +400,7 @@
           <li><a class="footer-link" href="#courses">Course catalogue</a></li>
           <li><a class="footer-link" href="#timetable">Weekly timetable</a></li>
           <li><a class="footer-link" href="#courses">Search by faculty</a></li>
+          <li><a class="footer-link" href="#about">About &amp; questions</a></li>
         </ul>
       </div>
 
@@ -310,7 +440,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="js/data.js?v=16"></script>
-  <script src="js/app.js?v=16"></script>
+  <script src="js/data.js?v=17"></script>
+  <script src="js/app.js?v=17"></script>
 </body>
 </html>
