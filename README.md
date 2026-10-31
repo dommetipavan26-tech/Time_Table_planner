@@ -237,7 +237,7 @@ that `sitemap.xml` / `robots.txt` describe that same canonical host (no `noindex
 node tools/check-links.mjs                       # no dependencies
 npm i --no-save puppeteer
 node tools/check-mobile.mjs http://127.0.0.1:8080/
-node tools/check-print.mjs  http://127.0.0.1:8080/
+node tools/check-print.mjs  http://127.0.0.1:8080/   # also needs pdfjs-dist
 ```
 
 `check-links.mjs` fails on a `href`/`src`/`action` that points at a file which is not in the repo, an
@@ -252,12 +252,19 @@ sideways scrolling, elements past the viewport (unless an ancestor clips them), 
 scrolls and has its own print layout.
 
 `check-print.mjs` is the guard for the printed sheet. It picks a realistic plan straight out of
-`js/data.js`, switches Chrome into print media and fails when: the PDF is not an **A4 portrait**
-page (or is rotated — a rotated sheet is what turns a timetable sideways), anything other than the
-timetable is printed (header, filters, selection panel, footer), the grid is wider than the
-printable area, any cell clips its text, any cell is missing a border, or text drops below 6 pt. It
-then puts the grid into `.is-exporting` and applies the same checks to the PNG download, because
-`html2canvas` only ever sees the screen stylesheet.
+`js/data.js`, switches Chrome into print media, saves a real PDF and reads it back with `pdf.js`, so
+the assertions come from the bytes a student would download. It fails when:
+
+- the sheet is not **A4 portrait**, is rotated, or spills over more than two pages — a landscape or
+  rotated sheet *is* the sideways timetable;
+- any glyph run is tilted instead of reading left to right, or ends past the right margin (clipped
+  column);
+- anything other than the timetable is printed (header, filters, selection panel, footer);
+- the grid is wider than the printable area, any cell clips its text, any cell is missing a border,
+  or text drops below 6 pt.
+
+It then puts the grid into `.is-exporting` and applies the layout checks to the PNG download,
+because `html2canvas` only ever sees the screen stylesheet.
 
 `.github/workflows/audit.yml` runs Lighthouse for mobile and desktop, posts the scores, the mobile
 report, the contrast audit and the print/PDF sheet as a pull-request comment, uploads the HTML
