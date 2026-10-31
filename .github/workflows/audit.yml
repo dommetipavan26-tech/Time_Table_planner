@@ -66,6 +66,11 @@ jobs:
           node tools/check-contrast.mjs "$URL" > contrast.txt 2>&1; echo "exit=$?" >> contrast.txt
           cat contrast.txt
 
+      - name: Print / PDF audit
+        run: |
+          node tools/check-print.mjs "$URL" > print.txt 2>&1; echo "exit=$?" >> print.txt
+          cat print.txt
+
       - name: Collect the audit report
         if: always()
         run: |
@@ -75,7 +80,9 @@ jobs:
             echo '<details><summary>Mobile layout audit (320–1024 px, both views)</summary>'; echo;
             echo '```'; cat mobile.txt; echo '```'; echo '</details>'; echo;
             echo '<details><summary>Contrast audit (light + dark)</summary>'; echo;
-            echo '```'; cat contrast.txt; echo '```'; echo '</details>'; } > audit-report.md
+            echo '```'; cat contrast.txt; echo '```'; echo '</details>'; echo;
+            echo '<details><summary>Print / PDF sheet (A4 portrait)</summary>'; echo;
+            echo '```'; cat print.txt; echo '```'; echo '</details>'; } > audit-report.md
           cat audit-report.md
 
       - name: Publish the report on the pull request
@@ -97,4 +104,4 @@ jobs:
 
       - name: Gate on the scores that actually matter
         if: always()
-        run: node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt
+        run: node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt print.txt
