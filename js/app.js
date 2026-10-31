@@ -481,13 +481,12 @@ function cardHTML(course) {
         <button class="btn-select ${isOn ? 'on' : ''}${willSwap ? ' swap' : ''}" data-toggle
           data-code="${esc(course.code)}" data-slot="${esc(sec.code)}" data-venue="${esc(sec.venue)}"
           aria-pressed="${isOn}"
-          aria-label="${esc(isOn
-            ? `Remove ${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`
-            : willSwap
-              ? `Swap ${course.code} ${sec.type} slot to ${sec.code} at ${sec.venue}, replacing ${current.sel.sectionCode}`
-              : `Select ${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`)}"
           ${willSwap ? `title="Replaces your current ${sec.type} slot ${esc(current.sel.sectionCode)}"` : ''}>
-          ${isOn ? '✓ Selected' : willSwap ? 'Swap' : 'Select'}
+          ${isOn ? '✓ Selected' : willSwap ? 'Swap' : 'Select'}<span class="sr-only"> — ${esc(isOn
+            ? `remove ${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`
+            : willSwap
+              ? `swap ${course.code} ${sec.type} slot to ${sec.code} at ${sec.venue}, replacing ${current.sel.sectionCode}`
+              : `${course.code} ${sec.type} slot ${sec.code} at ${sec.venue}`)}</span>
         </button>
       </div>`;
   }).join('');
