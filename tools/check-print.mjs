@@ -145,23 +145,43 @@ if (report.borderless.length) fail(`${report.borderless.length} cell(s) without 
 
 /* ---------------- the PDF itself ---------------- */
 const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
-// Chrome writes the page dictionaries uncompressed, so the sheet geometry can be
-// read straight out of the bytes — no PDF library needed.
-const bytes = pdf.toString('latin1');
-const box = /MediaBox\s*\[\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\]/.exec(bytes);
-let w = 0, h = 0;
-if (box) { w = Number(box[3]) - Number(box[1]); h = Number(box[4]) - Number(box[2]); }
-else fail('the PDF has no MediaBox — could not read the page size');
 
-const rotate = /\/Rotate\s+(\d+)/.exec(bytes);
-const pages = (bytes.match(/\/Type\s*\/Page[^s]/g) || []).length;
+/* Chrome wraps the page dictionaries in object streams, so the sheet is read
+   back with pdf.js instead of a regex. */
+const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
+const doc = await getDocument({ data: new Uint8Array(pdf), useSystemFonts: false, isEvalSupported: false }).promise;
+const first = await doc.getPage(1);
+const view = first.getViewport({ scale: 1 });
+const w = Math.round(view.width);
+const h = Math.round(view.height);
+const pages = doc.numPages;
 
-if (w && h) {
-  if (w > h) fail(`the PDF page is landscape (${Math.round(w)}×${Math.round(h)} pt) — the timetable should be a portrait A4 sheet`);
-  if (Math.abs(w - 595) > 6 || Math.abs(h - 842) > 6) fail(`the PDF page is ${Math.round(w)}×${Math.round(h)} pt, not A4 portrait (595×842)`);
+/* Upright text on a portrait sheet: every glyph run has to read left to right
+   and stop before the right margin. A rotated run is the sideways timetable. */
+const text = await first.getTextContent();
+let glyphs = 0, tilted = 0, pastMargin = 0, furthest = 0;
+const tiltedSamples = [];
+for (const item of text.items) {
+  if (!item.str || !item.str.trim()) continue;
+  glyphs += 1;
+  const angle = Math.abs((Math.atan2(item.transform[1], item.transform[0]) * 180) / Math.PI);
+  if (angle > 1) {
+    tilted += 1;
+    if (tiltedSamples.length < 3) tiltedSamples.push(`"${item.str.trim().slice(0, 14)}" ${angle.toFixed(0)}°`);
+  }
+  const right = item.transform[4] + (item.width || 0);
+  if (right > furthest) furthest = right;
+  if (right > view.width - 8) pastMargin += 1;
 }
-if (rotate && Number(rotate[1]) % 360 !== 0) fail(`the PDF page is rotated ${rotate[1]}° — that is the sideways timetable`);
+
+if (w > h) fail(`the PDF page is landscape (${w}×${h} pt) — the timetable should be a portrait A4 sheet`);
+if (Math.abs(w - 595) > 6 || Math.abs(h - 842) > 6) fail(`the PDF page is ${w}×${h} pt, not A4 portrait (595×842)`);
+if (first.rotate % 360 !== 0) fail(`the PDF page is rotated ${first.rotate}° — that is the sideways timetable`);
 if (pages > 2) fail(`the timetable spills over ${pages} pages`);
+if (glyphs === 0) fail('the PDF contains no text — nothing was printed');
+if (tilted) fail(`${tilted} of ${glyphs} text runs are rotated, not horizontal — ${tiltedSamples.join(', ')}`);
+if (pastMargin) fail(`${pastMargin} text run(s) cross the right margin (furthest glyph ends at ${Math.round(furthest)} of ${Math.round(view.width)} pt) — the sheet is clipped`);
+await doc.destroy();
 
 /* ---------------- the PNG download (html2canvas reads screen CSS) ---------------- */
 await page.emulateMediaType('screen');
@@ -201,6 +221,7 @@ if (problems.length) {
   for (const p of problems) console.error('  · ' + p);
   process.exit(1);
 }
-console.log(`✓ print sheet is clean — A4 portrait ${Math.round(w)}×${Math.round(h)} pt, rotation ${rotate ? rotate[1] : '0'}°, ${pages} page(s)`);
+console.log(`✓ print sheet is clean — A4 portrait ${w}×${h} pt, rotation 0°, ${pages} page(s)`);
+console.log(`  ${glyphs} horizontal text runs, none tilted, furthest glyph ${Math.round(furthest)} of ${w} pt`);
 console.log('  timetable only · fits the printable width · no clipped cells · full borders · text ≥ 6 pt');
 console.log(`  PNG export: ${exportMode.width} px sheet, ${exportMode.cells} cells, ${exportMode.clipped} clipped, ${exportMode.borderless} without borders`);

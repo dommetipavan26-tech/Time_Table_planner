@@ -68,6 +68,7 @@ jobs:
 
       - name: Print / PDF audit
         run: |
+          npm i --no-save pdfjs-dist@4 >/dev/null 2>&1
           node tools/check-print.mjs "$URL" > print.txt 2>&1; echo "exit=$?" >> print.txt
           cat print.txt
 
