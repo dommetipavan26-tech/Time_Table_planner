@@ -7,7 +7,7 @@
  *                   screenshots (OCR).
  *                   MAT1010, MGT1040, STS2011 — from official course PDFs
  *                   (faculty, venues, slots all extracted via OCR).
- *                   ECE2003, ECE2006, ECE2009, ECE3006, CSE1022 — from VTOP
+ *                   ECE2003, ECE2006, ECE2017, ECE3005, CSE1022 — from VTOP
  *                   Winter 2026-27 registration exports (slot, venue and
  *                   faculty only; the availability/seat counts are omitted).
  *                   CSE1005, CSE1007, CSE1021, CSE2007 — from VIT-AP course
@@ -529,7 +529,7 @@ const COURSES = [
     ],
   },
   {
-    code: 'ECE2009', name: 'Data Acquisition and Transmission Systems',
+    code: 'ECE2017', name: 'Sensor Systems and Data Acquisition',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PE', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [
@@ -546,7 +546,7 @@ const COURSES = [
     ],
   },
   {
-    code: 'ECE3006', name: 'HDL Verification and Methodology',
+    code: 'ECE3005', name: 'CMOS VLSI Design',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PE', branch: 'ECE', type: 'Embedded Theory and Lab',
     faculty: [

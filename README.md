@@ -52,7 +52,7 @@ Winter 2026–27 · **26 courses · 100 credits · 906 sections**
 | Group | Courses |
 |---|---|
 | MECH | `MEC4003` `MEC3002` `MEC2018` `MEC2005` |
-| ECE | `ECE2003` `ECE2006` `ECE2009` `ECE3006` `ECE2016` |
+| ECE | `ECE2003` `ECE2006` `ECE2017` `ECE3005` `ECE2016` |
 | CSE | `CSE1005` `CSE1006` `CSE1007` `CSE1021` `CSE2007` `CSE2008` `CSE3008` |
 | MIS | `CSE3001` `CSE3002` `SWE2004` `SWE3001` `SWE2006` |
 | MIC | `ECE2015` (+ the four MIS courses that sit on both lists) |
