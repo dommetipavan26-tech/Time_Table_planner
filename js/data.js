@@ -120,6 +120,18 @@ const DAYS = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 /* ------------------------------------------------------------------ */
 const COURSES = [
   {
+    code: 'MEC4003', name: 'Internal Combustion Engines',
+    credits: 4, theoryCredits: 3, labCredits: 1,
+    category: 'PC', branch: 'MECH', type: 'Embedded Theory and Lab',
+    faculty: [
+      'Rajan DeoRao Lanjekar'
+    ],
+    sections: [
+      { code: 'F1+TF1', venue: 'CB-220', faculty: 'Rajan DeoRao Lanjekar', type: 'theory' },
+      { code: 'L33+L34', venue: 'AB2-G11', faculty: 'Rajan DeoRao Lanjekar', type: 'lab' },
+    ],
+  },
+  {
     code: 'MEC3002', name: 'Theory of Machines',
     credits: 4, theoryCredits: 3, labCredits: 1,
     category: 'PC', branch: 'MECH', type: 'Embedded Theory and Lab',
