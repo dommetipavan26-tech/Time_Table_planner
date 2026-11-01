@@ -84,7 +84,7 @@ domain is ever changed in Vercel, update these links plus the `canonical` / `og:
 
 ## The plan
 
-Winter 2026–27 · **25 courses · 96 credits · 904 sections**
+Winter 2026–27 · **26 courses · 100 credits · 906 sections**
 
 | Code | Title | Branch | Cat. | Credits | Breakdown |
 |---|---|:--:|:--:|:--:|---|

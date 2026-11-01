@@ -103,7 +103,7 @@ do nothing but add noise.
 - **H1:** “VIT-AP time table planner” with the tagline underneath — previously the H1 was only
   “Plan your semester, section by section.”, which told Google nothing.
 - **Description:** 164 characters naming VIT-AP, FFCS, the course/section counts and the promise.
-- **Static copy:** an About section plus a **list of all 25 courses** and six FAQs, so the page has
+- **Static copy:** an About section plus a **list of all 26 courses** and six FAQs, so the page has
   real text without JavaScript — the catalogue itself is rendered client-side.
 - **Schema:** `WebSite` + `WebApplication` (with `alternateName`: “VITAP Time Table Planner”,
   “VIT-AP FFCS Planner”) + `FAQPage` mirroring the visible questions.
