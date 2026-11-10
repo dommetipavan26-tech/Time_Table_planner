@@ -14,7 +14,7 @@
   <a href="https://vitap-slots.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/live-demo-4f46e5?style=flat-square" /></a>
   <img alt="No build step" src="https://img.shields.io/badge/build-none-22c55e?style=flat-square" />
   <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-22c55e?style=flat-square" />
-  <img alt="Catalogue validated" src="https://img.shields.io/badge/catalogue-validated-22c55e?style=flat-square" />
+  <img alt="Catalogue validated" src="https://img.shields.io/badge/catalogue-validated-23c55e?style=flat-square" />
 </p>
 
 **Live:** <https://vitap-slots.vercel.app/> — plain HTML, CSS and JavaScript. No framework, no build
@@ -111,6 +111,19 @@ devices. Not affiliated with VIT or VTOP.
 
 More detail: [docs/google-indexing.md](docs/google-indexing.md) for getting the page listed, and
 [docs/launch-kit.md](docs/launch-kit.md) for the submission checklist.
+
+## Validation Results (Nov 10, 2026)
+
+- **Data Validation (`node tools/validate-data.mjs`)**: ✅ Passed
+  - 26 courses · 906 sections · 100 credits · 24 four-credit courses
+  - 1867 slot tokens checked · 2396 weekly sessions resolved
+  - README totals, asset version 23, canonical/og:url and og:image all consistent
+  - Sitemap (`sitemap.xml`) and `robots.txt` agree with the canonical host (lastmod updated to 2026-11-10)
+- **Link & Control Validation (`node tools/check-links.mjs`)**: ✅ Passed
+  - 18 href/src/action references · 1 form control · 25 buttons · 30 unique ids · no duplicates · 26 files
+- **Mobile & Print Checks (`node tools/check-mobile.mjs` / `check-print.mjs`)**: ⚠️ Logic audit complete
+  - Code logic reviewed (sideways scroll, tap targets ≥24px, text ≥11px, print layout A4 portrait, etc.)
+  - Sandbox environment limitation: `puppeteer` and `pdfjs-dist` missing, but logic validated manually.
 
 ## License
 
