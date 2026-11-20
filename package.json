@@ -1,0 +1,20 @@
+{
+  "name": "winter-planner-tooling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development-only tooling for the static Winter Planner",
+  "scripts": {
+    "test": "node --test tools/*.test.mjs",
+    "validate": "node tools/validate-data.mjs && node tools/check-links.mjs",
+    "audit:security": "npm audit --audit-level=high",
+    "check:compat": "node tools/check-browser-compat.mjs"
+  },
+  "devDependencies": {
+    "html2canvas": "1.4.1",
+    "http-server": "14.1.1",
+    "lighthouse": "13.6.0",
+    "pdfjs-dist": "6.5.438",
+    "playwright": "1.65.1",
+    "puppeteer": "25.18.1"
+  }
+}

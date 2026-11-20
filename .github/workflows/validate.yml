@@ -18,9 +18,13 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
-      # No install step: the site and the checker have no dependencies.
+      - name: Audit pinned developer dependencies
+        run: npm audit --audit-level=high
+
+      # Catalogue and checker use no production dependencies or build step.
       - name: Run the catalogue validator
         run: node tools/validate-data.mjs
 

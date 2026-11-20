@@ -131,23 +131,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=24" />
+  <link rel="stylesheet" href="css/styles.css?v=25" />
 
-  <!-- Vercel Web Analytics -->
-  <script>
-    window.va = window.va || function () { 
-      (window.vaq = window.vaq || []).push(arguments); 
-    };
-  </script>
-  <!-- Vercel Web Analytics exists only on Vercel deployments; requesting it elsewhere is a 404 -->
-  <script>
-    if (location.hostname.endsWith('.vercel.app')) {
-      var va = document.createElement('script');
-      va.defer = true;
-      va.src = '/_vercel/insights/script.js';
-      document.head.appendChild(va);
-    }
-  </script>
+  <!-- Vercel Web Analytics is loaded only on the deployed Vercel hostname. -->
+  <script src="js/analytics.js?v=25" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -443,8 +430,8 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=24"></script>
-  <script src="js/planner-core.js?v=24"></script>
-  <script src="js/app.js?v=24"></script>
+  <script src="js/data.js?v=25"></script>
+  <script src="js/planner-core.js?v=25"></script>
+  <script src="js/app.js?v=25"></script>
 </body>
 </html>

@@ -50,7 +50,7 @@ for (const width of WIDTHS) {
   page.on('pageerror', (e) => consoleErrors.push(String(e)));
   page.on('requestfailed', (r) => {
     const u = r.url();
-    if (/googleapis|gstatic|cdnjs|_vercel/.test(u)) return;     // third-party/CDN, not ours to fix here
+    if (/googleapis|gstatic|_vercel/.test(u)) return;     // optional fonts / production analytics, not app-owned
     consoleErrors.push(`request failed: ${u}`);
   });
 

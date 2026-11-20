@@ -164,9 +164,10 @@ if (!totals) {
 }
 
 const html = read('index.html');
-const versions = [...html.matchAll(/\?v=(\d+)/g)].map((m) => m[1]);
+const appSource = read('js/app.js');
+const versions = [...html.matchAll(/\?v=(\d+)/g), ...appSource.matchAll(/\?v=(\d+)/g)].map((m) => m[1]);
 if (versions.length === 0) fail('index.html: no ?v= cache-busting query found');
-else if (new Set(versions).size !== 1) fail(`index.html: mixed asset versions ${[...new Set(versions)].join(', ')}`);
+else if (new Set(versions).size !== 1) fail(`index.html/js/app.js: mixed asset versions ${[...new Set(versions)].join(', ')}`);
 
 const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
 const ogUrl = html.match(/<meta property="og:url" content="([^"]+)"/);

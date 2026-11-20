@@ -2,7 +2,7 @@
 /**
  * Fail the build only on the things that matter.
  *
- *   node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt print.txt
+ *   node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt print.txt [compatibility.txt]
  *
  * Gates (deliberately generous on performance, strict on correctness):
  *   accessibility    ≥ 0.95 on both form factors
@@ -60,6 +60,17 @@ if (existsSync('contrast.txt')) {
   report(code === '0', `contrast audit exited ${code ?? 'unknown'} (light + dark)`);
 } else {
   report(false, 'contrast audit produced no output');
+}
+
+const compatibilityPath = process.argv[7];
+if (compatibilityPath) {
+  if (!existsSync(compatibilityPath)) {
+    report(false, `browser compatibility audit produced no output (${compatibilityPath})`);
+  } else {
+    const txt = readFileSync(compatibilityPath, 'utf8');
+    const code = (txt.match(/exit=(\d+)/) || [])[1];
+    report(code === '0', `Chromium / Firefox / WebKit smoke tests exited ${code ?? 'unknown'}`);
+  }
 }
 
 process.exit(failed ? 1 : 0);

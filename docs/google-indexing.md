@@ -76,9 +76,9 @@ nothing. One request after each meaningful change is right.
 
 ## 4b. Keep it fast (Google's tie-breaker)
 
-The mobile Lighthouse run in CI is the early-warning system. The PNG export used to pull `html2canvas`
-from a CDN in front of the app's own scripts on every page load; it now loads only when someone taps
-**Save image**, so the catalogue paints without waiting for a third-party download.
+The mobile Lighthouse run in CI is the early-warning system. The PNG export library is now a
+versioned, locally served bundle and loads only when someone taps **Save image**, so the catalogue
+paints without waiting for or executing a third-party script.
 
 ## 5. Why a brand-new site ranks low, and what actually moves it
 

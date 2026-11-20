@@ -26,11 +26,21 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
+
+      - name: Install locked audit tooling
+        run: npm ci --ignore-scripts
+
+      - name: Install Chromium, Firefox and WebKit
+        run: |
+          npx playwright install --with-deps chromium firefox webkit
+          CHROME_PATH="$(node -e 'console.log(require("playwright").chromium.executablePath())')"
+          echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
 
       - name: Serve the site
         run: |
-          npx --yes http-server@14 . -p 8080 -a 127.0.0.1 --silent &
+          npx http-server . -p 8080 -a 127.0.0.1 --silent &
           for i in $(seq 1 40); do
             curl -fsS "$URL" >/dev/null && break
             sleep 1
@@ -39,7 +49,7 @@ jobs:
 
       - name: Lighthouse — mobile
         run: |
-          npx --yes lighthouse@12 "$URL" \
+          npx lighthouse "$URL" \
             --only-categories=performance,accessibility,best-practices,seo \
             --output=json --output=html --output-path=./lh-mobile \
             --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --quiet || true
@@ -47,17 +57,20 @@ jobs:
 
       - name: Lighthouse — desktop
         run: |
-          npx --yes lighthouse@12 "$URL" \
+          npx lighthouse "$URL" \
             --preset=desktop \
             --only-categories=performance,accessibility,best-practices,seo \
             --output=json --output=html --output-path=./lh-desktop \
             --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage" --quiet || true
           mv lh-desktop.report.json lh-desktop.json 2>/dev/null || true
 
+      - name: Cross-browser smoke test
+        run: |
+          node tools/check-browser-compat.mjs "$URL" > compatibility.txt 2>&1; echo "exit=$?" >> compatibility.txt
+          cat compatibility.txt
+
       - name: Mobile layout audit
         run: |
-          npm init -y >/dev/null 2>&1
-          npm i --no-save puppeteer@23 pdfjs-dist@4 >/dev/null 2>&1
           node tools/check-mobile.mjs "$URL" > mobile.txt 2>&1; echo "exit=$?" >> mobile.txt
           cat mobile.txt
 
@@ -77,6 +90,8 @@ jobs:
           node tools/lh-summary.mjs lh-mobile.json lh-desktop.json > lh-summary.txt 2>&1 || true
           { echo '### Lighthouse + mobile audit'; echo;
             echo '```'; cat lh-summary.txt; echo '```'; echo;
+            echo '<details><summary>Browser compatibility (Chromium, Firefox, WebKit)</summary>'; echo;
+            echo '```'; cat compatibility.txt; echo '```'; echo '</details>'; echo;
             echo '<details><summary>Mobile layout audit (320–1024 px, both views)</summary>'; echo;
             echo '```'; cat mobile.txt; echo '```'; echo '</details>'; echo;
             echo '<details><summary>Contrast audit (light + dark)</summary>'; echo;
@@ -99,10 +114,11 @@ jobs:
           path: |
             lh-mobile.report.html
             lh-desktop.report.html
+            compatibility.txt
             audit-report.md
           if-no-files-found: warn
           retention-days: 14
 
       - name: Gate on the scores that actually matter
         if: always()
-        run: node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt print.txt
+        run: node tools/lh-gate.mjs lh-mobile.json lh-desktop.json mobile.txt contrast.txt print.txt compatibility.txt

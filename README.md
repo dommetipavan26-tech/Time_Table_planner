@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://vitap-slots.vercel.app/"><img alt="Live demo" src="https://img.shields.io/badge/live-demo-4f46e5?style=flat-square" /></a>
   <img alt="No build step" src="https://img.shields.io/badge/build-none-22c55e?style=flat-square" />
-  <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-0-22c55e?style=flat-square" />
+  <img alt="No runtime npm dependencies" src="https://img.shields.io/badge/runtime%20npm%20dependencies-0-22c55e?style=flat-square" />
   <img alt="Catalogue validated" src="https://img.shields.io/badge/catalogue-validated-23c55e?style=flat-square" />
 </p>
 
@@ -30,7 +30,7 @@ step, no server and no account; your selections stay in your own browser.
 - **Timetable** — selections land on the official Tue–Sat grid (08:00–19:30), colour-coded by
   theory and lab, with instant clash detection.
 - **Selections panel** — drop a single section, or clear labs, theory or the whole plan with undo.
-- **Export** — **Print / PDF** for a clean A4 portrait sheet, or **Save image** for a PNG.
+- **Export and recovery** — **Print / PDF**, PNG and text exports, plus a validated, restorable JSON backup for moving or recovering a plan.
 - **Everyday details** — dark mode, deep links (`/#courses`, `/#timetable`), keyboard shortcuts and
   full `prefers-reduced-motion` support.
 
@@ -75,7 +75,7 @@ All catalogue data lives in `js/data.js`: edit it and reload.
 
 A section is `{ code, venue, faculty, type: 'theory' | 'lab' }` in VTOP slot notation (`C2+TCC2` is
 theory + tutorial, `L9+L10` two consecutive lab periods). Keep `theoryCredits + labCredits = credits`,
-then bump the `?v=` asset version in `index.html`, the totals line above and the sitemap `lastmod` —
+then bump the `?v=` asset version in `index.html` (and the versioned local vendor URL in `js/app.js`), the totals line above and the sitemap `lastmod` —
 `node tools/validate-data.mjs` checks all three.
 
 ## Checks
@@ -88,28 +88,33 @@ node --test tools/planner-core.test.mjs
 node tools/check-links.mjs
 ```
 
-For real-browser layout, contrast and print checks, install the audit-only dependencies and serve the
-site in one terminal:
+For browser checks, install the pinned development tooling and browser engines, then serve the site
+in one terminal:
 
 ```bash
-npm install --no-save puppeteer@23 pdfjs-dist@4
+npm ci
+npx playwright install chromium firefox webkit
 python3 -m http.server 8080
 ```
 
 Then, in another terminal, run:
 
 ```bash
+npm run check:compat -- http://127.0.0.1:8080/
 node tools/check-mobile.mjs http://127.0.0.1:8080/
 node tools/check-contrast.mjs http://127.0.0.1:8080/
 node tools/check-print.mjs http://127.0.0.1:8080/
+node tools/check-live-site.mjs
 ```
 
-Puppeteer needs a compatible Chromium/Chrome installation; set `CHROME_PATH` if it is not found
-automatically. `validate.yml` runs catalogue validation, planner unit tests and link/control checks
-on every pull request and push to `main`. `audit.yml` runs Lighthouse plus the browser audits and
-gates on accessibility ≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mobile / ≥ 90
-desktop. Audit reports are uploaded as workflow artifacts; same-repository pull requests also get a
-comment with the results.
+The local live-site probe targets production; set `SITE_URL` to check a different deployed URL. The
+mobile/contrast/print scripts use Puppeteer and need a compatible Chromium/Chrome installation; set
+`CHROME_PATH` if it is not found automatically. `validate.yml` runs catalogue validation, unit tests,
+link/CSP-header configuration checks and `npm audit` on every pull request and push to `main`. `audit.yml` runs
+Lighthouse, Chrome layout/contrast/print audits, and Chromium/Firefox/WebKit smoke tests. A separate
+scheduled health workflow probes the production site; CodeQL and Dependabot provide scheduled code
+and dependency checks. Audit reports are workflow artifacts; same-repository PRs also receive a
+comment with the browser results.
 
 ## Project structure
 
@@ -118,34 +123,43 @@ index.html          # app shell: header, views, footer, dialogs
 css/styles.css      # design system, motion layer, print and export styles
 js/data.js          # courses, sections, slot → period mapping
 js/planner-core.js  # pure scheduling/conflict logic shared with unit tests
-js/app.js           # rendering, selection rules, conflicts, exports
+js/app.js           # rendering, selection rules, persistence, import/export
+js/analytics.js     # production-only Vercel Web Analytics loader
+js/vendor/          # licensed, locally served PNG-export library
+vercel.json         # CSP, security headers and static asset caching
+package.json        # pinned development-only audit tools; no runtime npm deps
 tools/              # validators, unit tests and browser audits
-docs/               # banner, OG image, launch kit, indexing and data provenance
+.github/workflows/  # validation, security scans, browser audits and health probe
+docs/               # architecture, operations, source provenance and launch notes
 ```
 
 ## Privacy and scope
 
 Your selected sections are stored in this browser's `localStorage`; the planner does not transmit
-or sync your timetable. Browser requests do include Google Fonts, and the PNG export feature loads
-`html2canvas` from cdnjs on demand. On the Vercel deployment, cookieless Vercel Web Analytics also
-receives page-view data. These requests are independent of your selected timetable. If browser
-storage is unavailable, the planner remains usable for the current page but cannot preserve picks
-after reload or close.
+or sync your timetable. The PNG exporter is a licensed, versioned library served from this repository
+and loaded only on demand. Browser requests do include Google Fonts; on the Vercel deployment,
+cookieless Vercel Web Analytics also receives page-view data. These requests are independent of your
+selected timetable. If browser storage is unavailable, the planner remains usable for the current page
+but cannot preserve picks after reload or close. Use **Backup JSON** to create a restorable local
+backup.
 
 The catalogue is static and hand-maintained — it does not read VTOP live, seat availability and
 registration windows are out of scope, and there is no sync between devices. Check the current
 official information before registering; see [docs/data-provenance.md](docs/data-provenance.md) for
 the source notes and transcription limits. Not affiliated with VIT or VTOP.
 
-More detail: [docs/google-indexing.md](docs/google-indexing.md) for getting the page listed, and
+More detail: [docs/architecture.md](docs/architecture.md) for data flow and trust boundaries,
+[docs/operations.md](docs/operations.md) for deployment/backup/recovery, [docs/data-provenance.md](docs/data-provenance.md)
+for catalogue caveats, [docs/google-indexing.md](docs/google-indexing.md) for search indexing, and
 [docs/launch-kit.md](docs/launch-kit.md) for the submission checklist.
 
 ## Validation Results (Nov 20, 2026)
 
-- **Data validation:** ✅ `node tools/validate-data.mjs` — 26 courses, 906 sections, 100 credits; all 1867 slot tokens resolve to 2396 weekly sessions.
-- **Planner unit tests:** ✅ `node --test tools/planner-core.test.mjs` — 6 tests passed, including paired slots, unknown slots, overlap boundaries, multiple conflicts and storage failures.
-- **Link and control checks:** ✅ `node tools/check-links.mjs` — 19 page references, 1 form control, 25 buttons and 30 unique IDs; no dead bindings or unlabeled filter groups.
-- **Browser audits:** not run in this workspace because Chromium/Chrome is not installed. The mobile, contrast and print/PDF checks are available with the setup above and run in `audit.yml` on GitHub Actions.
+- **Data validation:** ✅ 26 courses, 906 sections, 100 credits; all 1867 slot tokens resolve to 2396 weekly sessions.
+- **Planner tests:** ✅ 9 Node tests passed for scheduling, overlap detection, safe persistence and JSON-backup validation.
+- **Static/security checks:** ✅ link/control checks verify the deployed CSP/security-header configuration; JSON/JS syntax checks pass.
+- **Dependency audit:** ✅ pinned development dependencies; `npm audit --audit-level=high` reports 0 vulnerabilities.
+- **Browser/live checks:** not run locally because browser engines and production network access are unavailable in this workspace. GitHub Actions now runs Chromium/Firefox/WebKit smoke tests, visual/browser audits, and a scheduled production health probe.
 - Catalogue integrity was checked on Nov 20; this is not independent source verification. See [data provenance](docs/data-provenance.md) for the transcription caveats.
 
 ## License
