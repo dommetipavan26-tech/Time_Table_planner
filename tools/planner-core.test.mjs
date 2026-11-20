@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import '../js/planner-core.js';
 
-const { findConflicts, safeWrite, sessionsFor, timeOverlap } = globalThis.PlannerCore;
+const { findConflicts, safeWrite, sessionsFor, timeOverlap, validateBackup } = globalThis.PlannerCore;
 const schedule = {
   days: ['TUE', 'WED'],
   theorySlots: { TUE: { A1: 0 }, WED: { B1: 1 } },
@@ -39,6 +39,40 @@ test('reports every conflicting pair rather than overwriting earlier conflicts',
   assert.deepEqual(conflicts.first.map(pair => pair.with), ['second', 'third']);
   assert.equal(conflicts.second[0].with, 'first');
   assert.equal(conflicts.third[0].with, 'first');
+});
+
+const backupCourses = [{
+  code: 'CSE1001',
+  sections: [
+    { code: 'A1', venue: 'CB-101', type: 'theory' },
+    { code: 'L1+L2', venue: 'CB-201', type: 'lab' },
+  ],
+}];
+const backupFixture = {
+  format: 'vitap-winter-planner',
+  version: 1,
+  semester: 'winter-2026-27',
+  selections: [{ courseCode: 'CSE1001', sectionCode: 'A1', venue: 'CB-101', type: 'theory' }],
+};
+
+test('accepts a versioned backup only when its section exists in the catalogue', () => {
+  const restored = validateBackup(backupFixture, backupCourses);
+  assert.equal(restored.length, 1);
+  assert.equal(restored[0].section.code, 'A1');
+  assert.throws(() => validateBackup({ ...backupFixture, selections: [{ ...backupFixture.selections[0], venue: 'evil' }] }, backupCourses), /not in this catalogue/);
+});
+
+test('rejects duplicate course components in imported backups', () => {
+  const duplicate = {
+    ...backupFixture,
+    selections: [backupFixture.selections[0], backupFixture.selections[0]],
+  };
+  assert.throws(() => validateBackup(duplicate, backupCourses), /more than one theory section/);
+});
+
+test('rejects unsupported backup formats and oversized selection lists', () => {
+  assert.throws(() => validateBackup({ ...backupFixture, version: 99 }, backupCourses), /not a supported/);
+  assert.throws(() => validateBackup({ ...backupFixture, selections: Array(3).fill(backupFixture.selections[0]) }, backupCourses), /invalid selections list/);
 });
 
 test('safeWrite reports browser storage failures instead of throwing', () => {

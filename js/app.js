@@ -42,11 +42,13 @@ const PALETTE = [
   '#7c3aed', '#14b8a6', '#6366f1', '#f97316', '#22c55e', '#06b6d4',
   '#a855f7', '#84cc16', '#0f766e', '#3b82f6',
 ];
-function colorFor(code) {
+function colorIndexFor(code) {
   let h = 0;
   for (let i = 0; i < code.length; i++) h = (h * 31 + code.charCodeAt(i)) >>> 0;
-  return PALETTE[h % PALETTE.length];
+  return h % PALETTE.length;
 }
+function colorFor(code) { return PALETTE[colorIndexFor(code)]; }
+function colorClass(code) { return `color-${colorIndexFor(code)}`; }
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -435,7 +437,6 @@ function renderCourses() {
 }
 
 function cardHTML(course) {
-  const color = colorFor(course.code);
   const expanded = expandedCourses.has(course.code);
   const visibleSections = expanded
     ? course.sections
@@ -452,7 +453,7 @@ function cardHTML(course) {
     const sess = sessionsFor(sec.code, sec.type);
     const days = [...new Set(sess.map(s => s.day))].join(' · ');
     return `
-      <div class="section-row ${isOn ? 'selected' : ''}" style="--c:${color}">
+      <div class="section-row ${isOn ? 'selected' : ''} ${colorClass(course.code)}">
         <span class="slot-code">${esc(sec.code)}</span>
         <span class="slot-type ${sec.type}">${sec.type === 'lab' ? 'LAB' : 'T'}</span>
         <span class="venue">${esc(sec.venue)}</span>
@@ -473,7 +474,7 @@ function cardHTML(course) {
   const missing = nextMissingSection(course);
 
   return `
-    <article class="course-card" style="--c:${color}">
+    <article class="course-card ${colorClass(course.code)}">
       <header class="card-head">
         <div>
           <div class="code-row">
@@ -609,9 +610,8 @@ function renderTimetable() {
     const items = assignments[`${day}|${type}|${slot}`] || [];
     if (!items.length) return `<td class="matrix-cell"><span class="matrix-slot">${esc(slot)}</span></td>`;
     const hasConflict = items.some(item => (conflicts[item.selectionKey] || []).length > 0);
-    const color = items[0].color;
     const title = items.map(item => `${item.courseCode} · ${item.sectionCode} · ${item.venue}`).join(' | ');
-    return `<td class="matrix-cell is-selected ${hasConflict ? 'has-overlap' : ''}" style="--c:${color}" title="${esc(title)}">
+    return `<td class="matrix-cell is-selected ${hasConflict ? 'has-overlap' : ''} ${colorClass(items[0].courseCode)}" title="${esc(title)}">
       <span class="matrix-slot">${esc(slot)}</span>
       ${items.map(item => `<span class="matrix-course"><b>${esc(item.courseCode)}</b><small>${esc(item.venue)}</small></span>`).join('')}
     </td>`;
@@ -649,7 +649,7 @@ function renderTimetable() {
   const legend = Object.values(selected);
   $('#tt-legend').innerHTML = legend.length
     ? `<span class="legend-title">Selected:</span>` + legend.map(s => `
-        <div class="legend-item" style="--c:${s.color}">
+        <div class="legend-item ${colorClass(s.courseCode)}">
           <span class="legend-swatch"></span>
           <span>${esc(s.courseCode)}</span>
           <span class="legend-sec">${esc(s.sectionCode)}</span>
@@ -659,9 +659,21 @@ function renderTimetable() {
   $('#tt-toolbar').innerHTML = `
     <button class="btn-ghost" id="tt-save-print" title="Print or save as PDF">Print / PDF</button>
     <button class="btn-ghost" id="tt-save-text" title="Download as text file">Save text</button>
+    <button class="btn-ghost" id="tt-save-backup" title="Download a restorable JSON backup">Backup JSON</button>
+    <button class="btn-ghost" id="tt-restore-backup" title="Restore a JSON backup from this device">Restore backup</button>
+    <input id="tt-backup-file" type="file" accept="application/json,.json" hidden />
     <button class="btn-ghost" id="tt-save-img" title="Download as PNG image">Save image</button>`;
   $('#tt-save-print').addEventListener('click', () => window.print());
   $('#tt-save-text').addEventListener('click', saveTimetableText);
+  $('#tt-save-backup').addEventListener('click', downloadTimetableBackup);
+  $('#tt-restore-backup').addEventListener('click', () => $('#tt-backup-file').click());
+  $('#tt-backup-file').addEventListener('change', async event => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    try { await restoreTimetableBackup(file); }
+    catch (error) { toast(error.message || 'Could not restore this backup.', 'error'); }
+    event.target.value = '';
+  });
   $('#tt-save-img').addEventListener('click', saveTimetableImage);
   renderSelections(conflicts);
 }
@@ -729,11 +741,64 @@ function saveTimetableText() {
   toast('Timetable saved as text file', 'success');
 }
 
-/* html2canvas is only needed for the PNG export. It used to load on every page
-   view, in front of the app's own scripts; now it is fetched the first time
-   somebody actually asks for an image, which keeps the first paint fast on a
-   phone with a slow connection. */
-const HTML2CANVAS_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+function downloadTimetableBackup() {
+  if (Object.keys(selected).length === 0) { toast('Nothing to back up — add sections first', 'error'); return; }
+  const backup = {
+    format: 'vitap-winter-planner',
+    version: 1,
+    semester: 'winter-2026-27',
+    exportedAt: new Date().toISOString(),
+    selections: Object.values(selected).map(({ courseCode, sectionCode, venue, type }) => ({ courseCode, sectionCode, venue, type })),
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Winter2026-27_timetable_backup.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast('Timetable backup downloaded');
+}
+
+async function restoreTimetableBackup(file) {
+  if (file.size > 64 * 1024) throw new Error('Backup file is too large (maximum 64 KB).');
+  const backup = JSON.parse(await file.text());
+  const entries = PlannerCore.validateBackup(backup, COURSES);
+  const restored = {};
+  for (const { course, section } of entries) {
+    restored[sectionKey(course, section)] = {
+      courseCode: course.code,
+      courseName: course.name,
+      sectionCode: section.code,
+      venue: section.venue,
+      faculty: section.faculty,
+      type: section.type,
+      credits: sectionCredits(course, section.type),
+      color: colorFor(course.code),
+    };
+  }
+  const overlaps = PlannerCore.findConflicts(restored, s => sessionsFor(s.sectionCode, s.type));
+  if (Object.keys(overlaps).length) throw new Error('This backup contains timetable clashes; your current plan was not changed.');
+  if (Object.keys(selected).length) {
+    const yes = await confirmDialog({
+      title: 'Replace your current plan?',
+      body: `This backup contains <b>${entries.length} section${entries.length === 1 ? '' : 's'}</b>. It will replace your current selections.`,
+      ok: 'Restore backup',
+    });
+    if (!yes) return;
+  }
+  const previous = { ...selected };
+  selected = restored;
+  saveState();
+  refreshAll();
+  toast(`Restored ${entries.length} section${entries.length === 1 ? '' : 's'}`, 'success', {
+    label: 'Undo',
+    onClick: () => { selected = previous; refreshAll(); toast('Previous timetable restored'); },
+  });
+}
+
+/* Load the locally hosted export library only when the visitor requests a PNG. */
+const HTML2CANVAS_SRC = 'js/vendor/html2canvas.min.js?v=25';
 let html2canvasLoading = null;
 
 function loadHtml2canvas() {
@@ -829,7 +894,7 @@ function renderSelections(conflicts = findConflicts()) {
   $('#sel-clear-labs').disabled = nLab === 0;
 
   $('#sel-list').innerHTML = clashBanner + (n ? entries.map(([k, s]) => `
-    <div class="sel-item ${(conflicts[k] || []).length ? 'conflict' : ''}" style="--c:${s.color}">
+    <div class="sel-item ${(conflicts[k] || []).length ? 'conflict' : ''} ${colorClass(s.courseCode)}">
       <span class="sel-swatch"></span>
       <div class="sel-text">
         <div class="sel-line1">

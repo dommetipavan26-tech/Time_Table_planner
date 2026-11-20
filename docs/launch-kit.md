@@ -48,7 +48,7 @@ Do these in order; the first two matter far more than the rest.
 | 7 | **LinkedIn** | §4.5, tagged to your college network | <https://www.linkedin.com/feed/> |
 | 8 | **Product Hunt** | §4.2 as the tagline; schedule for a weekday morning IST | <https://www.producthunt.com/posts/new> |
 | 9 | **AlternativeTo** | “Alternative to Excel timetable templates / VTOP slot list”; needs an account | <https://alternativeto.net/manage/> |
-| 10 | **Hacker News** | only if you have a technical angle — *Show HN: Static FFCS timetable planner, no build step, no dependencies* | <https://news.ycombinator.com/submit> |
+| 10 | **Hacker News** | only if you have a technical angle — *Show HN: Static FFCS timetable planner, no build step, no runtime npm dependencies* | <https://news.ycombinator.com/submit> |
 | 11 | **Awesome lists** | open a PR against a “awesome student tools / awesome India / awesome education” list — a permanent link on a high-authority repo. Search GitHub for `awesome student` first and follow that list's contributing rules. | github.com |
 
 Afterwards, check back in a week: **Search Console → Performance** shows which queries land, and

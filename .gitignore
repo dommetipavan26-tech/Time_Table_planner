@@ -9,9 +9,8 @@ desktop.ini
 *.swp
 *.swo
 
-# Tooling (the site itself has no build step or dependencies)
+# Tooling (the site has no build step or runtime npm dependencies)
 node_modules/
-package-lock.json
 npm-debug.log*
 yarn-error.log*
 

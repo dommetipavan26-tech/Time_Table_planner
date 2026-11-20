@@ -65,6 +65,33 @@
     return conflicts;
   }
 
+  function validateBackup(backup, courses) {
+    if (!backup || backup.format !== 'vitap-winter-planner' || backup.version !== 1 || backup.semester !== 'winter-2026-27') {
+      throw new Error('This file is not a supported Winter 2026–27 planner backup.');
+    }
+    if (!Array.isArray(backup.selections) || backup.selections.length > courses.length * 2) {
+      throw new Error('The backup has an invalid selections list.');
+    }
+    const seen = new Set();
+    const restored = [];
+    for (const item of backup.selections) {
+      if (!item || typeof item !== 'object' ||
+          typeof item.courseCode !== 'string' || typeof item.sectionCode !== 'string' ||
+          typeof item.venue !== 'string' || (item.type !== 'theory' && item.type !== 'lab')) {
+        throw new Error('A backup entry is malformed.');
+      }
+      const course = courses.find(candidate => candidate.code === item.courseCode);
+      const section = course?.sections.find(candidate =>
+        candidate.code === item.sectionCode && candidate.venue === item.venue && candidate.type === item.type);
+      if (!course || !section) throw new Error(`Section ${item.courseCode} ${item.sectionCode} is not in this catalogue.`);
+      const slot = `${course.code}::${section.type}`;
+      if (seen.has(slot)) throw new Error(`Backup has more than one ${section.type} section for ${course.code}.`);
+      seen.add(slot);
+      restored.push({ course, section });
+    }
+    return restored;
+  }
+
   function safeWrite(storage, key, value) {
     try {
       storage.setItem(key, JSON.stringify(value));
@@ -74,5 +101,5 @@
     }
   }
 
-  root.PlannerCore = Object.freeze({ sessionsFor, parseTime, timeOverlap, findConflicts, safeWrite });
+  root.PlannerCore = Object.freeze({ sessionsFor, parseTime, timeOverlap, findConflicts, validateBackup, safeWrite });
 })(globalThis);

@@ -174,6 +174,38 @@ for (const cls of boundClasses) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Deployment security policy                                          */
+/* ------------------------------------------------------------------ */
+const vercelConfig = JSON.parse(read('vercel.json'));
+const siteHeaders = (vercelConfig.headers || []).find((entry) => entry.source === '/(.*)')?.headers || [];
+const headerMap = new Map(siteHeaders.map(({ key, value }) => [key.toLowerCase(), value]));
+for (const name of [
+  'content-security-policy', 'strict-transport-security', 'x-content-type-options',
+  'x-frame-options', 'referrer-policy', 'permissions-policy',
+]) {
+  if (!headerMap.has(name)) fail(`vercel.json: missing ${name} security header`);
+}
+const csp = headerMap.get('content-security-policy') || '';
+for (const directive of ["default-src 'self'", "script-src 'self'", "object-src 'none'", "frame-ancestors 'none'"]) {
+  if (!csp.includes(directive)) fail(`vercel.json: CSP is missing ${directive}`);
+}
+if (/\b(?:unsafe-inline|unsafe-eval)\b/.test(csp)) fail('vercel.json: CSP permits unsafe inline/eval execution');
+for (const [attrs] of html.matchAll(/<script\b([^>]*)>/gi)) {
+  if (/\bsrc\s*=/.test(attrs) || /type\s*=\s*"application\/ld\+json"/i.test(attrs)) continue;
+  fail('index.html: executable inline script is not allowed by the deployed CSP');
+}
+if (/<[^>]+\s+on[a-z]+\s*=/i.test(html)) fail('index.html: inline event handler is not allowed by the deployed CSP');
+if (/<[^>]+\s+style\s*=/i.test(html)) fail('index.html: inline style attribute is not allowed by the deployed CSP');
+if (!existsSync(join(ROOT, 'js/vendor/html2canvas.min.js'))) fail('the locally served PNG export library is missing');
+if (!existsSync(join(ROOT, 'docs/licenses/HTML2CANVAS.txt'))) fail('the bundled PNG library license is missing');
+const packageJson = JSON.parse(read('package.json'));
+const bundledLibrary = read('js/vendor/html2canvas.min.js').slice(0, 400);
+const libraryVersion = packageJson.devDependencies?.html2canvas;
+if (!libraryVersion || !bundledLibrary.includes(`html2canvas ${libraryVersion}`)) {
+  fail(`package.json and the bundled html2canvas version do not match (${libraryVersion || 'missing'}).`);
+}
+
+/* ------------------------------------------------------------------ */
 /* Structured data                                                      */
 /* ------------------------------------------------------------------ */
 const canonicalTag = html.match(/<link rel="canonical" href="([^"]+)"/);
