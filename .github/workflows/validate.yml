@@ -24,6 +24,10 @@ jobs:
       - name: Run the catalogue validator
         run: node tools/validate-data.mjs
 
+      # Pure planner logic: slot mapping, conflict detection and storage failures.
+      - name: Run planner unit tests
+        run: node --test tools/planner-core.test.mjs
+
       # Broken links, unlabelled controls, dead app.js bindings, JSON-LD.
       - name: Run the link and control checker
         run: node tools/check-links.mjs

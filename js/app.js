@@ -8,6 +8,9 @@
 /* ------------------------------------------------------------------ */
 const STORAGE_KEY = 'winter26-planner-v4';
 const LEGACY_STORAGE_KEY = 'winter26-planner-v2';
+let storageAvailable = true;
+let storageWarningShown = false;
+let booted = false;
 let selected = loadState();   // sectionKey -> normalised selection
 let view = 'courses';         // courses | timetable
 let filters = { q: '', branch: 'all', cat: 'all', type: 'all' };
@@ -81,9 +84,25 @@ function loadState() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY))
       || JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY))
       || {};
-  } catch (e) { return {}; }
+  } catch (e) {
+    storageAvailable = false;
+    return {};
+  }
 }
-function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(selected)); }
+function saveState() {
+  if (!storageAvailable) return false;
+  try {
+    if (!PlannerCore.safeWrite(localStorage, STORAGE_KEY, selected)) throw new Error('storage write failed');
+    return true;
+  } catch (e) {
+    storageAvailable = false;
+    if (booted && !storageWarningShown) {
+      storageWarningShown = true;
+      toast('Your browser blocked saving. This plan will stay only until you close or reload this page.', 'error');
+    }
+    return false;
+  }
+}
 
 /** Rebuild saved selections from the current catalogue.
  *  This drops obsolete records (including the removed MGT1040 lab entries)
@@ -93,6 +112,7 @@ function normaliseSavedSelections() {
   const clean = {};
   const filled = new Set();   // "COURSE::type" that already has its one slot
   for (const saved of Object.values(selected)) {
+    if (!saved || typeof saved !== 'object') continue;
     const course = COURSES.find(c => c.code === saved.courseCode);
     if (!course) continue;
     const section = course.sections.find(sec =>
@@ -155,27 +175,13 @@ function sortSections() {
 /* Scheduling                                                          */
 /* ------------------------------------------------------------------ */
 function sessionsFor(code, type) {
-  const parts = code.split('+');
-  const out = [];
-  const found = new Set();
-  for (const day of DAYS) {
-    const map = type === 'lab' ? LAB_SLOTS[day] : THEORY_SLOTS[day];
-    if (!map) continue;
-    for (const p of parts) {
-      const idx = map[p];
-      if (idx === undefined) continue;
-      found.add(p);
-      out.push({
-        day, slot: p, idx, type,
-        time: type === 'lab' ? SLOT_LAB_TIMES[idx] : SLOT_THEORY_TIMES[idx],
-      });
-    }
-  }
-  for (const p of parts) {
-    if (!found.has(p)) throw new Error(`Slot ${p} not scheduled for section ${code}`);
-  }
-  out.sort((a, b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day) || a.time.localeCompare(b.time));
-  return out;
+  return PlannerCore.sessionsFor(code, type, {
+    days: DAYS,
+    theorySlots: THEORY_SLOTS,
+    labSlots: LAB_SLOTS,
+    theoryTimes: SLOT_THEORY_TIMES,
+    labTimes: SLOT_LAB_TIMES,
+  });
 }
 function rowOf(session) {
   return session.type === 'lab' ? LAB_ROW[session.idx] : THEORY_ROW[session.idx];
@@ -202,55 +208,12 @@ function totals() {
   }
   return { credits, sessions, hours: Math.round((minutes / 60) * 10) / 10 };
 }
-function parseTime(t) {
-  const m = t.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
-  if (!m) return null;
-  return { start: +m[1] * 60 + +m[2], end: +m[3] * 60 + +m[4] };
-}
-function timeOverlap(t1, t2) {
-  const p1 = parseTime(t1), p2 = parseTime(t2);
-  if (!p1 || !p2) return false;
-  return p1.start < p2.end && p2.start < p1.end;
-}
 /**
- * Detect clashes between selected sections.
- * Two sections clash if any of their sessions overlap in time on the
- * same day — e.g. A1+TA1 (FRI 10:00–10:50) vs L21+L22 (FRI 09:50–10:40).
- * Returns a map: sectionKey -> { with: otherKey, clashes: [{day, time1, time2}] }
+ * Detect clashes between selected sections. Returns every conflicting pair as
+ * sectionKey -> [{ with, clashes }], so multiple overlaps are not overwritten.
  */
 function findConflicts() {
-  const keys = Object.keys(selected);
-  if (keys.length < 2) return {};
-  const sessionMap = {};
-  for (const k of keys) {
-    sessionMap[k] = sessionsFor(selected[k].sectionCode, selected[k].type);
-  }
-  const bad = {};
-  for (let i = 0; i < keys.length; i++) {
-    for (let j = i + 1; j < keys.length; j++) {
-      const k1 = keys[i], k2 = keys[j];
-      const s1 = selected[k1], s2 = selected[k2];
-      const clashes = [];
-      for (const sess1 of sessionMap[k1]) {
-        for (const sess2 of sessionMap[k2]) {
-          if (sess1.day === sess2.day && timeOverlap(sess1.time, sess2.time)) {
-            clashes.push({
-              day: sess1.day,
-              time1: sess1.time,
-              time2: sess2.time,
-              slot1: sess1.slot,
-              slot2: sess2.slot,
-            });
-          }
-        }
-      }
-      if (clashes.length > 0) {
-        bad[k1] = { with: k2, clashes };
-        bad[k2] = { with: k1, clashes };
-      }
-    }
-  }
-  return bad;
+  return PlannerCore.findConflicts(selected, s => sessionsFor(s.sectionCode, s.type));
 }
 
 /* ------------------------------------------------------------------ */
@@ -285,6 +248,7 @@ let closeActiveDialog = null;
 function confirmDialog({ title, body, ok = 'Yes, clear all' }) {
   if (closeActiveDialog) closeActiveDialog(false);   // only one dialog at a time
   return new Promise(resolve => {
+    const returnFocus = document.activeElement;
     const modal = $('#modal');
     $('#modal-title').textContent = title;
     $('#modal-body').innerHTML = body;
@@ -296,7 +260,12 @@ function confirmDialog({ title, body, ok = 'Yes, clear all' }) {
       if (closeActiveDialog !== close) return;
       closeActiveDialog = null;
       modal.classList.remove('show');
-      setTimeout(() => { if (!closeActiveDialog) modal.hidden = true; }, 200);
+      setTimeout(() => {
+        if (!closeActiveDialog) {
+          modal.hidden = true;
+          if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+        }
+      }, 200);
       $('#modal-ok').removeEventListener('click', onOk);
       $('#modal-cancel').removeEventListener('click', onCancel);
       modal.removeEventListener('click', onBackdrop);
@@ -307,7 +276,18 @@ function confirmDialog({ title, body, ok = 'Yes, clear all' }) {
     const onOk = () => close(true);
     const onCancel = () => close(false);
     const onBackdrop = e => { if (e.target === modal) close(false); };
-    const onKey = e => { if (e.key === 'Escape') close(false); };
+    const onKey = e => {
+      if (e.key === 'Escape') { close(false); return; }
+      if (e.key === 'Tab') {
+        const controls = [$('#modal-cancel'), $('#modal-ok')];
+        const current = controls.indexOf(document.activeElement);
+        const next = e.shiftKey
+          ? (current <= 0 ? controls.length - 1 : current - 1)
+          : (current === controls.length - 1 ? 0 : current + 1);
+        e.preventDefault();
+        controls[next].focus();
+      }
+    };
     $('#modal-ok').addEventListener('click', onOk);
     $('#modal-cancel').addEventListener('click', onCancel);
     modal.addEventListener('click', onBackdrop);
@@ -549,14 +529,16 @@ function toggleSection(course, section, btn) {
     };
     // Prevent clashes instead of leaving error-coloured cells in the plan.
     const clashes = findConflicts();
-    const myClash = clashes[key];
-    if (myClash) {
-      const other = selected[myClash.with];
-      const detail = myClash.clashes
-        .map(c => `${c.day} ${c.slot1}/${c.slot2} · ${c.time1} ↔ ${c.time2}`).join(' · ');
+    const myClashes = clashes[key] || [];
+    if (myClashes.length) {
+      const details = myClashes.map(({ with: otherKey, clashes: times }) => {
+        const other = selected[otherKey];
+        const detail = times.map(c => `${c.day} ${c.slot1}/${c.slot2} · ${c.time1} ↔ ${c.time2}`).join(' · ');
+        return `${other.courseCode} · ${other.sectionCode} (${detail})`;
+      }).join('; ');
       delete selected[key];
       if (restore) selected[restore.key] = restore.value;   // keep the old slot
-      toast(`Cannot add ${course.code} · ${section.code}: it overlaps with ${other.courseCode} · ${other.sectionCode} — ${detail}`, 'error');
+      toast(`Cannot add ${course.code} · ${section.code}: it overlaps with ${details}`, 'error');
     } else if (restore) {
       toast(`Swapped ${course.code} ${section.type} · ${restore.value.sectionCode} → ${section.code}`, 'info');
     } else {
@@ -626,7 +608,7 @@ function renderTimetable() {
     if (slot === '—') return '<td class="matrix-cell is-gap"><span>—</span></td>';
     const items = assignments[`${day}|${type}|${slot}`] || [];
     if (!items.length) return `<td class="matrix-cell"><span class="matrix-slot">${esc(slot)}</span></td>`;
-    const hasConflict = items.some(item => conflicts[item.selectionKey]);
+    const hasConflict = items.some(item => (conflicts[item.selectionKey] || []).length > 0);
     const color = items[0].color;
     const title = items.map(item => `${item.courseCode} · ${item.sectionCode} · ${item.venue}`).join(' | ');
     return `<td class="matrix-cell is-selected ${hasConflict ? 'has-overlap' : ''}" style="--c:${color}" title="${esc(title)}">
@@ -817,21 +799,21 @@ function renderSelections(conflicts = findConflicts()) {
   const nLab = n - nTheory;
 
   // clash summary banner
-  const clashPairs = new Set();
-  for (const k in conflicts) {
-    const other = conflicts[k].with;
-    clashPairs.add([k, other].sort().join('||'));
+  const clashPairs = new Map();
+  for (const [key, pairs] of Object.entries(conflicts)) {
+    for (const pair of pairs) {
+      const pairKey = [key, pair.with].sort().join('||');
+      if (!clashPairs.has(pairKey)) clashPairs.set(pairKey, { first: key, second: pair.with, clashes: pair.clashes });
+    }
   }
   const clashBanner = clashPairs.size > 0
     ? `<div class="clash-banner" id="clash-banner">
          <div class="clash-banner-icon">⚠</div>
          <div class="clash-banner-text">
            <b>${clashPairs.size} timetable clash${clashPairs.size > 1 ? 'es' : ''} detected</b>
-           ${Array.from(clashPairs).map(pair => {
-             const [k1, k2] = pair.split('||');
-             const c1 = selected[k1], c2 = selected[k2];
-             const details = conflicts[k1].clashes
-               .map(c => `${c.day} ${c.time1} ↔ ${c.time2}`).join(' · ');
+           ${Array.from(clashPairs.values()).map(({ first, second, clashes: times }) => {
+             const c1 = selected[first], c2 = selected[second];
+             const details = times.map(c => `${c.day} ${c.time1} ↔ ${c.time2}`).join(' · ');
              return `<div class="clash-detail">${esc(c1.courseCode)} · ${esc(c1.sectionCode)} clashes with ${esc(c2.courseCode)} · ${esc(c2.sectionCode)} — ${esc(details)}</div>`;
            }).join('')}
          </div>
@@ -847,14 +829,14 @@ function renderSelections(conflicts = findConflicts()) {
   $('#sel-clear-labs').disabled = nLab === 0;
 
   $('#sel-list').innerHTML = clashBanner + (n ? entries.map(([k, s]) => `
-    <div class="sel-item ${conflicts[k] ? 'conflict' : ''}" style="--c:${s.color}">
+    <div class="sel-item ${(conflicts[k] || []).length ? 'conflict' : ''}" style="--c:${s.color}">
       <span class="sel-swatch"></span>
       <div class="sel-text">
         <div class="sel-line1">
           <b>${esc(s.courseCode)}</b>
           <span class="slot-type ${s.type}">${s.type === 'lab' ? 'LAB' : 'T'}</span>
           <span class="sel-slot">${esc(s.sectionCode)}</span>
-          ${conflicts[k] ? `<span class="sel-warn" title="${esc(conflicts[k].clashes.map(c => c.day + ' ' + c.time1 + ' / ' + c.time2).join('; '))}">⚠ clashes with ${esc(selected[conflicts[k].with].courseCode)} · ${esc(selected[conflicts[k].with].sectionCode)}</span>` : ''}
+          ${(conflicts[k] || []).length ? `<span class="sel-warn" title="${esc(conflicts[k].flatMap(pair => pair.clashes.map(c => c.day + ' ' + c.time1 + ' / ' + c.time2)).join('; '))}">⚠ clashes with ${esc(conflicts[k].map(pair => `${selected[pair.with].courseCode} · ${selected[pair.with].sectionCode}`).join(', '))}</span>` : ''}
         </div>
         <div class="sel-line2">${esc(s.venue)} ${s.faculty ? '· ' + esc(s.faculty) : ''} · ${s.credits} cr</div>
       </div>
@@ -919,21 +901,33 @@ function bindFilters() {
   $$('.branch-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       filters.branch = chip.dataset.branch;
-      $$('.branch-chip').forEach(c => c.classList.toggle('active', c === chip));
+      $$('.branch-chip').forEach(c => {
+        const active = c === chip;
+        c.classList.toggle('active', active);
+        c.setAttribute('aria-pressed', String(active));
+      });
       renderCourses();
     });
   });
   $$('.cat-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       filters.cat = chip.dataset.cat;
-      $$('.cat-chip').forEach(c => c.classList.toggle('active', c === chip));
+      $$('.cat-chip').forEach(c => {
+        const active = c === chip;
+        c.classList.toggle('active', active);
+        c.setAttribute('aria-pressed', String(active));
+      });
       renderCourses();
     });
   });
   $$('.type-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       filters.type = chip.dataset.type;
-      $$('.type-chip').forEach(c => c.classList.toggle('active', c === chip));
+      $$('.type-chip').forEach(c => {
+        const active = c === chip;
+        c.classList.toggle('active', active);
+        c.setAttribute('aria-pressed', String(active));
+      });
       renderCourses();
     });
   });
@@ -1029,6 +1023,11 @@ function boot() {
     const syncHeader = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
     syncHeader();
     window.addEventListener('scroll', syncHeader, { passive: true });
+  }
+  booted = true;
+  if (!storageAvailable && !storageWarningShown) {
+    storageWarningShown = true;
+    toast('Your browser blocked saving. This plan will stay only until you close or reload this page.', 'error');
   }
 }
 document.addEventListener('DOMContentLoaded', boot);
