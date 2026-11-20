@@ -131,7 +131,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=23" />
+  <link rel="stylesheet" href="css/styles.css?v=24" />
 
   <!-- Vercel Web Analytics -->
   <script>
@@ -220,30 +220,30 @@
             <span class="sr-only" id="search-hint">Matches course code, title, faculty name or room. Press the slash key anywhere to focus this field.</span>
           </div>
           <div class="chips">
-            <div class="chip-group">
+            <div class="chip-group" role="group" aria-label="Filter by branch">
               <span class="chip-label">Branch</span>
-              <button class="branch-chip active" data-branch="all">All</button>
-              <button class="branch-chip" data-branch="Common">Common</button>
-              <button class="branch-chip" data-branch="MECH">MECH</button>
-              <button class="branch-chip" data-branch="ECE">ECE</button>
-              <button class="branch-chip" data-branch="CSE">CSE</button>
-              <button class="branch-chip" data-branch="MIS">MIS</button>
-              <button class="branch-chip" data-branch="MIC">MIC</button>
+              <button class="branch-chip active" aria-pressed="true" data-branch="all">All</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="Common">Common</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="MECH">MECH</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="ECE">ECE</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="CSE">CSE</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="MIS">MIS</button>
+              <button class="branch-chip" aria-pressed="false" data-branch="MIC">MIC</button>
             </div>
-            <div class="chip-group">
+            <div class="chip-group" role="group" aria-label="Filter by category">
               <span class="chip-label">Category</span>
-              <button class="cat-chip active" data-cat="all">All</button>
-              <button class="cat-chip" data-cat="PC">PC</button>
-              <button class="cat-chip" data-cat="PE">PE</button>
-              <button class="cat-chip" data-cat="UC">UC</button>
-              <button class="cat-chip" data-cat="UE">UE</button>
+              <button class="cat-chip active" aria-pressed="true" data-cat="all">All</button>
+              <button class="cat-chip" aria-pressed="false" data-cat="PC">PC</button>
+              <button class="cat-chip" aria-pressed="false" data-cat="PE">PE</button>
+              <button class="cat-chip" aria-pressed="false" data-cat="UC">UC</button>
+              <button class="cat-chip" aria-pressed="false" data-cat="UE">UE</button>
             </div>
-            <div class="chip-group">
+            <div class="chip-group" role="group" aria-label="Filter by course type">
               <span class="chip-label">Type</span>
-              <button class="type-chip active" data-type="all">All</button>
-              <button class="type-chip" data-type="Embedded Theory and Lab">Theory + Lab</button>
-              <button class="type-chip" data-type="Embedded Theory and Project">Theory + Project</button>
-              <button class="type-chip" data-type="Theory Only">Theory Only</button>
+              <button class="type-chip active" aria-pressed="true" data-type="all">All</button>
+              <button class="type-chip" aria-pressed="false" data-type="Embedded Theory and Lab">Theory + Lab</button>
+              <button class="type-chip" aria-pressed="false" data-type="Embedded Theory and Project">Theory + Project</button>
+              <button class="type-chip" aria-pressed="false" data-type="Theory Only">Theory Only</button>
             </div>
           </div>
         </div>
@@ -443,7 +443,8 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=23"></script>
-  <script src="js/app.js?v=23"></script>
+  <script src="js/data.js?v=24"></script>
+  <script src="js/planner-core.js?v=24"></script>
+  <script src="js/app.js?v=24"></script>
 </body>
 </html>

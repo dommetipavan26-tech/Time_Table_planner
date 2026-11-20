@@ -118,6 +118,21 @@ for (const [tag, inner] of html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/
   }
 }
 
+for (const kind of ['branch-chip', 'cat-chip', 'type-chip']) {
+  const buttons = [...html.matchAll(new RegExp(`<button\\b([^>]*class="[^"]*\\b${kind}\\b[^>]*)>`, 'g'))];
+  if (!buttons.length) fail(`filter group .${kind} has no buttons`);
+  for (const [tag] of buttons) {
+    if (!/\baria-pressed\s*=\s*"(?:true|false)"/i.test(tag)) {
+      fail(`filter button .${kind} has no aria-pressed state`);
+    }
+  }
+}
+for (const label of ['Filter by branch', 'Filter by category', 'Filter by course type']) {
+  if (!new RegExp(`<[^>]+role="group"[^>]+aria-label="${label}"`).test(html)) {
+    fail(`filter controls are missing the labelled group "${label}"`);
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Duplicate ids + dead bindings between app.js and index.html          */
 /* ------------------------------------------------------------------ */

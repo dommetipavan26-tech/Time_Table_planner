@@ -80,16 +80,36 @@ then bump the `?v=` asset version in `index.html`, the totals line above and the
 
 ## Checks
 
+The catalogue and planner-logic checks use Node's built-in test runner and need no install step:
+
 ```bash
-node tools/validate-data.mjs                          # catalogue, credits, README totals, SEO tags
-node tools/check-links.mjs                            # dead links, labels, ids, unused bindings
-node tools/check-mobile.mjs http://127.0.0.1:8080/    # layout at 320–1024 px (needs puppeteer)
-node tools/check-print.mjs  http://127.0.0.1:8080/    # printed A4 sheet and PNG export (pdfjs-dist)
+node tools/validate-data.mjs
+node --test tools/planner-core.test.mjs
+node tools/check-links.mjs
 ```
 
-`validate.yml` runs the first two on every push and pull request. `audit.yml` runs Lighthouse plus
-the layout, contrast and print audits, posts the numbers on the pull request, and gates on
-accessibility ≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mobile / ≥ 90 desktop.
+For real-browser layout, contrast and print checks, install the audit-only dependencies and serve the
+site in one terminal:
+
+```bash
+npm install --no-save puppeteer@23 pdfjs-dist@4
+python3 -m http.server 8080
+```
+
+Then, in another terminal, run:
+
+```bash
+node tools/check-mobile.mjs http://127.0.0.1:8080/
+node tools/check-contrast.mjs http://127.0.0.1:8080/
+node tools/check-print.mjs http://127.0.0.1:8080/
+```
+
+Puppeteer needs a compatible Chromium/Chrome installation; set `CHROME_PATH` if it is not found
+automatically. `validate.yml` runs catalogue validation, planner unit tests and link/control checks
+on every pull request and push to `main`. `audit.yml` runs Lighthouse plus the browser audits and
+gates on accessibility ≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mobile / ≥ 90
+desktop. Audit reports are uploaded as workflow artifacts; same-repository pull requests also get a
+comment with the results.
 
 ## Project structure
 
@@ -97,33 +117,36 @@ accessibility ≥ 95, best practices ≥ 90, SEO = 100 and performance ≥ 70 mo
 index.html          # app shell: header, views, footer, dialogs
 css/styles.css      # design system, motion layer, print and export styles
 js/data.js          # courses, sections, slot → period mapping
+js/planner-core.js  # pure scheduling/conflict logic shared with unit tests
 js/app.js           # rendering, selection rules, conflicts, exports
-tools/              # validators and browser audits
-docs/               # banner, OG image, launch kit, indexing notes
+tools/              # validators, unit tests and browser audits
+docs/               # banner, OG image, launch kit, indexing and data provenance
 ```
 
 ## Privacy and scope
 
-Selections are written to `localStorage` and never leave the device; the only page-view request is
-cookieless Vercel Web Analytics. The catalogue is static and hand-maintained — it does not read VTOP
-live, seat availability and registration windows are out of scope, and there is no sync between
-devices. Not affiliated with VIT or VTOP.
+Your selected sections are stored in this browser's `localStorage`; the planner does not transmit
+or sync your timetable. Browser requests do include Google Fonts, and the PNG export feature loads
+`html2canvas` from cdnjs on demand. On the Vercel deployment, cookieless Vercel Web Analytics also
+receives page-view data. These requests are independent of your selected timetable. If browser
+storage is unavailable, the planner remains usable for the current page but cannot preserve picks
+after reload or close.
+
+The catalogue is static and hand-maintained — it does not read VTOP live, seat availability and
+registration windows are out of scope, and there is no sync between devices. Check the current
+official information before registering; see [docs/data-provenance.md](docs/data-provenance.md) for
+the source notes and transcription limits. Not affiliated with VIT or VTOP.
 
 More detail: [docs/google-indexing.md](docs/google-indexing.md) for getting the page listed, and
 [docs/launch-kit.md](docs/launch-kit.md) for the submission checklist.
 
-## Validation Results (Nov 10, 2026)
+## Validation Results (Nov 20, 2026)
 
-- **Data Validation (`node tools/validate-data.mjs`)**: ✅ Passed
-  - 26 courses · 906 sections · 100 credits · 24 four-credit courses
-  - 1867 slot tokens checked · 2396 weekly sessions resolved
-  - README totals, asset version 23, canonical/og:url and og:image all consistent
-  - Sitemap (`sitemap.xml`) and `robots.txt` agree with the canonical host (lastmod updated to 2026-11-10)
-- **Link & Control Validation (`node tools/check-links.mjs`)**: ✅ Passed
-  - 18 href/src/action references · 1 form control · 25 buttons · 30 unique ids · no duplicates · 26 files
-- **Mobile & Print Checks (`node tools/check-mobile.mjs` / `check-print.mjs`)**: ⚠️ Logic audit complete
-  - Code logic reviewed (sideways scroll, tap targets ≥24px, text ≥11px, print layout A4 portrait, etc.)
-  - Sandbox environment limitation: `puppeteer` and `pdfjs-dist` missing, but logic validated manually.
+- **Data validation:** ✅ `node tools/validate-data.mjs` — 26 courses, 906 sections, 100 credits; all 1867 slot tokens resolve to 2396 weekly sessions.
+- **Planner unit tests:** ✅ `node --test tools/planner-core.test.mjs` — 6 tests passed, including paired slots, unknown slots, overlap boundaries, multiple conflicts and storage failures.
+- **Link and control checks:** ✅ `node tools/check-links.mjs` — 19 page references, 1 form control, 25 buttons and 30 unique IDs; no dead bindings or unlabeled filter groups.
+- **Browser audits:** not run in this workspace because Chromium/Chrome is not installed. The mobile, contrast and print/PDF checks are available with the setup above and run in `audit.yml` on GitHub Actions.
+- Catalogue integrity was checked on Nov 20; this is not independent source verification. See [data provenance](docs/data-provenance.md) for the transcription caveats.
 
 ## License
 

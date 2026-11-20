@@ -85,8 +85,9 @@ jobs:
             echo '```'; cat print.txt; echo '```'; echo '</details>'; } > audit-report.md
           cat audit-report.md
 
+      # Fork PR tokens are read-only; their complete report remains available as an artifact.
       - name: Publish the report on the pull request
-        if: always() && github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr comment "${{ github.event.pull_request.number }}" --body-file audit-report.md
