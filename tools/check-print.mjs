@@ -149,7 +149,8 @@ const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
 /* Chrome wraps the page dictionaries in object streams, so the sheet is read
    back with pdf.js instead of a regex. */
 const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
-const doc = await getDocument({ data: new Uint8Array(pdf), useSystemFonts: false, isEvalSupported: false }).promise;
+const loadingTask = getDocument({ data: new Uint8Array(pdf), useSystemFonts: false, isEvalSupported: false });
+const doc = await loadingTask.promise;
 const first = await doc.getPage(1);
 const view = first.getViewport({ scale: 1 });
 const w = Math.round(view.width);
@@ -181,7 +182,7 @@ if (pages > 2) fail(`the timetable spills over ${pages} pages`);
 if (glyphs === 0) fail('the PDF contains no text — nothing was printed');
 if (tilted) fail(`${tilted} of ${glyphs} text runs are rotated, not horizontal — ${tiltedSamples.join(', ')}`);
 if (pastMargin) fail(`${pastMargin} text run(s) cross the right margin (furthest glyph ends at ${Math.round(furthest)} of ${Math.round(view.width)} pt) — the sheet is clipped`);
-await doc.destroy();
+await loadingTask.destroy();
 
 /* ---------------- the PNG download (html2canvas reads screen CSS) ---------------- */
 await page.emulateMediaType('screen');

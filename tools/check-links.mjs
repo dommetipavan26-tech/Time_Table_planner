@@ -198,7 +198,7 @@ if (/<[^>]+\s+on[a-z]+\s*=/i.test(html)) fail('index.html: inline event handler 
 if (/<[^>]+\s+style\s*=/i.test(html)) fail('index.html: inline style attribute is not allowed by the deployed CSP');
 if (!existsSync(join(ROOT, 'js/vendor/html2canvas.min.js'))) fail('the locally served PNG export library is missing');
 if (!existsSync(join(ROOT, 'docs/licenses/HTML2CANVAS.txt'))) fail('the bundled PNG library license is missing');
-if (/cdnjs\.cloudflare\.com/.test(appSrc)) fail('PNG export must use the locally bundled library, not a third-party script host');
+if (appSrc.includes('cdnjs.cloudflare.com')) fail('PNG export must use the locally bundled library, not a third-party script host');
 const packageJson = JSON.parse(read('package.json'));
 const bundledLibrary = read('js/vendor/html2canvas.min.js').slice(0, 400);
 const libraryVersion = packageJson.devDependencies?.html2canvas;
